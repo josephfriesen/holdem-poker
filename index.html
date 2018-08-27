@@ -4,15 +4,22 @@
     <title></title>
     <script src="js/jquery.js"></script>
     <script src="js/scripts.js"></script>
+    <script src="js/frontend.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Condiment" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   </head>
   <body>
     <h2 class="header">Texas Hold'Em</h2>
+    <form id="enterName">
+      <label for="name">Please enter name:</label>
+      <input id="name">
+      <button type="submit" id="btn">Submit</button>
+    </form>
     <div id="container">
       <div id="table">
         <div class="player" id="playerOne">
-          <p><span class="box">Player1</span></p>
+          <p><span id="playerOneName" class="box"></span></p>
           <p><span class="box">$1500.00</span></p>
         </div>
         <div class="player" id="playerTwo">
