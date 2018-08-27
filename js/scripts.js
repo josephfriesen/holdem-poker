@@ -11,47 +11,91 @@ function Table() {
   this.ranks = [
     '2','3','4','5','6','7','8','9','10','jack','queen','king','ace'
   ]
-  this.hands = {
-    royalFlush: function(){
+  this.handEvaluators = {
+    // Done -- is this syntax for calling other functions in the handEvaluators object correct? royalFlush and straightFlush both require flush(hand) and straight(hand) to evaluate to true.
+    royalFlush: function(hand){
+      var aceCheck = false;
+      for (var i = 0; i <= 4; i++) {
+        if (hand.cards[i].rank === "ace") {
+          aceCheck = true;
+        }
+      }
+      if (this.flush(hand) && this.straight(hand) && aceCheck) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Done
+    straightFlush: function(hand){
+      if (this.flush(hand) && this.straight(hand)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Done
+    fourOfAKind: function(hand) {
+      if (hand.instances[0] === 4) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Done
+    fullHouse: function(hand){
+      if (hand.instances[0] === 3 && hand.instances[3] === 2) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Done
+    flush: function(hand){
+      if (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    straight: function(hand){
 
     },
-    straightFlush: function(){
-
+    // Done
+    threeOfAKind: function(hand){
+      if (hand.instances[0] === 3) {
+        return true;
+      } else {
+        return false;
+      }
     },
-
-    // Four of a Kind check function. Given a hand, returns True if that hand is a four of a kind, false if not.
-    fourOfAKind: function(instanceArr) {
-      // instancesArr.forEach(function(instance) {
-      //   if (instance === 4) {
-      //     output = true;
-      //   }
-      // })
-      // return output;
+    // Done
+    twoPair: function(hand){
+      if (hand.instances[0] === 2 && hand.instances[2] === 2) {
+        return true;
+      } else {
+        return false;
+      }
     },
-
-    fullHouse: function(){
-
+    // Done
+    pair: function(hand){
+      if (hand.instances[0] === 2 && hand.instances[2] === 1) {
+        return true;
+      } else {
+        return false;
+      }
     },
-    flush: function(){
-
-    },
-    straight: function(){
-
-    },
-    threeOfAKind: function(){
-
-    },
-    twoPair: function(){
-
-    },
-    pair: function(){
-
-    },
-    highCard: function() {
-
+    // Done
+    highCard: function(hand) {
+      if (hand.instances[0] === 1) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
-}
+  this.handKeys = Object.keys(this.handEvaluators)
+
   this.deck = [];
   this.board = [];
   this.round = 0;
@@ -81,30 +125,59 @@ Table.prototype.shuffle = function() {
 Table.prototype.deal = function() {
 
 }
-Table.prototype.handRank(hand) {
+Table.prototype.handIndex = function(handKey) {
   var keyArr = Object.keys(this.hands);
-  return keyArr.indexOf(hand);
+  return keyArr.indexOf(handKey);
 }
-Table.prototype.getHands(player.cards) {
-  // return array of all player.holeCards + this.communityCards combinations
+Table.prototype.getHands = function(multiCardArray) {
+  var handArray = [];
+  // for each 5-card combination of multiCardArray...
+  // (get them how??)
+  // ...instantiate a Hand
+  // var newHand = new Hand([5-card combo])
+  // newHand.handValue = table.evaluateHand(newHand)
+  // handArray.push(newHand)
+  return handArray; // returns an array of Hand objects
 }
-Table.prototype.findBestHand(handArray) {
-  // find all possible hands for handArray
-  // player.finalFive = bestHand.cards
-  // return bestHand key
+Table.prototype.evaluateHand = function(hand) {
+  var bestHand = "highCard"
+  for (handKey in this.evaluators) { // iterate through eval functions
+    if (this.evaluators[handKey](hand)) { // check current fiveCardArray
+      return table.handKeys.indexOf(handKey) // returns index
+    }
+  }
 }
-Table.prototype.findWinner() {
-
+Table.prototype.findBestHand = function(handArray) {
+  // handArrays are produced by Table.getHands()
+  // takes array of 21 possible hands and returns best one
+  handArray.forEach(function(handObject,i){
+    var bestHandIndex = this.handEvaluators.length-1
+    var bestHand;
+    for (handKey in this.handEvaluators) { // iterate through eval functions
+      if (hand.handValue < bestHandIndex) { // check if current hand is higher than best
+        bestHandIndex = hand.evaluateHand().handIndex
+        bestHand = handObject
+      }
+    }
+  })
+  return bestHand; // returns a hand key i.e. "twoPair"
+}
+Table.prototype.findWinner = function() {
+  // compare player final hands, return winning player
 }
 function Card(suit,rank) {
   this.suit = suit;
   this.rank = rank;
 }
 function Hand(arr) {
-  this.cards = [];
-  this.instances = [];
+  this.cards = arr;
+  this.instances = this.getInstances()
+  this.handValue = 0;
 }
-Hand.prototype.getInstances() {
+Hand.prototype.checkFor = function(handToCheck) {
+  return table.handEvaluators[handToCheck]()
+}
+Hand.prototype.getInstances = function() {
   var cardArray = this.hand.cards
   var output = false;
   var instances = 1;
@@ -127,7 +200,7 @@ Hand.prototype.getInstances() {
 function Player(human) {
   this.human = human;
   this.name = "";
-  this.bank = 0;
+  this.bank = 1500;
   this.holeCards = [];
   this.finalFive = [];
   this.hand = undefined;
