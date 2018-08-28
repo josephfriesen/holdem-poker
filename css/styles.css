@@ -1,6 +1,7 @@
 body {
   background: rgb(241,241,233);
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
+  font-family: Helvetica;
 }
 
 .header {
@@ -14,7 +15,7 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   padding: 8px;
   font-family: Helvetica;
   color: rgb(72, 72, 72);
-
+  font-size: 16px;
 
 }
 #container {
@@ -33,7 +34,7 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
   width: 600px;
   height: 300px;
-  margin-left: 100px;
+  margin: 0 auto;
   z-index: 1;
   border: 10px solid rgb(226, 186, 19);
   border-radius: 10px;
@@ -44,7 +45,8 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   background: black;
   border: 2px solid yellow;
   width: 150px;
-  height: 60px;
+  height: 50px;
+  padding: 15px;
   z-index: 2;
   text-align: center;
   letter-spacing: 1.1px;
@@ -67,6 +69,7 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   font-size: 14px;
   line-height: 15px;
   z-index: 2;
+  font-family: 'Sawarabi Mincho', sans-serif;
 }
 
 .write {
@@ -75,7 +78,6 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
 .box {
   color: #fff;
   font-size: 12px;
-  line-height: 13px;
 }
 .actionButtons {
   padding-left: 10px;
@@ -90,6 +92,6 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   text-transform: uppercase;
 }
 
-#funds, #check, #call, #raise, #allIn, #fold {
+/* #funds, #check, #call, #raise, #allIn, #fold {
   display: none;
-}
+} */

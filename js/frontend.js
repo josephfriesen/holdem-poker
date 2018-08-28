@@ -1,5 +1,6 @@
 //Make submission form to enter name
 
+var oneBank = 1500
 
 $(document).ready(function() {
   var oneName = $("#enterName").submit(function(event) {
@@ -8,6 +9,7 @@ $(document).ready(function() {
     $("#container").show();
     var name = $("#name").val()
     $("#playerOneName").text(name);
+    $("#playerOneBank").text(oneBank);
     console.log()
     // $("#playerOneFunds").text();
     // $("#playerTwoName").text();
