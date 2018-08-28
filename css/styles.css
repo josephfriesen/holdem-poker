@@ -6,16 +6,25 @@ body {
 .header {
   text-align: center;
   text-transform: uppercase;
+  background: rgb(153,153,153);
+background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
+  height: 20px;
+  -webkit-margin-after: 0;
+  -webkit-margin-before: 0;
+  padding: 8px;
+  font-family: Helvetica;
+  color: rgb(72, 72, 72);
+
+
 }
 #container {
   background: rgb(7,10,88);
   background: linear-gradient(90deg, rgba(7,10,88,0.8090423669467788) 6%, rgba(25,37,170,0.7418154761904762) 19%, rgba(7,10,88,0.8146446078431373) 41%);
-  width: 800px;
-  height: 500px;
-  margin: 0;
-  padding: 30px;
+  width: 100%;
+  height: 700px;
+  padding-top: 30px;
   z-index: 0;
-  margin: 30px auto;
+  margin: 0 auto;
   display: none;
 }
 
@@ -24,7 +33,6 @@ body {
   background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
   width: 600px;
   height: 300px;
-  margin-top: 50px;
   margin-left: 100px;
   z-index: 1;
   border: 10px solid rgb(226, 186, 19);
