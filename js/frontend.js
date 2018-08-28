@@ -14,3 +14,20 @@ $(document).ready(function() {
     // $("#playerTwoFunds").text();
   });
 });
+
+
+//Future reference for action actionButtons depending on scenario
+
+//If no bets at moment
+// $("#check").show();
+// $("#bet").show();
+// $("#allIn").show();
+
+//If opponent bets or raises
+// $("#call").show();
+// $("#raise").show();
+// $("#allIn").show();
+
+//If opponent goes all in
+// $("#call").show();
+// $("#fold").show();
