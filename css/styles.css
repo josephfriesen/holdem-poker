@@ -3,6 +3,9 @@ body {
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
   font-family: Helvetica;
 }
+button {
+  cursor: pointer;
+}
 
 .header {
   text-align: center;
@@ -42,8 +45,8 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
 
 .player {
   position: absolute;
-  background: black;
-  border: 2px solid yellow;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid green;
   width: 150px;
   height: 50px;
   padding: 15px;
@@ -52,14 +55,19 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   letter-spacing: 1.1px;
 }
 
-#playerOne {
+#player1 {
   margin-left: -50px;
   margin-top: 120px;
 }
 
-#playerTwo {
+#player2 {
   margin-left: 500px;
   margin-top: 120px;
+}
+
+.at-bat {
+  background: rgba(0, 0, 0, 1);
+  border: 2px solid yellow;
 }
 
 #boardWrite {
