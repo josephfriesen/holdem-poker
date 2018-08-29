@@ -76,16 +76,16 @@ function Table() {
         handRanks.push(hand.cards[i].rank);
       }
       handRanks.sort();
-      var straightsList = [["2", "3", "4", "5", "ace"],
-      ["2", "3", "4", "5", "6"],
-      ["3", "4", "5", "6", "7"],
-      ["4", "5","6", "7", "8"],
-      ["5", "6", "7", "8", "9"],
-      ["10", "6", "7", "8", "9"],
-      ["10", "7", "8", "9", "jack"],
-      ["10", "8", "9", "jack", "queen"],
-      ["10", "9", "jack", "king", "queen"],
-      ["10", "ace", "jack", "king", "queen"]
+      var straightsList = [["two", "three", "four", "five", "ace"],
+      ["two", "three", "four", "five", "six"],
+      ["three", "four", "five", "six", "seven"],
+      ["four", "five","six", "seven", "eight"],
+      ["five", "six", "seven", "eight", "nine"],
+      ["ten", "six", "seven", "eight", "nine"],
+      ["ten", "seven", "eight", "nine", "jack"],
+      ["ten", "eight", "nine", "jack", "queen"],
+      ["ten", "nine", "jack", "king", "queen"],
+      ["ten", "ace", "jack", "king", "queen"]
       ];
       straightsList.forEach(function(straight) {
         if (handRanks[0] === straight[0] && handRanks[1] === straight[1] && handRanks[2] === straight[2] && handRanks[3] === straight[3] && handRanks[4] === straight[4]) {
@@ -107,16 +107,29 @@ function Table() {
       return (hand.instances[0] === 1);
     }
   }
+  this.tiebreaks = {
+    royalFlush: function() {
+      return "tied";
+    },
+    fourOfAKind: function(hand1,hand2) {
+
+    }
+  }
   this.handKeys = Object.keys(this.handEvaluators)
   this.deck = [];
   this.board = [];
   this.roundIndex = 0;
+
+}
+Table.prototype.createDeck = function(){
   this.suits.forEach(function(suit,i){
     this.ranks.forEach(function(rank,j){
-      this.deck.push( new Card(suit,rank) )
+      this.deck.push(new Card(suit,rank) )
     },this);
   },this)
 }
+table.createDeck();
+
 Table.prototype.shuffle = function() {
   var newDeck = [];
   this.deck.forEach(function(card) {
@@ -235,51 +248,26 @@ Table.prototype.evaluateHand = function(hand) {
     }
   }
 }
-// Table.prototype.evaluateHand = function(hand) {
-//   if (this.handEvaluators.royalFlush(hand)) {
-//     return table.handKeys[0];
-//   } else if (this.handEvaluators.straightFlush(hand)) {
-//     return table.handKeys[1];
-//   } else if (this.handEvaluators.fourOfAKind(hand)) {
-//     return table.handKeys[2];
-//   } else if (this.handEvaluators.fullHouse(hand)) {
-//     return table.handKeys[3];
-//   } else if (this.handEvaluators.flush(hand)) {
-//     return table.handKeys[4];
-//   } else if (this.handEvaluators.straight(hand)) {
-//     return table.handKeys[5];
-//   } else if (this.handEvaluators.threeOfAKind(hand)) {
-//     return table.handKeys[6];
-//   } else if (this.handEvaluators.twoPair(hand)) {
-//     return table.handKeys[7];
-//   } else if (this.handEvaluators.pair(hand)) {
-//     return table.handKeys[8];
-//   } else {
-//     return table.handKeys[9];
-//   }
-// }
 Table.prototype.findBestHand = function(handArray) {
   // handArrays are produced by Table.getHands()
   // takes array of 21 possible hands and returns best one
-  handArray.forEach(function(handObject,i){
-    var bestHandIndex = this.handEvaluators.length-1
-    var bestHand;
-    for (handKey in this.handEvaluators) { // iterate through eval functions
-      if (hand.handValue < bestHandIndex) { // check if current hand is higher than best
-        bestHandIndex = hand.evaluateHand().handIndex
-        bestHand = handObject
-      }
-    }
+  var reversedHands = table.handKeys.reverse()
+  handArray.sort(function(hand1,hand2){
+    return reversedHands.indexOf(hand2.handValue) - reversedHands.indexOf(hand1.handValue)
   })
-  return bestHand; // returns a hand key i.e. "twoPair"
+  return handArray[0]; // returns a handObject
 }
 Table.prototype.findWinner = function () {
   // compare player final hands, return winning player
 }
+
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
   this.cardHTML = `<div class="playing-card" id="`+this.rank+`-of-`+this.suit+`"></div>`;
+  this.getValue = function(){
+    return table.ranks.reverse().indexOf(this.rank)
+  }
   this.place = function (targetElement,replace) {
     replace ? $(targetElement).html(this.cardHTML) : $(targetElement).append(this.cardHTML);
     this.div = $('#'+this.rank+`-of-`+this.suit);
@@ -287,7 +275,7 @@ function Card(suit, rank) {
     pos.left = table.ranks.indexOf(this.rank) * cardWidth;
     pos.top = table.suits.indexOf(this.suit) * cardHeight;
     this.div.css({
-      'background-image': 'url(../img/cardsheet.png)',
+      'background-image': 'url(img/cardsheet.png)',
       'background-size': (cardWidth*13)+'px '+(cardHeight*4)+'px',
       'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
       'background-repeat': 'no-repeat',
@@ -295,6 +283,7 @@ function Card(suit, rank) {
       'height': cardHeight + 'px',
     });
   }
+  this.value = this.getValue();
 }
 function Hand(arr) {
   this.cards = arr;
@@ -315,10 +304,14 @@ function Hand(arr) {
     return instancesArr
   }
   this.instances = getInstances(this.cards)
-  this.handValue = 0;
+  this.handValue = table.evaluateHand(this);
 }
-Hand.prototype.checkFor = function (handToCheck) {
-  return table.handEvaluators[handToCheck]()
+Hand.prototype.sortByValue = function() {
+  this.cards.sort(function(card1, card2){
+    console.log(card1.value + " " + card2.value)
+     return card2.value - card1.value;
+  })
+  return this.cards;
 }
 function getInstances(cardArray) {
   var instances = 1;
@@ -367,6 +360,7 @@ Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount
 }
 $(document).ready(function() {
+
   $("#enterName").submit(function (event) {
     event.preventDefault();
     console.log("-------------------- GAME INITIATED -------------------")
@@ -396,13 +390,13 @@ $(document).ready(function() {
 // }
 // Pre-built common hands for testing purposes.
 //
-// card1 = new Card("diamonds", "5");
-// card2 = new Card("diamonds", "6");
-// card3 = new Card("diamonds", "7");
-// card4 = new Card("diamonds", "8");
-// card5 = new Card("diamonds", "9");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// straightFlush = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "five");
+card2 = new Card("diamonds", "six");
+card3 = new Card("diamonds", "seven");
+card4 = new Card("diamonds", "eight");
+card5 = new Card("diamonds", "nine");
+reallyGoodCards = [card3, card1, card2, card5, card4];
+straightFlush = new Hand(reallyGoodCards);
 
 // card1 = new Card("diamonds", "ace");
 // card2 = new Card("diamonds", "king");
@@ -468,16 +462,16 @@ $(document).ready(function() {
 // reallyGoodCards = [card1, card2, card3, card4, card5];
 // twoPair = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "ace");
-// card2 = new Card("clubs", "ace");
-// card3 = new Card("diamonds", "king");
-// card4 = new Card("hearts", "3");
-// card5 = new Card("hearts", "6");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// pair = new Hand(reallyGoodCards);
-// //
-// //
-// //
-// card6 = new Card("spades", "jack");
-// card7 = new Card("diamonds", "4");
-// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+card1 = new Card("diamonds", "ace");
+card2 = new Card("clubs", "ace");
+card3 = new Card("diamonds", "king");
+card4 = new Card("hearts", "3");
+card5 = new Card("hearts", "6");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+pair = new Hand(reallyGoodCards);
+//
+//
+//
+card6 = new Card("spades", "jack");
+card7 = new Card("diamonds", "4");
+sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
