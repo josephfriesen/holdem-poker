@@ -1,8 +1,6 @@
 
 var table = new Table();
-var startingBank = 1500
-
-
+var startingBank = 1500;
 function Table() {
   this.players = [];
   this.communityCards = [];
@@ -22,12 +20,10 @@ function Table() {
       amount: 80,
       player: undefined
     }
-  }
+  };
   this.headsUp = false;
-
-  this.player1er;
   this.atBat;
-  this.betThisRound = false;
+  this.betOccurred = false;
   this.round = ""
   this.pot = 0
   this.suits = [
@@ -40,7 +36,6 @@ function Table() {
     '2','3','4','5','6','7','8','9','10','jack','queen','king','ace'
   ];
   this.handEvaluators = {
-    // Done -- is this syntax for calling other functions in the handEvaluators object correct? royalFlush and straightFlush both require flush(hand) and straight(hand) to evaluate to true.
     royalFlush: function(hand){
       var aceCheck = false;
       for (var i = 0; i <= 4; i++) {
@@ -70,13 +65,11 @@ function Table() {
           return output
         }
       }
-
       var handRanks = [];
       for (var i = 0; i <= 4; i++) {
         handRanks.push(hand.cards[i].rank);
       }
       handRanks.sort();
-
       var straightsList = [["2", "3", "4", "5", "ace"],
       ["2", "3", "4", "5", "6"],
       ["3", "4", "5", "6", "7"],
@@ -88,7 +81,6 @@ function Table() {
       ["10", "9", "jack", "king", "queen"],
       ["10", "ace", "jack", "king", "queen"]
       ];
-
       straightsList.forEach(function(straight) {
         if (handRanks[0] === straight[0] && handRanks[1] === straight[1] && handRanks[2] === straight[2] && handRanks[3] === straight[3] && handRanks[4] === straight[4]) {
           output = true;
@@ -168,6 +160,10 @@ Table.prototype.advanceRound = function() {
     // begin end sequence
   } else {
     if (roundName === "preFlop") {
+      // call/check
+      // bet/raise
+      // all-in
+      // Fold
       if (this.players.length === 2) {
         this.headsUp = true;
         this.dealer = this.atBat = this.players[0];
@@ -183,10 +179,6 @@ Table.prototype.advanceRound = function() {
         this.pot += this.blinds.big.amount
         $('#playerOneBank').text(this.players[0].bank);
         $('#playerTwoBank').text(this.players[1].bank);
-        // call/check
-        // bet/raise
-        // all-in
-        // Fold
         $('#call-check').text("Call");
         $('#bet-raise').text("Raise");
         // $('#call-check').off()
@@ -201,10 +193,8 @@ Table.prototype.advanceRound = function() {
             } else {
               $('#playerTwoBank').text(player.bank);
             }
-
           }
         })
-
       } else {
         // multiplayer rules
       }
@@ -229,7 +219,6 @@ Table.prototype.getHands = function(multiCardArray) {
   var fiveCardArr = [];
   var newHand;
   var len = multiCardArray.length - 1;
-
   for (var i = 0; i < len; i++) {
     badCard1 = multiCardArray[i];
     for (var j = i+1; j <= len; j++) {
@@ -247,37 +236,37 @@ Table.prototype.getHands = function(multiCardArray) {
   }
   return handArray;
 }
+Table.prototype.evaluateHand = function(hand) {
+  for (handKey in this.handEvaluators) { // iterate through eval functions
+    if (this.handEvaluators[handKey](hand)) { // check current hand object
+      return handKey
+    }
+  }
+  // return "highCard"; // none matched
+}
 // Table.prototype.evaluateHand = function(hand) {
-//   var bestHand = "highCard"
-//   for (handKey in this.evaluators) { // iterate through eval functions
-//     if (this.evaluators[handKey](hand)) { // check current fiveCardArray
-//       return handKey
-//     }
+//   if (this.handEvaluators.royalFlush(hand)) {
+//     return table.handKeys[0];
+//   } else if (this.handEvaluators.straightFlush(hand)) {
+//     return table.handKeys[1];
+//   } else if (this.handEvaluators.fourOfAKind(hand)) {
+//     return table.handKeys[2];
+//   } else if (this.handEvaluators.fullHouse(hand)) {
+//     return table.handKeys[3];
+//   } else if (this.handEvaluators.flush(hand)) {
+//     return table.handKeys[4];
+//   } else if (this.handEvaluators.straight(hand)) {
+//     return table.handKeys[5];
+//   } else if (this.handEvaluators.threeOfAKind(hand)) {
+//     return table.handKeys[6];
+//   } else if (this.handEvaluators.twoPair(hand)) {
+//     return table.handKeys[7];
+//   } else if (this.handEvaluators.pair(hand)) {
+//     return table.handKeys[8];
+//   } else {
+//     return table.handKeys[9];
 //   }
 // }
-Table.prototype.evaluateHand = function(hand) {
-  if (this.handEvaluators.royalFlush(hand)) {
-    return table.handKeys[0];
-  } else if (this.handEvaluators.straightFlush(hand)) {
-    return table.handKeys[1];
-  } else if (this.handEvaluators.fourOfAKind(hand)) {
-    return table.handKeys[2];
-  } else if (this.handEvaluators.fullHouse(hand)) {
-    return table.handKeys[3];
-  } else if (this.handEvaluators.flush(hand)) {
-    return table.handKeys[4];
-  } else if (this.handEvaluators.straight(hand)) {
-    return table.handKeys[5];
-  } else if (this.handEvaluators.threeOfAKind(hand)) {
-    return table.handKeys[6];
-  } else if (this.handEvaluators.twoPair(hand)) {
-    return table.handKeys[7];
-  } else if (this.handEvaluators.pair(hand)) {
-    return table.handKeys[8];
-  } else {
-    return table.handKeys[9];
-  }
-}
 Table.prototype.findBestHand = function(handArray) {
 
   // handArrays are produced by Table.getHands()
@@ -387,105 +376,104 @@ $(document).ready(function() {
     $('#playerTwoName').text(name2)
     table.advanceRound();
     table.changeTurn(0);
+    console.log(flush)
   });
 });
+
 // Function just for testing purposes, will shuffle the deck, create a five card hand object.
-function fiveCardHand() {
-  var newDeck = table.shuffle();
-  var cards = [];
-  for (i = 0; i <= 4; i++) {
-    cards.push(newDeck.pop());
-  }
-  var hand = new Hand(cards);
-  return hand;
-}
-
-
-
+// function fiveCardHand() {
+//   var newDeck = table.shuffle();
+//   var cards = [];
+//   for (i = 0; i <= 4; i++) {
+//     cards.push(newDeck.pop());
+//   }
+//   var hand = new Hand(cards);
+//   return hand;
+// }
 // Pre-built common hands for testing purposes.
 //
-card1 = new Card("diamonds", "5");
-card2 = new Card("diamonds", "6");
-card3 = new Card("diamonds", "7");
-card4 = new Card("diamonds", "8");
-card5 = new Card("diamonds", "9");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-straightFlush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "5");
+// card2 = new Card("diamonds", "6");
+// card3 = new Card("diamonds", "7");
+// card4 = new Card("diamonds", "8");
+// card5 = new Card("diamonds", "9");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// straightFlush = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "ace");
-card2 = new Card("diamonds", "king");
-card3 = new Card("diamonds", "queen");
-card4 = new Card("diamonds", "jack");
-card5 = new Card("diamonds", "10");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-royalFlush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "ace");
+// card2 = new Card("diamonds", "king");
+// card3 = new Card("diamonds", "queen");
+// card4 = new Card("diamonds", "jack");
+// card5 = new Card("diamonds", "10");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// royalFlush = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "2");
-card2 = new Card("diamonds", "7");
-card3 = new Card("diamonds", "9");
-card4 = new Card("diamonds", "4");
-card5 = new Card("diamonds", "queen");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-flush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "2");
+// card2 = new Card("diamonds", "7");
+// card3 = new Card("diamonds", "9");
+// card4 = new Card("diamonds", "4");
+// card5 = new Card("diamonds", "queen");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// flush = new Hand(reallyGoodCards);
 
-card1 = new Card("clubs", "5");
-card2 = new Card("diamonds", "6");
-card3 = new Card("spades", "7");
-card4 = new Card("diamonds", "8");
-card5 = new Card("hearts", "9");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-straight = new Hand(reallyGoodCards);
+// card1 = new Card("clubs", "5");
+// card2 = new Card("diamonds", "6");
+// card3 = new Card("spades", "7");
+// card4 = new Card("diamonds", "8");
+// card5 = new Card("hearts", "9");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// straight = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "3");
-card2 = new Card("clubs", "3");
-card3 = new Card("spades", "3");
-card4 = new Card("diamonds", "8");
-card5 = new Card("spades", "8");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-fullHouse = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "3");
+// card2 = new Card("clubs", "3");
+// card3 = new Card("spades", "3");
+// card4 = new Card("diamonds", "8");
+// card5 = new Card("spades", "8");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// fullHouse = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "5");
-card2 = new Card("clubs", "5");
-card3 = new Card("hearts", "5");
-card4 = new Card("spades", "5");
-card5 = new Card("diamonds", "queen");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-fourOfAKind = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "5");
+// card2 = new Card("clubs", "5");
+// card3 = new Card("hearts", "5");
+// card4 = new Card("spades", "5");
+// card5 = new Card("diamonds", "queen");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// fourOfAKind = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "7");
-card2 = new Card("clubs", "7");
-card3 = new Card("spades", "7");
-card4 = new Card("diamonds", "2");
-card5 = new Card("diamonds", "jack");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-threeOfAKind = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "7");
+// card2 = new Card("clubs", "7");
+// card3 = new Card("spades", "7");
+// card4 = new Card("diamonds", "2");
+// card5 = new Card("diamonds", "jack");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// threeOfAKind = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "5");
-card2 = new Card("diamonds", "6");
-card3 = new Card("diamonds", "7");
-card4 = new Card("diamonds", "8");
-card5 = new Card("diamonds", "9");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-straightFlush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "5");
+// card2 = new Card("diamonds", "6");
+// card3 = new Card("diamonds", "7");
+// card4 = new Card("diamonds", "8");
+// card5 = new Card("diamonds", "9");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// straightFlush = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "5");
-card2 = new Card("clubs", "5");
-card3 = new Card("diamonds", "7");
-card4 = new Card("spades", "7");
-card5 = new Card("hearts", "2");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-twoPair = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "5");
+// card2 = new Card("clubs", "5");
+// card3 = new Card("diamonds", "7");
+// card4 = new Card("spades", "7");
+// card5 = new Card("hearts", "2");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// twoPair = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "ace");
-card2 = new Card("clubs", "ace");
-card3 = new Card("diamonds", "king");
-card4 = new Card("hearts", "3");
-card5 = new Card("hearts", "6");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-pair = new Hand(reallyGoodCards);
-//
-//
-//
-card6 = new Card("spades", "jack");
-card7 = new Card("diamonds", "4");
-sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+// card1 = new Card("diamonds", "ace");
+// card2 = new Card("clubs", "ace");
+// card3 = new Card("diamonds", "king");
+// card4 = new Card("hearts", "3");
+// card5 = new Card("hearts", "6");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// pair = new Hand(reallyGoodCards);
+// //
+// //
+// //
+// card6 = new Card("spades", "jack");
+// card7 = new Card("diamonds", "4");
+// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
