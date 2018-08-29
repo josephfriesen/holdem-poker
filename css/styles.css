@@ -183,7 +183,7 @@ button {
 #boardWriteMobile {
   font-family: 'Sawarabi Mincho', sans-serif;
   color: #F1D804;
-  display: hidden;
+  display: none;
 }
 /* #funds, #check, #call, #raise, #allIn, #fold {
   display: none;
@@ -266,6 +266,7 @@ button {
       margin-top: 80px;
       width: 525px;
       height: 30px;
+      display: inline-block;
     }
 
     #pot {
@@ -312,7 +313,7 @@ button {
   #community {
       width: 225px;
       height: 75px;
-      margin-left: 45px;
+      margin-left: 40px;
       float:left;
       display: flex;
       margin-top: -140px;
@@ -354,9 +355,10 @@ button {
       line-height: 9px;
       letter-spacing: 1.6px;
       margin-left: 40px;
-      margin-top: 125px;
+      margin-top: 15px;
       width: 525px;
       height: 30px;
+      display: inline-block;
     }
 
     #pot {
@@ -368,7 +370,7 @@ button {
     .actionButtons {
       width: 600px;
       margin-left: -25px;
-      margin-top: -10px;
+      margin-top: 10px;
     }
 
     .action {
