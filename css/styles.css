@@ -10,7 +10,7 @@ body {
   text-align: center;
   text-transform: uppercase;
   background: rgb(153,153,153);
-background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
+  background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
   height: 20px;
   margin: 0;
   -webkit-margin-after: 0;
@@ -179,11 +179,22 @@ button {
 #funds {
   width: 160px;
 }
+
+#boardWriteMobile {
+  font-family: 'Sawarabi Mincho', sans-serif;
+  color: #F1D804;
+  display: hidden;
+}
 /* #funds, #check, #call, #raise, #allIn, #fold {
   display: none;
 } */
 
 @media screen and (min-width: 768px) and (max-width: 1024px) {
+
+  #container {
+    padding-top: 60px;
+  }
+
   #table {
     border: 8px solid #F1D804;;
     width: 745px;
@@ -244,13 +255,17 @@ button {
     }
 
     #boardWrite {
+      display: none;
+    }
+
+    #boardWriteMobile {
       font-size: 18px;
       line-height: 9px;
       letter-spacing: 1.6px;
-      margin-left: 250px;
-      margin-top: 30px;
-      width: 225px;
-      height: 90px;
+      margin-left: 130px;
+      margin-top: 80px;
+      width: 525px;
+      height: 30px;
     }
 
     #pot {
@@ -258,3 +273,114 @@ button {
       margin-top: 15px;
       font-size: 15px;
     }
+}
+
+@media screen and (max-width: 768px) {
+
+  .header {
+    height: 10px;
+    padding: 8px;
+  }
+
+  #container {
+    padding-top: 10px;
+    height: 424px;
+  }
+
+  #table {
+    border: 6px solid #F1D804;;
+    width: 565px;
+    height: 285px;
+  }
+
+  #cards {
+    width: 585px;
+    height: 75px;
+    margin-top: 190px;
+  }
+
+  .hole {
+    width: 90px;
+    height: 75px;
+    display: flex;
+  }
+
+  #holeOne {
+    margin-left: 35px;
+}
+
+  #community {
+      width: 225px;
+      height: 75px;
+      margin-left: 45px;
+      float:left;
+      display: flex;
+      margin-top: -140px;
+    }
+
+  #holeTwo {
+    margin-left: 305px;
+    float:left;
+    }
+
+    #playerAlign {
+      width: 725px;
+      height: 60px;
+      margin-top: -40px;
+    }
+
+    .player {
+      height: 60px;
+      width: 120px;
+      font-size: 12px;
+    }
+
+    #player1 {
+      margin-top: -130px;
+      margin-left: -570px;
+    }
+
+    #player2 {
+      margin-left: -155px;
+      margin-top: -130px;
+    }
+
+    #boardWrite {
+      display: none;
+    }
+
+    #boardWriteMobile {
+      font-size: 18px;
+      line-height: 9px;
+      letter-spacing: 1.6px;
+      margin-left: 40px;
+      margin-top: 125px;
+      width: 525px;
+      height: 30px;
+    }
+
+    #pot {
+      margin-left: 250px;
+      margin-top: -130px;
+      font-size: 15px;
+    }
+
+    .actionButtons {
+      width: 600px;
+      margin-left: -25px;
+      margin-top: -10px;
+    }
+
+    .action {
+      background: rgb(163,153,153);
+      background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+      text-align: center;
+      width: 80px;
+      height: 25px;
+      color: #fff;
+    }
+
+    #funds {
+      width: 160px;
+    }
+}
