@@ -83,6 +83,13 @@ background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1)
   display: flex;
 }
 
+#pot {
+  margin-left: 440px;
+  margin-top: 20px;
+  font-size: 20px;
+  color: #F1D804;
+}
+
 .commCard {
   flex: 1;
   border: 1px solid yellow;
@@ -175,3 +182,79 @@ button {
 /* #funds, #check, #call, #raise, #allIn, #fold {
   display: none;
 } */
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  #table {
+    border: 8px solid #F1D804;;
+    width: 745px;
+    height: 375px;
+  }
+
+  #cards {
+    width: 725px;
+    height: 75px;
+    margin-top: 120px;
+  }
+
+  .hole {
+    width: 90px;
+    height: 75px;
+    z-index: 4;
+    display: flex;
+  }
+
+  #holeOne {
+    margin-left: 45px;
+}
+
+  #community {
+      width: 225px;
+      height: 75px;
+      margin-left: 115px;
+      float:left;
+      display: flex;
+    }
+
+  #holeTwo {
+    margin-left: 115px;
+    float:left;
+    margin-right: 45px;
+    }
+
+    #playerAlign {
+      width: 725px;
+      height: 60px;
+      margin-top: -40px;
+    }
+
+    .player {
+      height: 60px;
+      width: 120px;
+      font-size: 12px;
+    }
+
+    #player1 {
+      margin-top: -40px;
+      margin-left: 30px;
+    }
+
+    #player2 {
+      margin-left: 425px;
+      margin-top: -40px;
+    }
+
+    #boardWrite {
+      font-size: 18px;
+      line-height: 9px;
+      letter-spacing: 1.6px;
+      margin-left: 250px;
+      margin-top: 30px;
+      width: 225px;
+      height: 90px;
+    }
+
+    #pot {
+      margin-left: 330px;
+      margin-top: 15px;
+      font-size: 15px;
+    }
