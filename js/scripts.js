@@ -1,6 +1,9 @@
 
 var table = new Table();
 var startingBank = 1500;
+var cardRatio = 0.6
+var cardWidth = 225*cardRatio
+var cardHeight = 315*cardRatio
 function Table() {
   this.players = [];
   this.communityCards = [];
@@ -10,7 +13,7 @@ function Table() {
     "flop",
     "turn",
     "river"
-  ]
+  ];
   this.blinds = {
     small: {
       amount: 40,
@@ -24,16 +27,19 @@ function Table() {
   this.headsUp = false;
   this.atBat;
   this.betOccurred = false;
-  this.round = ""
-  this.pot = 0
+  this.round = "";
+  this.pot = 0;
   this.suits = [
-    'clubs',
-    'diamonds',
     'hearts',
-    'spades'
+    'spades',
+    'diamonds',
+    'clubs'
   ];
+  // this.ranks = [
+  //   '2','3','4','5','6','7','8','9','10','jack','queen','king','ace'
+  // ];
   this.ranks = [
-    '2','3','4','5','6','7','8','9','10','jack','queen','king','ace'
+    'ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king'
   ];
   this.handEvaluators = {
     royalFlush: function(hand){
@@ -158,52 +164,38 @@ Table.prototype.advanceRound = function() {
   var roundName = table.rounds[table.roundIndex];
   if (!table.rounds[table.roundIndex]) {
     // begin end sequence
-  } else {
-    if (roundName === "preFlop") {
-      // call/check
-      // bet/raise
-      // all-in
-      // Fold
-      if (this.players.length === 2) {
-        this.headsUp = true;
-        this.dealer = this.atBat = this.players[0];
-        this.players[0].blind = this.blinds.small;
-        this.players[1].blind = this.blinds.big;
-        this.blinds.small['player'] = this.players[0]
-        this.blinds.big['player'] = this.players[1]
-        // this.deal(3)
-        this.deal(2);
-        this.players[0].changeBankAmountBy(-this.blinds.small.amount);
-        this.pot += this.blinds.small.amount
-        this.players[1].changeBankAmountBy(-this.blinds.big.amount);
-        this.pot += this.blinds.big.amount
-        $('#playerOneBank').text(this.players[0].bank);
-        $('#playerTwoBank').text(this.players[1].bank);
-        $('#call-check').text("Call");
-        $('#bet-raise').text("Raise");
-        // $('#call-check').off()
-        $('#call-check').click(function(){
-          var player = table.atBat
-          if (player.blind && player.blind === table.blinds.small) {
-            var amount = table.blinds.small.amount
-            player.changeBankAmountBy(-amount);
-            table.pot += amount
-            if (table.players.indexOf(player) === 0) {
-              $('#playerOneBank').text(player.bank);
-            } else {
-              $('#playerTwoBank').text(player.bank);
-            }
+  } else if (roundName === "preFlop") {
+    if (this.players.length === 2) {
+      this.headsUp = true;
+      this.dealer = this.atBat = this.players[0];
+      this.players[0].blind = this.blinds.small;
+      this.players[1].blind = this.blinds.big;
+      this.blinds.small['player'] = this.players[0]
+      this.blinds.big['player'] = this.players[1]
+      // this.deal(3)
+      this.deal(2);
+      this.players[0].changeBankAmountBy(-this.blinds.small.amount);
+      this.pot += this.blinds.small.amount
+      this.players[1].changeBankAmountBy(-this.blinds.big.amount);
+      this.pot += this.blinds.big.amount
+      $('#playerOneBank').text(this.players[0].bank);
+      $('#playerTwoBank').text(this.players[1].bank);
+      $('#call-check').text("Call");
+      $('#bet-raise').text("Raise");
+      $('#call-check').off();
+      $('#call-check').click(function(){
+        var player = table.atBat
+        if (player.blind && player.blind === table.blinds.small) {
+          var amount = table.blinds.small.amount
+          player.changeBankAmountBy(-amount);
+          table.pot += amount
+          if (table.players.indexOf(player) === 0) {
+            $('#playerOneBank').text(player.bank);
+          } else {
+            $('#playerTwoBank').text(player.bank);
           }
-        })
-      } else {
-        // multiplayer rules
-      }
-    } else if (roundName === "flop") {
-      //
-    } else if (roundName === "turn") {
-
-    } else if (roundName === "river") {
-
+        }
+      });
     }
   }
   console.log("--------------- ROUND " + table.rounds[table.roundIndex] + " -------------------")
@@ -239,10 +231,9 @@ Table.prototype.getHands = function(multiCardArray) {
 Table.prototype.evaluateHand = function(hand) {
   for (handKey in this.handEvaluators) { // iterate through eval functions
     if (this.handEvaluators[handKey](hand)) { // check current hand object
-      return handKey
+      return handKey;
     }
   }
-  // return "highCard"; // none matched
 }
 // Table.prototype.evaluateHand = function(hand) {
 //   if (this.handEvaluators.royalFlush(hand)) {
@@ -268,7 +259,6 @@ Table.prototype.evaluateHand = function(hand) {
 //   }
 // }
 Table.prototype.findBestHand = function(handArray) {
-
   // handArrays are produced by Table.getHands()
   // takes array of 21 possible hands and returns best one
   handArray.forEach(function(handObject,i){
@@ -289,12 +279,27 @@ Table.prototype.findWinner = function () {
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
+  this.cardHTML = `<div class="playing-card" id="`+this.rank+`-of-`+this.suit+`"></div>`;
+  this.place = function (targetElement,replace) {
+    replace ? $(targetElement).html(this.cardHTML) : $(targetElement).append(this.cardHTML);
+    this.div = $('#'+this.rank+`-of-`+this.suit);
+    var pos = {};
+    pos.left = table.ranks.indexOf(this.rank) * cardWidth;
+    pos.top = table.suits.indexOf(this.suit) * cardHeight;
+    this.div.css({
+      'background-image': 'url(../img/cardsheet.png)',
+      'background-size': (cardWidth*13)+'px '+(cardHeight*4)+'px',
+      'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
+      'background-repeat': 'no-repeat',
+      'width': cardWidth + 'px',
+      'height': cardHeight + 'px',
+    });
+  }
 }
 function Hand(arr) {
   this.cards = arr;
   this.getInstances = function () {
     var cardArray = this.cards.splice(0)
-    var output = false;
     var instances = 1;
     var instancesArr = [];
     for (var i = 0; i <= 4; i++) {
@@ -356,7 +361,7 @@ Player.prototype.amountLeft = function (action, amount) {
   } else if (action === "allIn") {
     amountLeft = 0
   }
-  return amountLeft
+  return amountLeft;
 }
 Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount
@@ -376,7 +381,6 @@ $(document).ready(function() {
     $('#playerTwoName').text(name2)
     table.advanceRound();
     table.changeTurn(0);
-    console.log(flush)
   });
 });
 
