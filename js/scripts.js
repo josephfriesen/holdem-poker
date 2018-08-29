@@ -50,8 +50,8 @@ function Table() {
       }
       return (this.flush(hand) && this.straight(hand) && aceCheck)
     },
-    straightFlush: function(hand){
-      return (this.handEvaluators.flush(hand) && this.handEvaluators.straight(hand));
+    straightFlush: function (hand) {
+      return (this.flush(hand) && this.straight(hand));
     },
     fourOfAKind: function(hand) {
       return (hand.instances[0] === 4);
@@ -63,7 +63,38 @@ function Table() {
       return (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit);
     },
     straight: function(hand){
+      var output = false;
+      var uniqueArr = [1,1,1,1,1];
+      for (var n = 0; n <= 4; n++) {
+        if (hand.instances[n] !== uniqueArr[n]) {
+          return output
+        }
+      }
 
+      var handRanks = [];
+      for (var i = 0; i <= 4; i++) {
+        handRanks.push(hand.cards[i].rank);
+      }
+      handRanks.sort();
+
+      var straightsList = [["2", "3", "4", "5", "ace"],
+      ["2", "3", "4", "5", "6"],
+      ["3", "4", "5", "6", "7"],
+      ["4", "5","6", "7", "8"],
+      ["5", "6", "7", "8", "9"],
+      ["10", "6", "7", "8", "9"],
+      ["10", "7", "8", "9", "jack"],
+      ["10", "8", "9", "jack", "queen"],
+      ["10", "9", "jack", "king", "queen"],
+      ["10", "ace", "jack", "king", "queen"]
+      ];
+
+      straightsList.forEach(function(straight) {
+        if (handRanks[0] === straight[0] && handRanks[1] === straight[1] && handRanks[2] === straight[2] && handRanks[3] === straight[3] && handRanks[4] === straight[4]) {
+          output = true;
+        };
+      })
+      return output;
     },
     threeOfAKind: function(hand){
       return (hand.instances[0] === 3);
@@ -89,22 +120,27 @@ function Table() {
   },this)
 }
 Table.prototype.shuffle = function() {
-  var len = this.deck.length;
+  var newDeck = [];
+  this.deck.forEach(function(card) {
+    newDeck.push(card);
+  })
+  var len = newDeck.length;
   var output = [];
   var limit;
   var rand;
   for (var j = 0; j < len; j++) {
     limit = len - j;
     rand = Math.floor(Math.random() * (limit));
-    output.push(this.deck[rand]);
-    this.deck.splice(rand,1);
+    output.push(newDeck[rand]);
+    newDeck.splice(rand,1);
   }
-  this.deck = output;
+  return output;
 }
 Table.prototype.changeTurn = function(playerIndex) {
   this.atBat = this.players[playerIndex];
   // $('.player').removeClass('at-bat');
   this.atBat.div.addClass('at-bat')
+  console.log("|||||||||| It's " + this.atBat.name + "'s turn!")
 }
 Table.prototype.deal = function(amount) {
   var self = this
@@ -126,9 +162,7 @@ Table.prototype.deal = function(amount) {
 }
 Table.prototype.advanceRound = function() {
   this.betThisRound = false;
-  console.log("old round " + table.roundIndex)
   table.roundIndex++
-  console.log("new round is " + table.roundIndex);
   var roundName = table.rounds[table.roundIndex];
   if (!table.rounds[table.roundIndex]) {
     // begin end sequence
@@ -147,9 +181,6 @@ Table.prototype.advanceRound = function() {
         this.pot += this.blinds.small.amount
         this.players[1].changeBankAmountBy(-this.blinds.big.amount);
         this.pot += this.blinds.big.amount
-        console.log("minus " + this.blinds.small.amount);
-        console.log("1 basnkl " + this.players[0].bank);
-
         $('#playerOneBank').text(this.players[0].bank);
         $('#playerTwoBank').text(this.players[1].bank);
         // call/check
@@ -185,6 +216,7 @@ Table.prototype.advanceRound = function() {
 
     }
   }
+  console.log("--------------- ROUND " + table.rounds[table.roundIndex] + " -------------------")
 }
 Table.prototype.handIndex = function(handKey) {
   var keyArr = Object.keys(this.hands);
@@ -192,30 +224,69 @@ Table.prototype.handIndex = function(handKey) {
 }
 Table.prototype.getHands = function(multiCardArray) {
   var handArray = [];
-  // for each 5-card combination of multiCardArray...
-  // (get them how??)
-  // ...instantiate a Hand
-  // var newHand = new Hand([5-card combo])
-  // newHand.handValue = table.evaluateHand(newHand)
-  // handArray.push(newHand)
-  return handArray; // returns an array of Hand objects
-}
-Table.prototype.evaluateHand = function(hand) {
-  var bestHand = "highCard"
-  for (handKey in this.evaluators) { // iterate through eval functions
-    if (this.evaluators[handKey](hand)) { // check current fiveCardArray
-      return table.handKeys.indexOf(handKey) // return index
+  var badCard1;
+  var badCard2;
+  var fiveCardArr = [];
+  var newHand;
+  var len = multiCardArray.length - 1;
+
+  for (var i = 0; i < len; i++) {
+    badCard1 = multiCardArray[i];
+    for (var j = i+1; j <= len; j++) {
+      badCard2 = multiCardArray[j];
+      fiveCardArr = multiCardArray.filter(function(card) {
+        return card != badCard1;
+      });
+      fiveCardArr = fiveCardArr.filter(function(card) {
+        return card != badCard2;
+      });
+      newHand = new Hand(fiveCardArr);
+      handArray.push(newHand);
+      fiveCardArr = [];
     }
+  }
+  return handArray;
+}
+// Table.prototype.evaluateHand = function(hand) {
+//   var bestHand = "highCard"
+//   for (handKey in this.evaluators) { // iterate through eval functions
+//     if (this.evaluators[handKey](hand)) { // check current fiveCardArray
+//       return handKey
+//     }
+//   }
+// }
+Table.prototype.evaluateHand = function(hand) {
+  if (this.handEvaluators.royalFlush(hand)) {
+    return table.handKeys[0];
+  } else if (this.handEvaluators.straightFlush(hand)) {
+    return table.handKeys[1];
+  } else if (this.handEvaluators.fourOfAKind(hand)) {
+    return table.handKeys[2];
+  } else if (this.handEvaluators.fullHouse(hand)) {
+    return table.handKeys[3];
+  } else if (this.handEvaluators.flush(hand)) {
+    return table.handKeys[4];
+  } else if (this.handEvaluators.straight(hand)) {
+    return table.handKeys[5];
+  } else if (this.handEvaluators.threeOfAKind(hand)) {
+    return table.handKeys[6];
+  } else if (this.handEvaluators.twoPair(hand)) {
+    return table.handKeys[7];
+  } else if (this.handEvaluators.pair(hand)) {
+    return table.handKeys[8];
+  } else {
+    return table.handKeys[9];
   }
 }
 Table.prototype.findBestHand = function(handArray) {
+
   // handArrays are produced by Table.getHands()
   // takes array of 21 possible hands and returns best one
   handArray.forEach(function(handObject,i){
     var bestHandIndex = this.handEvaluators.length-1
     var bestHand;
     for (handKey in this.handEvaluators) { // iterate through eval functions
-      if (handObject.handValue < bestHandIndex) { // check if current hand is higher than best
+      if (hand.handValue < bestHandIndex) { // check if current hand is higher than best
         bestHandIndex = hand.evaluateHand().handIndex
         bestHand = handObject
       }
@@ -223,16 +294,16 @@ Table.prototype.findBestHand = function(handArray) {
   })
   return bestHand; // returns a hand key i.e. "twoPair"
 }
-Table.prototype.findWinner = function() {
+Table.prototype.findWinner = function () {
   // compare player final hands, return winning player
 }
-function Card(suit,rank) {
+function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
 }
 function Hand(arr) {
   this.cards = arr;
-  this.getInstances = function() {
+  this.getInstances = function () {
     var cardArray = this.cards.splice(0)
     var output = false;
     var instances = 1;
@@ -245,17 +316,33 @@ function Hand(arr) {
         }
       }
       instancesArr.push(instances);
-      cardArray.push(cardArray.splice(0,1)[0]);
+      cardArray.push(cardArray.splice(0, 1)[0]);
     }
     return instancesArr
   }
-  this.instances = this.getInstances()
+  this.instances = getInstances(this.cards)
   this.handValue = 0;
 }
-Hand.prototype.checkFor = function(handToCheck) {
+Hand.prototype.checkFor = function (handToCheck) {
   return table.handEvaluators[handToCheck]()
 }
-function Player(human,name,bank) {
+function getInstances(cardArray) {
+  var instances = 1;
+  var instancesArr = [1, 1, 1, 1, 1];
+  for (var i = 0; i <= 4; i++) {
+    for (var j = 1; j <= 4; j++) {
+      if (cardArray[0].rank === cardArray[j].rank) {
+        instancesArr[i] = instancesArr[i] + 1;
+      }
+    }
+    cardArray.push(cardArray.splice(0, 1)[0]);
+  }
+  instancesArr = instancesArr.sort(function (a, b) {
+    return b - a;
+  });
+  return instancesArr;
+}
+function Player(human, name, bank) {
   this.human = human;
   this.name = name;
   this.bank = bank;
@@ -269,11 +356,11 @@ function Player(human,name,bank) {
     amount: 0
   }
   table.players[table.players.length] = this
-  this.div = $('#player'+table.players.length);
+  this.div = $('#player' + table.players.length);
 }
-Player.prototype.amountLeft = function(action,amount) {
+Player.prototype.amountLeft = function (action, amount) {
   var amountLeft = 0
-  if ((action === "check") || (action === "call") ) {
+  if ((action === "check") || (action === "call")) {
     amountLeft = this.bank
   } else if ((action === "bet") || (action === "raise")) {
     amountLeft = this.bank - amount;
@@ -282,38 +369,123 @@ Player.prototype.amountLeft = function(action,amount) {
   }
   return amountLeft
 }
-Player.prototype.changeBankAmountBy = function(amount) {
+Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount
 }
-
-// var actions = ["check", "call", "bet", "raise", "allIn", "fold"]
-// var amount = "";
-// var oneName = "player1";
-// var oneBank = 1500
-// console.log(oneName);
-// console.log(oneBank);
-// var one = new Player(oneName, oneBank)
-
 $(document).ready(function() {
-  var oneName = $("#enterName").submit(function(event) {
+  $("#enterName").submit(function (event) {
     event.preventDefault();
+    console.log("-------------------- GAME INITIATED -------------------")
     $("#enterName").hide();
     $("#container").show();
-    var name1 = $("#name1").val()
-    var name2 = $("#name2").val()
-    if (!name1) {
-      name1 = "Player 1"
-    }
-    if (!name2) {
-      name2 = "Player 2"
-    }
+    var name1 = ( $("#name1").val() || "Player 1" )
+    var name2 = ( $("#name2").val() || "Player 2" )
     table = new Table();
-    var player1 = new Player(true,name1,startingBank);
-    var player2 = new Player(true,name2,startingBank);
+    new Player(true, name1, startingBank);
+    new Player(true, name2, startingBank);
     $('#playerOneName').text(name1)
     $('#playerTwoName').text(name2)
-    table.changeTurn(0);
     table.advanceRound();
+    table.changeTurn(0);
   });
-  var testHand = new Hand([table.deck[0],table.deck[1],table.deck[2],table.deck[3],table.deck[4]])
 });
+// Function just for testing purposes, will shuffle the deck, create a five card hand object.
+function fiveCardHand() {
+  var newDeck = table.shuffle();
+  var cards = [];
+  for (i = 0; i <= 4; i++) {
+    cards.push(newDeck.pop());
+  }
+  var hand = new Hand(cards);
+  return hand;
+}
+
+
+
+// Pre-built common hands for testing purposes.
+//
+card1 = new Card("diamonds", "5");
+card2 = new Card("diamonds", "6");
+card3 = new Card("diamonds", "7");
+card4 = new Card("diamonds", "8");
+card5 = new Card("diamonds", "9");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+straightFlush = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "ace");
+card2 = new Card("diamonds", "king");
+card3 = new Card("diamonds", "queen");
+card4 = new Card("diamonds", "jack");
+card5 = new Card("diamonds", "10");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+royalFlush = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "2");
+card2 = new Card("diamonds", "7");
+card3 = new Card("diamonds", "9");
+card4 = new Card("diamonds", "4");
+card5 = new Card("diamonds", "queen");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+flush = new Hand(reallyGoodCards);
+
+card1 = new Card("clubs", "5");
+card2 = new Card("diamonds", "6");
+card3 = new Card("spades", "7");
+card4 = new Card("diamonds", "8");
+card5 = new Card("hearts", "9");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+straight = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "3");
+card2 = new Card("clubs", "3");
+card3 = new Card("spades", "3");
+card4 = new Card("diamonds", "8");
+card5 = new Card("spades", "8");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+fullHouse = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "5");
+card2 = new Card("clubs", "5");
+card3 = new Card("hearts", "5");
+card4 = new Card("spades", "5");
+card5 = new Card("diamonds", "queen");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+fourOfAKind = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "7");
+card2 = new Card("clubs", "7");
+card3 = new Card("spades", "7");
+card4 = new Card("diamonds", "2");
+card5 = new Card("diamonds", "jack");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+threeOfAKind = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "5");
+card2 = new Card("diamonds", "6");
+card3 = new Card("diamonds", "7");
+card4 = new Card("diamonds", "8");
+card5 = new Card("diamonds", "9");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+straightFlush = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "5");
+card2 = new Card("clubs", "5");
+card3 = new Card("diamonds", "7");
+card4 = new Card("spades", "7");
+card5 = new Card("hearts", "2");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+twoPair = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "ace");
+card2 = new Card("clubs", "ace");
+card3 = new Card("diamonds", "king");
+card4 = new Card("hearts", "3");
+card5 = new Card("hearts", "6");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+pair = new Hand(reallyGoodCards);
+//
+//
+//
+card6 = new Card("spades", "jack");
+card7 = new Card("diamonds", "4");
+sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
