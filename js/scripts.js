@@ -1,10 +1,5 @@
-
 var table = new Table();
 var startingBank = 1500;
-var cardRatio = 0.6
-var cardWidth = 225*cardRatio
-var cardHeight = 315*cardRatio
-
 function Table() {
   this.players = [];
   this.communityCards = [];
@@ -190,7 +185,6 @@ function Table() {
         hand.sortByValue(dudArr);
         hand.cards.forEach(function(card,i) {
           if (hand.instances[i] !== 3) {
-            console.log("pushing into dudArr " + card.rank)
             dudArr.push(card)
             setArr.splice(setArr.indexOf(card),1)
           }
@@ -214,7 +208,6 @@ function Table() {
       },
       arrange: function(hand){
         hand.sortByValue();
-        console.log(hand.cards);
         if (hand.cards[0].rank !== hand.cards[1].rank) {
 
           hand.cards.push(hand.cards.shift());
@@ -268,14 +261,36 @@ function Table() {
   this.board = [];
   this.roundIndex = 0;
 };
+Table.prototype.initiateGame = function(playerNameArray){
+  console.log("GAME INITIATED ------------");
+  this.slots = [
+    $('.commCard:first-child'),
+    $('.commCard:nth-child(2)'),
+    $('.commCard:nth-child(3)'),
+    $('.commCard:nth-child(4)'),
+    $('.commCard:nth-child(5)'),
+  ];
+  playerNameArray.forEach(function(name,i){
+    new Player(true, name, startingBank);
+    if (i===0) {
+      $('#playerOneName').text(name);
+    } else {
+      $('#playerTwoName').text(name);
+    }
+  })
+  this.createDeck();
+  this.shuffle();
+  this.advanceRound();
+  this.changeTurn(0);
+}
 Table.prototype.createDeck = function(){
-  this.suits.forEach(function(suit,i){
-    this.ranks.forEach(function(rank,j){
-      this.deck.push(new Card(suit,rank) )
-    },this);
-  },this)
+  var self = this;
+  this.suits.forEach(function(suit){
+    self.ranks.forEach(function(rank){
+      self.deck.push(new Card(suit,rank));
+    });
+  });
 };
-table.createDeck();
 Table.prototype.shuffle = function() {
   var newDeck = [];
   this.deck.forEach(function(card) {
@@ -291,29 +306,32 @@ Table.prototype.shuffle = function() {
     output.push(newDeck[rand]);
     newDeck.splice(rand,1);
   }
+  this.deck = output;
   return output;
 }
 Table.prototype.changeTurn = function(playerIndex) {
   this.atBat = this.players[playerIndex];
-  // $('.player').removeClass('at-bat');
-  this.atBat.div.addClass('at-bat');
-  console.log("|||||||||| It's " + this.atBat.name + "'s turn!");
+  $('.hole').removeClass('at-bat');
+  this.atBat.hole.addClass('at-bat');
+  console.log("|| It's " + this.atBat.name + "'s turn!");
 }
 Table.prototype.deal = function(amount) {
-  var self = this
+  var self = this;
   if (amount === 2) {
     for (var p=0; p<this.players.length; p++) {
       var player = this.players[p];
       for (var i=0; i<amount; i++) {
         var newCard = self.deck.shift()
         player.holeCards.push(newCard);
+        newCard.place(player.slots[i],true)
       }
     };
-  } else {
+  } else { // 3 or 1
+    var startAt = this.communityCards.length;
     for (var i=0; i<amount; i++) {
       var newCard = self.deck.shift();
       this.communityCards.push(newCard);
-      $('#community-area').append(newCard.div);
+      newCard.place(this.slots[startAt+i],true);
     }
   }
 }
@@ -322,21 +340,22 @@ Table.prototype.advanceRound = function() {
   table.roundIndex++;
   var roundName = table.rounds[table.roundIndex];
   if (!table.rounds[table.roundIndex]) {
+    console.log("end of game?")
+    return;
     // begin end sequence
   } else if (roundName === "preFlop") {
     if (this.players.length === 2) {
       this.headsUp = true;
       this.dealer = this.atBat = this.players[0];
-      this.players[0].blind = this.blinds.small;
-      this.players[1].blind = this.blinds.big;
+      this.players[0].blind = this.blinds.small.amount;
+      this.players[1].blind = this.blinds.big.amount;
       this.blinds.small['player'] = this.players[0];
       this.blinds.big['player'] = this.players[1];
-      // this.deal(3)
-      this.deal(2);
       this.players[0].changeBankAmountBy(-this.blinds.small.amount);
       this.pot += this.blinds.small.amount
       this.players[1].changeBankAmountBy(-this.blinds.big.amount);
       this.pot += this.blinds.big.amount
+      this.deal(2);
       $('#playerOneBank').text(this.players[0].bank);
       $('#playerTwoBank').text(this.players[1].bank);
       $('#call-check').text("Call");
@@ -356,8 +375,17 @@ Table.prototype.advanceRound = function() {
         }
       });
     }
+  } else if (roundName === "flop") {
+    this.deal(3);
+
+  } else if (roundName === "turn") {
+    this.deal(1);
+
+  } else if (roundName === "river") {
+    this.deal(1);
+
   }
-  console.log("--------------- ROUND " + table.rounds[table.roundIndex] + " -------------------")
+  console.log("ROUND " + table.rounds[table.roundIndex] + " -----------")
 }
 Table.prototype.handIndex = function(handKey) {
   var keyArr = Object.keys(this.hands);
@@ -410,30 +438,49 @@ function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
   this.cardHTML = `<div class="playing-card" id="`+this.rank+`-of-`+this.suit+`"></div>`;
+  this.dimensions = {
+    width: 225,
+    height: 315
+  }
   this.getValue = function(){
     return table.ranks.slice().reverse().indexOf(this.rank);
   }
-  this.place = function (targetElement,replace) {
-    replace ? $(targetElement).html(this.cardHTML) : $(targetElement).append(this.cardHTML);
+  this.place = function (targetElement,resize,replace) {
+    targetElement.html(this.cardHTML)
     this.div = $('#'+this.rank+`-of-`+this.suit);
+    if (resize) {
+      this.dimensions.width = targetElement.width();
+      this.dimensions.height = targetElement.height();
+    }
     var pos = {};
-    pos.left = table.ranks.indexOf(this.rank) * cardWidth;
-    pos.top = table.suits.indexOf(this.suit) * cardHeight;
+    pos.left = table.ranks.indexOf(this.rank) * this.dimensions.width;
+    pos.top = table.suits.indexOf(this.suit) * this.dimensions.height;
     this.div.css({
       'background-image': 'url(img/cardsheet.png)',
-      'background-size': (cardWidth*13)+'px '+(cardHeight*4)+'px',
+      'background-size': (this.dimensions.width*13)+'px '+(this.dimensions.height*4)+'px',
       'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
       'background-repeat': 'no-repeat',
-      'width': cardWidth + 'px',
-      'height': cardHeight + 'px',
+      'width': this.dimensions.width + 'px',
+      'height': this.dimensions.height + 'px',
     });
   }
-  this.flip = function(instant) {
-    this.div.css({
-      'background-image': 'url(img/cardback.png)',
-      'background-size': (cardWidth)+'px '+(cardHeight)+'px',
-      'background-position': '0',
-    });
+  this.toggleFlip = function() {
+    if (this.div.css("background-image").includes("cardsheet")) {
+      this.div.css({
+        'background-image': 'url(img/cardback.png)',
+        'background-size': (this.dimensions.width)+'px '+(this.dimensions.height)+'px',
+        'background-position': '0',
+      });
+    } else {
+      var pos = {};
+      pos.left = table.ranks.indexOf(this.rank) * this.dimensions.width;
+      pos.top = table.suits.indexOf(this.suit) * this.dimensions.height;
+      this.div.css({
+        'background-image': 'url(img/cardsheet.png)',
+        'background-size': (this.dimensions.width*13)+'px '+(this.dimensions.height*4)+'px',
+        'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
+      });
+    }
   }
   this.value = this.getValue();
 }
@@ -441,12 +488,10 @@ function Hand(arr) {
   this.cards = arr;
   this.instances = getInstances(this.cards);
   this.handValue = table.evaluateHand(this);
-  console.log(this);
 }
 Hand.prototype.sortByValue = function(cardArr=this.cards) {
   cardArr.sort(function(card1, card2){
-    console.log(card1.value + " " + card2.value);
-     return card1.value - card2.value;
+    return card1.value - card2.value;
   })
   return cardArr;
 }
@@ -465,21 +510,26 @@ function getInstances(cardArray) {
   });
   return instancesArr;
 }
+var numberWords = {1:"One",2:'Two'}
 function Player(human, name, bank) {
   this.human = human;
   this.name = name;
   this.bank = bank;
-  this.bet = 0;
   this.holeCards = [];
   this.finalFive = [];
   this.hand = undefined;
-  this.blind = undefined;
+  this.blind = 0;
   this.currentBet = {
     type: "",
     amount: 0
   }
   table.players[table.players.length] = this;
   this.div = $('#player' + table.players.length);
+  this.hole = $('#hole' + numberWords[table.players.length]);
+  this.slots = [
+    $('#hole' + numberWords[table.players.length] + '>.holeCard:first-child'),
+    $('#hole' + numberWords[table.players.length] + '>.holeCard:nth-child(2)')
+  ]
 }
 Player.prototype.amountLeft = function (action, amount) {
   var amountLeft = 0;
@@ -496,22 +546,12 @@ Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount;
 }
 $(document).ready(function() {
-  document.body.style.setProperty('--card-width',cardWidth+'px');
-  document.body.style.setProperty('--card-height',cardHeight+'px');
-  $("#enterName").submit(function (event) {
+  $("#enterName").submit(function(event) {
     event.preventDefault();
-    console.log("-------------------- GAME INITIATED -------------------");
     $("#enterName").hide();
     $("#container").show();
-    var name1 = ( $("#name1").val() || "Player 1" );
-    var name2 = ( $("#name2").val() || "Player 2" );
-    table = new Table();
-    new Player(true, name1, startingBank);
-    new Player(true, name2, startingBank);
-    $('#playerOneName').text(name1);
-    $('#playerTwoName').text(name2);
-    table.advanceRound();
-    table.changeTurn(0);
+    var names = [($("#name1").val() || "Player 1" ),( $("#name2").val() || "Player 2" )];
+    table.initiateGame(names);
   });
 });
 
@@ -527,53 +567,53 @@ $(document).ready(function() {
 // }
 // Pre-built common hands for testing purposes.
 //
-card1 = new Card("diamonds", "five");
-card2 = new Card("diamonds", "six");
-card3 = new Card("diamonds", "seven");
-card4 = new Card("diamonds", "eight");
-card5 = new Card("diamonds", "nine");
-reallyGoodCards = [card3, card1, card2, card5, card4];
-straightFlush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "five");
+// card2 = new Card("diamonds", "six");
+// card3 = new Card("diamonds", "seven");
+// card4 = new Card("diamonds", "eight");
+// card5 = new Card("diamonds", "nine");
+// reallyGoodCards = [card3, card1, card2, card5, card4];
+// straightFlush = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "ace");
-card2 = new Card("diamonds", "king");
-card3 = new Card("diamonds", "queen");
-card4 = new Card("diamonds", "jack");
-card5 = new Card("diamonds", "ten");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-royalFlush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "ace");
+// card2 = new Card("diamonds", "king");
+// card3 = new Card("diamonds", "queen");
+// card4 = new Card("diamonds", "jack");
+// card5 = new Card("diamonds", "ten");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// royalFlush = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "two");
-card2 = new Card("diamonds", "seven");
-card3 = new Card("diamonds", "nine");
-card4 = new Card("diamonds", "four");
-card5 = new Card("diamonds", "queen");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-flush = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "two");
+// card2 = new Card("diamonds", "seven");
+// card3 = new Card("diamonds", "nine");
+// card4 = new Card("diamonds", "four");
+// card5 = new Card("diamonds", "queen");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// flush = new Hand(reallyGoodCards);
 
-card1 = new Card("clubs", "five");
-card2 = new Card("diamonds", "six");
-card3 = new Card("spades", "seven");
-card4 = new Card("diamonds", "eight");
-card5 = new Card("hearts", "nine");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-straight = new Hand(reallyGoodCards);
+// card1 = new Card("clubs", "five");
+// card2 = new Card("diamonds", "six");
+// card3 = new Card("spades", "seven");
+// card4 = new Card("diamonds", "eight");
+// card5 = new Card("hearts", "nine");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// straight = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "three");
-card2 = new Card("clubs", "three");
-card3 = new Card("spades", "three");
-card4 = new Card("diamonds", "eight");
-card5 = new Card("spades", "eight");
-reallyGoodCards = [card4, card3, card1, card2, card5];
-fullHouse = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "three");
+// card2 = new Card("clubs", "three");
+// card3 = new Card("spades", "three");
+// card4 = new Card("diamonds", "eight");
+// card5 = new Card("spades", "eight");
+// reallyGoodCards = [card4, card3, card1, card2, card5];
+// fullHouse = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "five");
-card2 = new Card("clubs", "five");
-card3 = new Card("hearts", "five");
-card4 = new Card("spades", "five");
-card5 = new Card("diamonds", "queen");
-reallyGoodCards = [card1, card2, card5, card3, card4];
-fourOfAKind = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "five");
+// card2 = new Card("clubs", "five");
+// card3 = new Card("hearts", "five");
+// card4 = new Card("spades", "five");
+// card5 = new Card("diamonds", "queen");
+// reallyGoodCards = [card1, card2, card5, card3, card4];
+// fourOfAKind = new Hand(reallyGoodCards);
 
 // card1 = new Card("diamonds", "seven");
 // card2 = new Card("clubs", "seven");
