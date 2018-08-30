@@ -1,3 +1,18 @@
+* {
+  transition: all 500ms ease;
+}
+.at-bat {
+  box-shadow: 0px 0px 60px 10px yellow;
+  animation-name: pulse;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-play-state: running;
+}
+@keyframes pulse {
+  50% {
+    box-shadow: 0px 0px 40px 8px yellow;
+  }
+}
 body {
   background: rgb(241,241,233);
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
@@ -118,7 +133,6 @@ margin-right: 60px;
   font-family: Helvetica;
   text-align: center;
 }
-
 #player1 {
   margin-top: -55px;
   margin-left: 40px;
