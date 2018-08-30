@@ -2,104 +2,387 @@ body {
   background: rgb(241,241,233);
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
   font-family: Helvetica;
-}
-button {
-  cursor: pointer;
+  margin: 0;
+  padding: 0;
 }
 
 .header {
   text-align: center;
   text-transform: uppercase;
   background: rgb(153,153,153);
-background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
+  background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
   height: 20px;
+  margin: 0;
   -webkit-margin-after: 0;
   -webkit-margin-before: 0;
   padding: 8px;
   font-family: Helvetica;
   color: rgb(72, 72, 72);
   font-size: 16px;
-
+  z-index: 1;
 }
+
+#container, #table {
+  box-sizing: border-box;
+}
+
 #container {
   background: rgb(7,10,88);
   background: linear-gradient(90deg, rgba(7,10,88,0.8090423669467788) 6%, rgba(25,37,170,0.7418154761904762) 19%, rgba(7,10,88,0.8146446078431373) 41%);
   width: 100%;
-  height: 700px;
-  padding-top: 30px;
+  height: 800px;
+  margin: 0;
+  padding: 0;
   z-index: 0;
-  margin: 0 auto;
+  padding-top: 80px;
   display: none;
 }
 
 #table {
   background: rgb(12,88,7);
   background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
-  width: 600px;
-  height: 300px;
   margin: 0 auto;
+  border: 10px solid #F1D804;;
+  border-radius: 40px;
+  width: 980px;
+  height: 500px;
   z-index: 1;
-  border: 10px solid rgb(226, 186, 19);
-  border-radius: 10px;
+}
+
+#cards {
+  width: 960px;
+  height: 100px;
+  margin-top: 160px;
+}
+.holeCard {
+  flex: 1;
+  border: 1px solid yellow;
+}
+
+
+.hole {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  width: 120px;
+  height: 100px;
+  z-index: 4;
+  display: flex;
+}
+
+#holeOne {
+  margin-left: 60px;
+  float:left;
+}
+
+#community {
+  background: rgba(0, 0, 0, 0.4);
+  width: 300px;
+  height: 100px;
+  margin-left: 150px;
+  float:left;
+  display: flex;
+}
+
+#pot {
+  margin-left: 440px;
+  margin-top: 20px;
+  font-size: 20px;
+  color: #F1D804;
+}
+
+.commCard {
+  flex: 1;
+  border: 1px solid yellow;
+}
+
+#holeTwo {
+margin-left: 150px;
+float:left;
+margin-right: 60px;
+}
+
+#playerAlign {
+  width: 960px;
+  height: 80px;
+  margin-top: -55px;
 }
 
 .player {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid green;
-  width: 150px;
-  height: 50px;
-  padding: 15px;
-  z-index: 2;
+  position: relative;
+  box-sizing: border-box;
+  height: 80px;
+  width: 160px;
+  border: 2px solid yellow;
+  z-index: 5;
+  color: #fff;
+  font-family: Helvetica;
   text-align: center;
-  letter-spacing: 1.1px;
 }
 
 #player1 {
-  margin-left: -50px;
-  margin-top: 120px;
+  margin-top: -55px;
+  margin-left: 40px;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  float: left;
 }
 
 #player2 {
-  margin-left: 500px;
-  margin-top: 120px;
+  margin-left: 560px;
+  margin-top: -55px;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  float: left;
 }
 
-.at-bat {
-  background: rgba(0, 0, 0, 1);
-  border: 2px solid yellow;
-}
 
 #boardWrite {
-  margin-top: 200px;
+  position: relative;
+  font-size: 24px;
+  color: #F1D804;
+  line-height: 12px;
+  letter-spacing: 2.1px;
+  font-family: 'Sawarabi Mincho', sans-serif;
+  margin-left: 330px;
+  margin-top: 40px;
+  width: 300px;
+  height: 120px;
   text-align: center;
   text-transform: uppercase;
-  font-size: 14px;
-  line-height: 15px;
-  z-index: 2;
-  font-family: 'Sawarabi Mincho', sans-serif;
+  z-index: 5;
 }
 
-.write {
-  color: rgba(227, 215, 10, 0.7);
+button {
+  cursor: pointer;
 }
-.box {
-  color: #fff;
-  font-size: 12px;
-}
+
 .actionButtons {
-  padding-left: 10px;
+  box-sizing: border-box;
+  margin: 100px auto 0 auto;
+  text-align: center;
+  background: #383737;
+  border: 2px solid yellow;
+  padding: 5px;
+  width: 700px;
+  height: 40px;
 }
 
 .action {
-  margin-top: 55px;
-  margin-left: 35px;
-  padding: 5px;
-  background: red;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  text-align: center;
+  width: 80px;
+  height: 25px;
   color: #fff;
-  text-transform: uppercase;
 }
 
+#funds {
+  width: 160px;
+}
+
+#boardWriteMobile {
+  font-family: 'Sawarabi Mincho', sans-serif;
+  color: #F1D804;
+  display: none;
+}
 /* #funds, #check, #call, #raise, #allIn, #fold {
   display: none;
 } */
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+
+  #container {
+    padding-top: 60px;
+  }
+
+  #table {
+    border: 8px solid #F1D804;;
+    width: 745px;
+    height: 375px;
+  }
+
+  #cards {
+    width: 725px;
+    height: 75px;
+    margin-top: 120px;
+  }
+
+  .hole {
+    width: 90px;
+    height: 75px;
+    z-index: 4;
+    display: flex;
+  }
+
+  #holeOne {
+    margin-left: 45px;
+}
+
+  #community {
+      width: 225px;
+      height: 75px;
+      margin-left: 115px;
+      float:left;
+      display: flex;
+    }
+
+  #holeTwo {
+    margin-left: 115px;
+    float:left;
+    margin-right: 45px;
+    }
+
+    #playerAlign {
+      width: 725px;
+      height: 60px;
+      margin-top: -40px;
+    }
+
+    .player {
+      height: 60px;
+      width: 120px;
+      font-size: 12px;
+    }
+
+    #player1 {
+      margin-top: -40px;
+      margin-left: 30px;
+    }
+
+    #player2 {
+      margin-left: 425px;
+      margin-top: -40px;
+    }
+
+    #boardWrite {
+      display: none;
+    }
+
+    #boardWriteMobile {
+      font-size: 18px;
+      line-height: 9px;
+      letter-spacing: 1.6px;
+      margin-left: 130px;
+      margin-top: 80px;
+      width: 525px;
+      height: 30px;
+      display: inline-block;
+    }
+
+    #pot {
+      margin-left: 330px;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+  .header {
+    height: 10px;
+    padding: 8px;
+  }
+
+  #container {
+    padding-top: 10px;
+    height: 424px;
+  }
+
+  #table {
+    border: 6px solid #F1D804;;
+    width: 565px;
+    height: 285px;
+  }
+
+  #cards {
+    width: 585px;
+    height: 75px;
+    margin-top: 190px;
+  }
+
+  .hole {
+    width: 90px;
+    height: 75px;
+    display: flex;
+  }
+
+  #holeOne {
+    margin-left: 35px;
+}
+
+  #community {
+      width: 225px;
+      height: 75px;
+      margin-left: 40px;
+      float:left;
+      display: flex;
+      margin-top: -140px;
+    }
+
+  #holeTwo {
+    margin-left: 305px;
+    float:left;
+    }
+
+    #playerAlign {
+      width: 725px;
+      height: 60px;
+      margin-top: -40px;
+    }
+
+    .player {
+      height: 60px;
+      width: 120px;
+      font-size: 12px;
+    }
+
+    #player1 {
+      margin-top: -130px;
+      margin-left: -570px;
+    }
+
+    #player2 {
+      margin-left: -155px;
+      margin-top: -130px;
+    }
+
+    #boardWrite {
+      display: none;
+    }
+
+    #boardWriteMobile {
+      font-size: 18px;
+      line-height: 9px;
+      letter-spacing: 1.6px;
+      margin-left: 40px;
+      margin-top: 15px;
+      width: 525px;
+      height: 30px;
+      display: inline-block;
+    }
+
+    #pot {
+      margin-left: 250px;
+      margin-top: -130px;
+      font-size: 15px;
+    }
+
+    .actionButtons {
+      width: 600px;
+      margin-left: -25px;
+      margin-top: 10px;
+    }
+
+    .action {
+      background: rgb(163,153,153);
+      background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+      text-align: center;
+      width: 80px;
+      height: 25px;
+      color: #fff;
+    }
+
+    #funds {
+      width: 160px;
+    }
+}
