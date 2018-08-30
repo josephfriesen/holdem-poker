@@ -594,9 +594,16 @@ Table.prototype.findBestHand = function(handArray) {
       // here, what I want to do is call the specific breakTie function associated with the handValue key stored in variable handType, with hands bestArr[i] and bestArr[i+1] as arguments, then remove the losing hand from bestArr before moving on to the next step in the loop.
     }
   }
+  return bestArr[0];
 }
-Table.prototype.findWinner = function () {
-  // compare player final hands, return winning player
+Table.prototype.findWinner = function (player1, player2) {
+  if (table.handKeys.indexOf(player1.hand.handValue) < table.handKeys.indexOf(player2.hand.handValue) {
+    return player1;
+  } else if (table.handKeys.indexOf(player1.hand.handValue) > table.handKeys.indexOf(player2.hand.handValue) {
+    return player2;
+  } else {
+    // here, the two hands are of equal handValue, so I want to call the specific breakTie function associated with that handValue with the two players' hands passed as arguments, then return the player with the better hand according to the tiebreak.
+  }
 }
 
 function Card(suit, rank) {
