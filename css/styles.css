@@ -1,5 +1,5 @@
 * {
-  transition: all 500ms ease;
+  transition: box-shadow 500ms ease;
 }
 .at-bat {
   box-shadow: 0px 0px 60px 10px yellow;
