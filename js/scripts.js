@@ -810,8 +810,8 @@ Player.prototype.changeBankAmountBy = function (amount) {
 $(document).ready(function() {
   $("#enterName").submit(function(event) {
     event.preventDefault();
-    $("#enterName").hide();
-    $("#container").show();
+    $(".sign-in").hide();
+    $("#table").show();
     var names = [($("#name1").val() || "Player 1" ),( $("#name2").val() || "Player 2" )];
     table.initiateGame(names);
   });

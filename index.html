@@ -15,17 +15,26 @@
   </head>
   <body>
     <p class="header">Texas Hold'Em</p>
-    <form id="enterName">
-      <label for="name1">Please enter name:</label>
-      <input placeholder="Player 1" id="name1">
-      <br />
-      <label for="name2">Please enter name:</label>
-      <input placeholder="Player 2" id="name2">
-      <br />
-      <button type="submit" id="name-btn">Submit</button>
-    </form>
+
+
 
     <div id="container">
+      <div class="sign-in">
+      <h2 id="signInHead">Please enter your names:</h2>
+      <form id="enterName">
+        <div class="nameDiv">
+          <label for="name1">Player 1:</label>
+          <input placeholder="Player 1" class="enterName" id="name1">
+        </div>
+          <br />
+        <div class="nameDiv">
+          <label for="name2">Player 2:</label>
+          <input placeholder="Player 2"  class="enterName" id="name2">
+        </div>
+          <br />
+          <button type="submit" class="action" id="name-btn">Submit</button>
+      </form>
+    </div>
       <div id="table">
       <div id="cards">
         <div class="hole" id="holeOne">
