@@ -497,7 +497,7 @@ Table.prototype.deal = function(amount) {
       for (var i=0; i<amount; i++) {
         var newCard = self.deck.shift()
         player.holeCards.push(newCard);
-        newCard.place(player.slots[i],true);
+        newCard.place(player.slots[i],true,true);
       }
     };
   } else { // 3 or 1
@@ -505,7 +505,7 @@ Table.prototype.deal = function(amount) {
     for (var i=0; i<amount; i++) {
       var newCard = self.deck.shift();
       this.communityCards.push(newCard);
-      newCard.place(this.slots[startAt+i],true);
+      newCard.place(this.slots[startAt+i],true,true);
     }
   }
 }
@@ -595,6 +595,7 @@ Table.prototype.findBestHand = function(handArray) {
   var len = bestArr.len;
   if (len === 1) {
     return bestArr[0];
+
   } else {
     for (var i = 0; i < len - 1; i++) {
       // here, what I want to do is call the specific breakTie function associated with the handValue key stored in variable handType, with hands bestArr[i] and bestArr[i+1] as arguments, then remove the losing hand from bestArr before moving on to the next step in the loop.
@@ -611,6 +612,12 @@ Table.prototype.findWinner = function (player1, player2) {
     // here, the two hands are of equal handValue, so I want to call the specific breakTie function associated with that handValue with the two players' hands passed as arguments, then return the player with the better hand according to the tiebreak.
   }
 }
+Table.prototype.updateFigures = function() {
+  $('#pot').text("Pot: " + this.pot);
+  $('#playerOneBank').text(this.players[0].bank);
+  $('#playerTwoBank').text(this.players[1].bank);
+
+};
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
@@ -619,10 +626,11 @@ function Card(suit, rank) {
     width: 225,
     height: 315
   }
+  var card = this;
   this.getValue = function(){
     return table.ranks.slice().reverse().indexOf(this.rank);
   }
-  this.place = function (targetElement,resize,replace) {
+  this.place = function (targetElement,resize,faceDown) {
     targetElement.html(this.cardHTML)
     this.div = $('#'+this.rank+`-of-`+this.suit);
     if (resize) {
@@ -640,6 +648,58 @@ function Card(suit, rank) {
       'width': this.dimensions.width + 'px',
       'height': this.dimensions.height + 'px',
     });
+    this.div.click(function(){
+      $(this).css({
+        'transform':'scaleX(0)'
+      })
+      var self = this
+      setTimeout(function(){
+        console.log(self)
+        if ($(self).css("background-image").includes("cardsheet")) {
+          $(self).css({
+            'background-image': 'url(img/cardback.png)',
+            'background-size': 'contain',
+            'background-position': '0 0'
+          });
+        } else {
+          var pos = {};
+          pos.left = table.ranks.indexOf(card.rank) * targetElement.width();
+          pos.top = table.suits.indexOf(card.suit) * targetElement.height();
+          $(self).css({
+            'background-image': 'url(img/cardsheet.png)',
+            'background-size': (card.dimensions.width*13)+'px '+(card.dimensions.height*4)+'px',
+            'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
+          });
+        }
+      },90);
+      setTimeout(function(){
+        $(self).css({
+          'transform':'scaleX(1)'
+        });
+      },180);
+    })
+    if (faceDown) {
+      this.toggleFlip();
+      var self = this;
+      setTimeout(function(){
+        var pos = {};
+        pos.left = table.ranks.indexOf(self.rank) * self.dimensions.width;
+        pos.top = table.suits.indexOf(self.suit) * self.dimensions.height;
+        self.div.css({
+          'background-image': 'url(img/cardsheet.png)',
+          'background-size': (self.dimensions.width*13)+'px '+(self.dimensions.height*4)+'px',
+          'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
+        });
+        self.div.css({
+          'transform':'scaleX(0)'
+        })
+      },600);
+      setTimeout(function(){
+        self.div.css({
+          'transform':'scaleX(1)'
+        })
+      },800);
+    }
   }
   this.toggleFlip = function() {
     if (this.div.css("background-image").includes("cardsheet")) {
@@ -659,6 +719,7 @@ function Card(suit, rank) {
       });
     }
   }
+
   this.value = this.getValue();
 }
 function Hand(arr) {
