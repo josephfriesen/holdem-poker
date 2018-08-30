@@ -297,8 +297,8 @@ Player.prototype.changeBankAmountBy = function(amount) {
 $(document).ready(function() {
   var oneName = $("#enterName").submit(function(event) {
     event.preventDefault();
-    $("#enterName").hide();
-    $("#container").show();
+    $(".sign-in").hide();
+    $("#table").show();
     var name1 = $("#name1").val()
     var name2 = $("#name2").val()
     if (!name1) {

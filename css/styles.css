@@ -22,6 +22,30 @@ body {
   z-index: 1;
 }
 
+.sign-in {
+  margin: 0 auto;
+  padding-top: 40px;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  width: 500px;
+  height: 200px;
+  border: 2px solid yellow;
+  color: #fff;
+  text-align: center;
+}
+
+.nameDiv {
+  padding-top: 3px;
+}
+
+.enterName {
+  width: 180px;
+}
+#name-btn {
+  text-align: center;
+  margin-top: 10px;
+}
+
 #container, #table {
   box-sizing: border-box;
 }
@@ -35,7 +59,6 @@ body {
   padding: 0;
   z-index: 0;
   padding-top: 80px;
-  display: none;
 }
 
 #table {
@@ -47,6 +70,7 @@ body {
   width: 980px;
   height: 500px;
   z-index: 1;
+  display: none;
 }
 
 #cards {
