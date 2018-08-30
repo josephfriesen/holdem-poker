@@ -24,7 +24,7 @@ function Table() {
   this.atBat;
   this.betOccurred = false;
   this.round = "";
-  this.pot = 0;
+  this.pot = 100;
   this.suits = [
     'hearts',
     'spades',
@@ -239,7 +239,7 @@ function Table() {
           }
         }
       },
-      breakTie: {
+      breakTie: function(hand1,hand2){
 
       }
     },
@@ -262,7 +262,6 @@ function Table() {
   this.roundIndex = 0;
 };
 Table.prototype.initiateGame = function(playerNameArray){
-  console.log("GAME INITIATED ------------");
   this.slots = [
     $('.commCard:first-child'),
     $('.commCard:nth-child(2)'),
@@ -278,10 +277,15 @@ Table.prototype.initiateGame = function(playerNameArray){
       $('#playerTwoName').text(name);
     }
   })
+  this.dealer = this.players[0];
+  this.players[0].blind = this.blinds.small.amount;
+  this.players[1].blind = this.blinds.big.amount;
+  this.blinds.small['player'] = this.players[0];
+  this.blinds.big['player'] = this.players[1];
   this.createDeck();
   this.shuffle();
   this.advanceRound();
-  this.changeTurn(0);
+  this.advanceTurn();
 }
 Table.prototype.createDeck = function(){
   var self = this;
@@ -309,11 +313,16 @@ Table.prototype.shuffle = function() {
   this.deck = output;
   return output;
 }
-Table.prototype.changeTurn = function(playerIndex) {
+Table.prototype.advanceTurn = function() {
+  if (this.players.indexOf(this.atBat)+1 < this.players.length) {
+    var playerIndex = this.players.indexOf(this.atBat)+1;
+  } else {
+    var playerIndex = 0
+  }
   this.atBat = this.players[playerIndex];
   $('.hole').removeClass('at-bat');
   this.atBat.hole.addClass('at-bat');
-  console.log("|| It's " + this.atBat.name + "'s turn!");
+  $('#funds').val("")
 }
 Table.prototype.deal = function(amount) {
   var self = this;
@@ -346,34 +355,13 @@ Table.prototype.advanceRound = function() {
   } else if (roundName === "preFlop") {
     if (this.players.length === 2) {
       this.headsUp = true;
-      this.dealer = this.atBat = this.players[0];
-      this.players[0].blind = this.blinds.small.amount;
-      this.players[1].blind = this.blinds.big.amount;
-      this.blinds.small['player'] = this.players[0];
-      this.blinds.big['player'] = this.players[1];
-      this.players[0].changeBankAmountBy(-this.blinds.small.amount);
-      this.pot += this.blinds.small.amount
-      this.players[1].changeBankAmountBy(-this.blinds.big.amount);
-      this.pot += this.blinds.big.amount
+      this.players[0].addToPot(this.players[0].blind);
+      this.players[1].addToPot(this.players[0].blind);
+      table.updateFigures();
       this.deal(2);
-      $('#playerOneBank').text(this.players[0].bank);
-      $('#playerTwoBank').text(this.players[1].bank);
       $('#call-check').text("Call");
       $('#bet-raise').text("Raise");
-      $('#call-check').off();
-      $('#call-check').click(function(){
-        var player = table.atBat;
-        if (player.blind && player.blind === table.blinds.small) {
-          var amount = table.blinds.small.amount
-          player.changeBankAmountBy(-amount);
-          table.pot += amount
-          if (table.players.indexOf(player) === 0) {
-            $('#playerOneBank').text(player.bank);
-          } else {
-            $('#playerTwoBank').text(player.bank);
-          }
-        }
-      });
+      
     }
   } else if (roundName === "flop") {
     this.deal(3);
@@ -421,7 +409,7 @@ Table.prototype.evaluateHand = function(hand) {
       return handKey;
     }
   }
-}
+};
 Table.prototype.findBestHand = function(handArray) {
   // handArrays are produced by Table.getHands()
   // takes array of 21 possible hands and returns best one
@@ -430,10 +418,16 @@ Table.prototype.findBestHand = function(handArray) {
     return reversedHands.indexOf(hand2.handValue) - reversedHands.indexOf(hand1.handValue);
   })
   return handArray[0]; // returns a handObject
-}
+};
 Table.prototype.findWinner = function () {
   // compare player final hands, return winning player
-}
+};
+Table.prototype.updateFigures = function() {
+  $('#pot').text("Pot: " + this.pot);
+  $('#playerOneBank').text(this.players[0].bank);
+  $('#playerTwoBank').text(this.players[1].bank);
+  
+};
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
@@ -510,7 +504,6 @@ function getInstances(cardArray) {
   });
   return instancesArr;
 }
-var numberWords = {1:"One",2:'Two'}
 function Player(human, name, bank) {
   this.human = human;
   this.name = name;
@@ -522,14 +515,28 @@ function Player(human, name, bank) {
   this.currentBet = {
     type: "",
     amount: 0
+  };
+  this.addToPot = function(amount) {
+    this.changeBankAmountBy(-amount);
+    table.pot += amount;
   }
-  table.players[table.players.length] = this;
+  if (!table.players.length) {
+    this.slots = [
+      $('#holeOne>.holeCard:first-child'),
+      $('#holeOne>.holeCard:nth-child(2)'),
+      this.hole = $('#holeOne')
+    ];
+  } else {
+    this.slots = [
+      $('#holeTwo>.holeCard:first-child'),
+      $('#holeTwo>.holeCard:nth-child(2)'),
+      this.hole = $('#holeTwo')
+    ];
+  }
+  table.players.push(this);
   this.div = $('#player' + table.players.length);
-  this.hole = $('#hole' + numberWords[table.players.length]);
-  this.slots = [
-    $('#hole' + numberWords[table.players.length] + '>.holeCard:first-child'),
-    $('#hole' + numberWords[table.players.length] + '>.holeCard:nth-child(2)')
-  ]
+  
+  
 }
 Player.prototype.amountLeft = function (action, amount) {
   var amountLeft = 0;
@@ -552,6 +559,52 @@ $(document).ready(function() {
     $("#container").show();
     var names = [($("#name1").val() || "Player 1" ),( $("#name2").val() || "Player 2" )];
     table.initiateGame(names);
+  });
+  $('#call-check').click(function(){
+    // call
+    var player = table.atBat;
+    if (player.blind && player.blind === table.blinds.small.amount) {
+      player.addToPot(player.blind);
+      table.updateFigures();
+      table.advanceTurn();
+    }
+  });
+  $('#bet-raise').click(function(){
+    // raise
+    var player = table.atBat;
+    var raiseAmount = parseInt($('#funds').val());
+    if (raiseAmount) {
+      player.addToPot(raiseAmount);
+      table.updateFigures();
+      table.advanceTurn();
+    }
+  });
+  $('#allIn').click(function(){
+    var player = table.atBat;
+    var raiseAmount = player.bank
+    player.addToPot(raiseAmount);
+    table.updateFigures();
+    table.advanceTurn();
+  });
+  $('#fold').click(function(){
+    var player = table.atBat;
+    player.holeCards[0].div.animate({
+      'opacity': '0'
+    },600);
+    player.holeCards[1].div.animate({
+      'opacity': '0'
+    },600);
+    if (table.players.indexOf(player) === 0) {
+      $('#playerOneName').animate({
+        'color': 'gray'
+      },800);
+    } else {
+      $('#playerTwoName').animate({
+        'color': 'gray'
+      },800);
+    }
+    table.players.splice(table.players.indexOf(player),1);
+    table.advanceTurn()
   });
 });
 
