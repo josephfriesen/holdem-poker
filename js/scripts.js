@@ -60,12 +60,12 @@ function Table() {
       evaluate: function(hand) {
         var isHand = (table.handEvaluators.flush.evaluate(hand) && table.handEvaluators.straight.evaluate(hand));
         if (isHand) {
-          this.arrange(hand)
+          this.arrange(hand);
         }
         return isHand;
       },
       arrange: function(hand){
-        hand.sortByValue()
+        hand.sortByValue();
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
@@ -81,7 +81,7 @@ function Table() {
       evaluate: function(hand) {
         var isHand = (hand.instances[0] === 4);
         if (isHand) {
-          this.arrange(hand)
+          this.arrange(hand);
         }
         return isHand;
       },
@@ -113,7 +113,7 @@ function Table() {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 3 && hand.instances[3] === 2)
         if (isHand) {
-          this.arrange(hand)
+          this.arrange(hand);
         }
         return isHand;
       },
@@ -148,12 +148,12 @@ function Table() {
       evaluate: function(hand){
         var isHand = (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit);
         if (isHand) {
-          this.arrange(hand)
+          this.arrange(hand);
         }
         return isHand;
       },
       arrange: function(hand){
-        hand.sortByValue()
+        hand.sortByValue();
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
@@ -216,7 +216,7 @@ function Table() {
           };
         })
         if (isHand) {
-          this.arrange(hand)
+          this.arrange(hand);
         }
         return isHand;
       },
@@ -447,7 +447,7 @@ Table.prototype.createDeck = function(){
   this.suits.forEach(function(suit,i){
     this.ranks.forEach(function(rank,j){
       this.deck.push(new Card(suit,rank) )
-    },this);
+    },this)
   },this)
 }
 table.createDeck();
@@ -482,7 +482,7 @@ Table.prototype.advanceTurn = function() {
   if (this.players.indexOf(this.atBat)+1 < this.players.length) {
     var playerIndex = this.players.indexOf(this.atBat)+1;
   } else {
-    var playerIndex = 0
+    var playerIndex = 0;
   }
   this.atBat = this.players[playerIndex];
   $('.hole').removeClass('at-bat');
@@ -497,7 +497,7 @@ Table.prototype.deal = function(amount) {
       for (var i=0; i<amount; i++) {
         var newCard = self.deck.shift()
         player.holeCards.push(newCard);
-        newCard.place(player.slots[i],true)
+        newCard.place(player.slots[i],true);
       }
     };
   } else { // 3 or 1
@@ -526,7 +526,7 @@ Table.prototype.advanceRound = function() {
       this.deal(2);
       $('#call-check').text("Call");
       $('#bet-raise').text("Raise");
-      
+
     }
   } else if (roundName === "flop") {
     this.deal(3);
@@ -603,9 +603,9 @@ Table.prototype.findBestHand = function(handArray) {
   return bestArr[0];
 }
 Table.prototype.findWinner = function (player1, player2) {
-  if (table.handKeys.indexOf(player1.hand.handValue) < table.handKeys.indexOf(player2.hand.handValue) {
+  if (table.handKeys.indexOf(player1.hand.handValue) < table.handKeys.indexOf(player2.hand.handValue)) {
     return player1;
-  } else if (table.handKeys.indexOf(player1.hand.handValue) > table.handKeys.indexOf(player2.hand.handValue) {
+  } else if (table.handKeys.indexOf(player1.hand.handValue) > table.handKeys.indexOf(player2.hand.handValue)) {
     return player2;
   } else {
     // here, the two hands are of equal handValue, so I want to call the specific breakTie function associated with that handValue with the two players' hands passed as arguments, then return the player with the better hand according to the tiebreak.
@@ -718,8 +718,8 @@ function Player(human, name, bank) {
   }
   table.players.push(this);
   this.div = $('#player' + table.players.length);
-  
-  
+
+
 }
 Player.prototype.amountLeft = function (action, amount) {
   var amountLeft = 0;
@@ -835,21 +835,21 @@ function fiveCardHand() {
 // reallyGoodCards = [card4, card3, card1, card2, card5];
 // fullHouse = new Hand(reallyGoodCards);
 
-card1 = new Card("diamonds", "five");
-card2 = new Card("clubs", "five");
-card3 = new Card("hearts", "five");
-card4 = new Card("spades", "five");
-card5 = new Card("diamonds", "king");
-reallyGoodCards = [card1, card2, card5, card3, card4];
-fourOfAKind = new Hand(reallyGoodCards);
-
-card1 = new Card("diamonds", "six");
-card2 = new Card("clubs", "six");
-card3 = new Card("hearts", "six");
-card4 = new Card("spades", "six");
-card5 = new Card("diamonds", "king");
-reallyGoodCards = [card1, card2, card5, card3, card4];
-fourOfAKind2 = new Hand(reallyGoodCards);
+// card1 = new Card("diamonds", "five");
+// card2 = new Card("clubs", "five");
+// card3 = new Card("hearts", "five");
+// card4 = new Card("spades", "five");
+// card5 = new Card("diamonds", "king");
+// reallyGoodCards = [card1, card2, card5, card3, card4];
+// fourOfAKind = new Hand(reallyGoodCards);
+//
+// card1 = new Card("diamonds", "six");
+// card2 = new Card("clubs", "six");
+// card3 = new Card("hearts", "six");
+// card4 = new Card("spades", "six");
+// card5 = new Card("diamonds", "king");
+// reallyGoodCards = [card1, card2, card5, card3, card4];
+// fourOfAKind2 = new Hand(reallyGoodCards);
 
 // card1 = new Card("diamonds", "five");
 // card2 = new Card("diamonds", "six");
@@ -858,33 +858,33 @@ fourOfAKind2 = new Hand(reallyGoodCards);
 // card5 = new Card("diamonds", "nine");
 // reallyGoodCards = [card1, card2, card3, card4, card5];
 // straightFlush = new Hand(reallyGoodCards);
-
-card1 = new Card("diamonds", "five");
-card2 = new Card("diamonds", "six");
-card3 = new Card("diamonds", "seven");
-card4 = new Card("diamonds", "eight");
-card5 = new Card("diamonds", "nine");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-straightFlush = new Hand(reallyGoodCards);
-
-card1 = new Card("diamonds", "five");
-card2 = new Card("clubs", "five");
-card3 = new Card("diamonds", "seven");
-card4 = new Card("spades", "seven");
-card5 = new Card("hearts", "two");
-reallyGoodCards = [card1, card5, card2, card4, card3];
-twoPair = new Hand(reallyGoodCards);
-
-card1 = new Card("diamonds", "ace");
-card2 = new Card("clubs", "jack");
-card3 = new Card("diamonds", "king");
-card4 = new Card("hearts", "ace");
-card5 = new Card("hearts", "three");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-pair = new Hand(reallyGoodCards);
 //
+// card1 = new Card("diamonds", "five");
+// card2 = new Card("diamonds", "six");
+// card3 = new Card("diamonds", "seven");
+// card4 = new Card("diamonds", "eight");
+// card5 = new Card("diamonds", "nine");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// straightFlush = new Hand(reallyGoodCards);
 //
+// card1 = new Card("diamonds", "five");
+// card2 = new Card("clubs", "five");
+// card3 = new Card("diamonds", "seven");
+// card4 = new Card("spades", "seven");
+// card5 = new Card("hearts", "two");
+// reallyGoodCards = [card1, card5, card2, card4, card3];
+// twoPair = new Hand(reallyGoodCards);
 //
-card6 = new Card("spades", "jack");
-card7 = new Card("diamonds", "four");
-sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+// card1 = new Card("diamonds", "ace");
+// card2 = new Card("clubs", "jack");
+// card3 = new Card("diamonds", "king");
+// card4 = new Card("hearts", "ace");
+// card5 = new Card("hearts", "three");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// pair = new Hand(reallyGoodCards);
+// //
+// //
+// //
+// card6 = new Card("spades", "jack");
+// card7 = new Card("diamonds", "four");
+// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
