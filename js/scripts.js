@@ -69,9 +69,9 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           return "tie";
         }
@@ -95,14 +95,14 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 4) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 4) === "tie") {
             return "tie";
           }
@@ -130,14 +130,14 @@ function Table() {
       },
       breakTie: function(){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 4) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 4) === "tie") {
             return "tie";
           }
@@ -157,29 +157,29 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 1) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 1) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 1) === "tie") {
             if (table.compareCards(hand1, hand2, 2) === "card1") {
-              return hand1;
+              return "hand1";
             } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-              return hand2;
+              return "hand2";
             } else if (table.compareCards(hand1, hand2, 2) === "tie") {
               if (table.compareCards(hand1, hand2, 3) === "card1") {
-                return hand1;
+                return "hand1";
               } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-                return hand2;
+                return "hand2";
               } else if (table.compareCards(hand1, hand2, 3) === "tie") {
                 if (table.compareCards(hand1, hand2, 4) === "card1") {
-                  return hand1;
+                  return "hand1";
                 } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                  return hand2;
+                  return "hand2";
                 } else if (table.compareCards(hand1, hand2, 4) === "tie") {
                   return "tie"
                 }
@@ -225,9 +225,9 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           return "tie";
         }
@@ -263,19 +263,19 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 3) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 3) === "tie") {
             if (table.compareCards(hand1, hand2, 4) === "card1") {
-              return hand1;
+              return "hand1";
             } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-              return hand2;
+              return "hand2";
             } else if (table.compareCards(hand1, hand2, 4) === "tie") {
               return "tie";
             }
@@ -297,24 +297,24 @@ function Table() {
 
           hand.cards.push(hand.cards.shift());
         } else if (hand.cards[2].rank !== hand.cards[3].rank) {
-          hand.cards.push(hand.cards.splice(2,1));
+          hand.cards.push(hand.cards.splice(2,1)[0]);
         }
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 3) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 3) === "tie") {
             if (table.compareCards(hand1, hand2, 4) === "card1") {
-              return hand1;
+              return "hand1";
             } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-              return hand2;
+              return "hand2";
             } else if (table.compareCards(hand1, hand2, 4) === "tie") {
               return "tie";
             }
@@ -344,24 +344,24 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 2) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 2) === "tie") {
             if (table.compareCards(hand1, hand2, 3) === "card1") {
-              return hand1;
+              return "hand1";
             } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-              return hand2;
+              return "hand2";
             } else if (table.compareCards(hand1, hand2, 3) === "tie") {
               if (table.compareCards(hand1, hand2, 4) === "card1") {
-                return hand1;
+                return "hand1";
               } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                return hand2;
+                return "hand2";
               } else if (table.compareCards(hand1, hand2, 4) === "tie") {
                 return "tie";
               }
@@ -379,29 +379,29 @@ function Table() {
       },
       breakTie: function(hand1, hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return hand1;
+          return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return hand2;
+          return "hand2";
         } else if (table.compareCards(hand1, hand2, 0) === "tie") {
           if (table.compareCards(hand1, hand2, 1) === "card1") {
-            return hand1;
+            return "hand1";
           } else if (table.compareCards(hand1, hand2, 1) === "card2") {
-            return hand2;
+            return "hand2";
           } else if (table.compareCards(hand1, hand2, 1) === "tie") {
             if (table.compareCards(hand1, hand2, 2) === "card1") {
-              return hand1;
+              return "hand1";
             } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-              return hand2;
+              return "hand2";
             } else if (table.compareCards(hand1, hand2, 2) === "tie") {
               if (table.compareCards(hand1, hand2, 3) === "card1") {
-                return hand1;
+                return "hand1";
               } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-                return hand2;
+                return "hand2";
               } else if (table.compareCards(hand1, hand2, 3) === "tie") {
                 if (table.compareCards(hand1, hand2, 4) === "card1") {
-                  return hand1;
+                  return "hand1";
                 } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                  return hand2;
+                  return "hand2";
                 } else if (table.compareCards(hand1, hand2, 4) === "tie") {
                   return "tie"
                 }
@@ -592,12 +592,16 @@ Table.prototype.findBestHand = function(handArray) {
     }
   })
   var handType = bestArr[0].handValue;
-  var len = bestArr.len;
+  var len = bestArr.length;
   if (len === 1) {
     return bestArr[0];
-
   } else {
     for (var i = 0; i < len - 1; i++) {
+      if (this.handEvaluators[handType].breakTie(bestArr[0], bestArr[1]) === "hand1") {
+        bestArr.splice(1,1);
+      } else {
+        bestArr.shift();
+      }
       // here, what I want to do is call the specific breakTie function associated with the handValue key stored in variable handType, with hands bestArr[i] and bestArr[i+1] as arguments, then remove the losing hand from bestArr before moving on to the next step in the loop.
     }
   }
@@ -609,7 +613,14 @@ Table.prototype.findWinner = function (player1, player2) {
   } else if (table.handKeys.indexOf(player1.hand.handValue) > table.handKeys.indexOf(player2.hand.handValue)) {
     return player2;
   } else {
-    // here, the two hands are of equal handValue, so I want to call the specific breakTie function associated with that handValue with the two players' hands passed as arguments, then return the player with the better hand according to the tiebreak.
+    var handType = player1.hand.handValue;
+    if (this.handEvaluators[handType].breakTie(player1.hand, player2.hand) === "hand1") {
+      return player1;
+    } else if (this.handEvaluators[handType].breakTie(player1.hand, player2.hand) === "hand2") {
+      return player2;
+    } else {
+      return "tie";
+    }
   }
 }
 Table.prototype.updateFigures = function() {
@@ -936,16 +947,16 @@ function fiveCardHand() {
 // reallyGoodCards = [card1, card5, card2, card4, card3];
 // twoPair = new Hand(reallyGoodCards);
 //
-// card1 = new Card("diamonds", "ace");
-// card2 = new Card("clubs", "jack");
-// card3 = new Card("diamonds", "king");
-// card4 = new Card("hearts", "ace");
-// card5 = new Card("hearts", "three");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// pair = new Hand(reallyGoodCards);
-// //
-// //
-// //
-// card6 = new Card("spades", "jack");
-// card7 = new Card("diamonds", "four");
-// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+card1 = new Card("diamonds", "ace");
+card2 = new Card("clubs", "jack");
+card3 = new Card("diamonds", "king");
+card4 = new Card("hearts", "ace");
+card5 = new Card("hearts", "three");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+pair = new Hand(reallyGoodCards);
+//
+//
+//
+card6 = new Card("spades", "jack");
+card7 = new Card("diamonds", "four");
+sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
