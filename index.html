@@ -1,7 +1,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f0">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="img/favicon.png" type="image/x-icon">
+    <title>Texas Hold 'Em</title>
     <script src="js/jquery.js"></script>
     <script src="js/scripts.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Sawarabi+Mincho" rel="stylesheet">
@@ -19,8 +24,28 @@
       <br />
       <button type="submit" id="name-btn">Submit</button>
     </form>
+
     <div id="container">
       <div id="table">
+      <div id="cards">
+        <div class="hole" id="holeOne">
+          <div class="holeCard"></div>
+          <div class="holeCard"></div>
+        </div>
+        <div id="community">
+          <div class="commCard"></div>
+          <div class="commCard"></div>
+          <div class="commCard"></div>
+          <div class="commCard"></div>
+          <div class="commCard"></div>
+        </div>
+        <div class="hole" id="holeTwo">
+          <div class="holeCard"></div>
+          <div class="holeCard"></div>
+        </div>
+      </div>
+      <div id="pot">Pot: 100</div>
+      <div id="playerAlign">
         <div class="player" id="player1">
           <p><span id="playerOneName" class="box"></span></p>
           <p><span id="playerOneBank" class="box"></span></p>
@@ -29,14 +54,17 @@
           <p><span id="playerTwoName" class="box"></span></p>
           <p><span id="playerTwoBank" class="box"></span></p>
         </div>
-        <div id="boardWrite">
+      </div>
+         <div id="boardWrite">
           <p><span class="write">No Limit Hold'Em</span></p>
-          <p><span class="write">Starting blinds 5/10</span></p>
-          <p><span class="write">Blinds double every 10 hands</span></p>
+          <p><span class="write">Blinds 40/80</span></p>
+          <p><span class="write">Buy-in 1500</span></p>
+        </div>
+        <div id="boardWriteMobile">
+          <p><span class="write">No Limit Hold'Em - Blinds 40/80 - BuyIn 1500</span></p>
         </div>
 
-        <div class="actionButtons">
-
+         <div class="actionButtons">
           <!-- <button type="submit" id="funds-btn">Submit</button> -->
           <button class="action" id="call-check"></button>
           <button class="action" id="bet-raise"></button>
@@ -45,7 +73,6 @@
           <button class="action" id="allIn">All In</button>
           <button class="action" id="fold">Fold</button>
         </div>
-      </div>
     </div>
   </body>
 </html>
