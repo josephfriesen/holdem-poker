@@ -122,9 +122,9 @@ body {
   display: flex;
 }
 
-#pot {
+#pot, #bet {
   margin-left: 440px;
-  margin-top: 20px;
+  margin-top: 10px;
   font-size: 20px;
   color: #F1D804;
 }
@@ -307,9 +307,9 @@ button {
       display: inline-block;
     }
 
-    #pot {
+    #pot, #bet {
       margin-left: 330px;
-      margin-top: 15px;
+      margin-top: 7px;
       font-size: 15px;
     }
 }
@@ -402,6 +402,12 @@ button {
     #pot {
       margin-left: 250px;
       margin-top: -130px;
+      font-size: 15px;
+    }
+
+    #bet {
+      margin-left: 250px;
+      margin-top: 10px;
       font-size: 15px;
     }
 
