@@ -573,11 +573,27 @@ Table.prototype.evaluateHand = function(hand) {
   }
 }
 Table.prototype.findBestHand = function(handArray) {
-  var reversedHands = this.handKeys.slice().reverse()
-  handArray.sort(function(hand1,hand2){
-    return reversedHands.indexOf(hand2.handValue) - reversedHands.indexOf(hand1.handValue)
+  var bestHand = 9;
+  handArray.forEach(function(hand) {
+    if (table.handKeys.indexOf(hand.handValue) < bestHand) {
+      bestHand = table.handKeys.indexOf(hand.handValue);
+    }
   })
-  return handArray[0];
+  bestArr = [];
+  handArray.forEach(function(hand) {
+    if (table.handKeys.indexOf(hand.handValue) === bestHand) {
+      bestArr.push(hand);
+    }
+  })
+  var handType = bestArr[0].handValue;
+  var len = bestArr.len;
+  if (len === 1) {
+    return bestArr[0];
+  } else {
+    for (var i = 0; i < len - 1; i++) {
+      // here, what I want to do is call the specific breakTie function associated with the handValue key stored in variable handType, with hands bestArr[i] and bestArr[i+1] as arguments, then remove the losing hand from bestArr before moving on to the next step in the loop.
+    }
+  }
 }
 Table.prototype.findWinner = function () {
   // compare player final hands, return winning player
