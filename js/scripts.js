@@ -58,9 +58,7 @@ function Table() {
         return isHand;
       },
       arrange: function(hand){
-        if (isHand) {
-          hand.sortByValue()
-        }
+          hand.sortByValue();
       },
       breakTie: function() {
 
@@ -91,23 +89,28 @@ function Table() {
     fourOfAKind: {
       evaluate: function(hand) {
         var isHand = (hand.instances[0] === 4);
-        var setArr = hand.cards.slice();
-        var dudArr = [];
         if (isHand) {
           this.arrange(hand)
         }
         return (isHand);
       },
       arrange: function(hand){
-        hand.cards.forEach(function(card,i) {
-          if (hand.instances[i] === 1) {
-            dudArr.push(setArr.splice(i,1)[0]);
-          }
-        });
-        dudArr.forEach(function(cardObj,i) {
-          setArr.push(cardObj);
-        });
-        hand.cards = setArr
+        var setArr = hand.cards.slice();
+        hand.sortByValue(setArr);
+        if (setArr[0].rank !== setArr[1].rank) {
+          setArr.push(setArr.shift());
+        }
+        hand.cards = setArr;
+        // var dudArr = [];
+        // hand.cards.forEach(function(card,i) {
+        //   if (hand.instances[i] === 1) {
+        //     dudArr.push(setArr.splice(i,1)[0]);
+        //   }
+        // });
+        // dudArr.forEach(function(cardObj,i) {
+        //   setArr.push(cardObj);
+        // });
+        // hand.cards = setArr
       },
       breakTie: function(){
 
@@ -140,19 +143,13 @@ function Table() {
       },
       arrange: function(hand){
         var setArr = hand.cards.slice();
-        var dudArr = [];
-        hand.cards.forEach(function(card,i) {
-          if (hand.instances[i] === 2) {
-            console.log(card)
-            console.log("pushing a " card.rank + " to dudArr")
-            dudArr.push(card)
-            setArr.splice(setArr.indexOf(card),1)
-          }
-        });
-        dudArr.forEach(function(cardObj,i) {
-          console.log("pushing a " + cardObj.rank + " to setArr " )
-          setArr.push(cardObj);
-        });
+        hand.sortByValue(setArr);
+        if (setArr[1].rank !== setArr[2].rank) {
+          var dud1 = setArr.shift();
+          var dud2 = setArr.shift();
+          setArr.push(dud1);
+          setArr.push(dud2);
+        }
         hand.cards = setArr;
       },
       breakTie: function(){
@@ -210,24 +207,25 @@ function Table() {
             return isHand;
           }
         }
-        var straightsList = [["two", "three", "four", "five", "ace"],
-        ["two", "three", "four", "five", "six"],
-        ["three", "four", "five", "six", "seven"],
-        ["four", "five","six", "seven", "eight"],
-        ["five", "six", "seven", "eight", "nine"],
-        ["ten", "six", "seven", "eight", "nine"],
-        ["ten", "seven", "eight", "nine", "jack"],
-        ["ten", "eight", "nine", "jack", "queen"],
-        ["ten", "nine", "jack", "king", "queen"],
-        ["ten", "ace", "jack", "king", "queen"]
+        hand.sortByValue();
+        var straightsList = [[ "ace", "five", "four", "three", "two" ],
+        [ "six", "five", "four", "three", "two" ],
+        [ "seven", "six", "five", "four", "three" ],
+        [ "eight", "seven", "six", "five", "four" ],
+        [ "nine", "eight", "seven", "six", "five" ],
+        [ "ten", "nine", "eight", "seven", "six" ],
+        [ "jack", "ten", "nine", "eight", "seven" ],
+        [ "queen", "jack", "ten", "nine", "eight" ],
+        [ "king", "queen", "jack", "ten", "nine" ],
+        [ "ace", "king", "queen", "jack", "ten" ]
         ];
         straightsList.forEach(function(straight) {
-          if (hand.cards[0] === straight[0] && hand.cards[1] === straight[1] && hand.cards[2] === straight[2] && hand.cards[3] === straight[3] && hand.cards[4] === straight[4]) {
+          if (hand.cards[0].rank === straight[0] && hand.cards[1].rank === straight[1] && hand.cards[2].rank === straight[2] && hand.cards[3].rank === straight[3] && hand.cards[4].rank === straight[4]) {
             isHand = true;
           };
         })
         if (isHand) {
-          this.arrange()
+          this.arrange(hand)
         }
         return isHand;
       },
@@ -270,28 +268,39 @@ function Table() {
     threeOfAKind: {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 3)
-        var setArr = hand.cards.slice();
-        var dudArr = [];
         if (isHand) {
-          this.arrange()
+          this.arrange(hand)
         }
         return isHand;
       },
       arrange: function(hand){
-        hand.cards.forEach(function(card,i) {
-          if (hand.instances[i] !== 3) {
-            console.log("pushing into dudArr " + card.rank)
-            dudArr.push(card)
-            setArr.splice(setArr.indexOf(card),1)
-          }
-        });
-        hand.sortByValue(dudArr);
-        console.log("dudArr")
-        console.log(dudArr);
-        dudArr.forEach(function(cardObj,i) {
-          setArr.push(cardObj);
-        });
-        hand.cards = setArr
+        var setArr = hand.cards.slice();
+        setArr = hand.sortByValue(setArr);
+        var dudArr = [];
+        var dud1;
+        var dud2;
+        if (setArr[4].rank === setArr[3].rank) {
+          dud1 = setArr.shift();
+          dud2 = setArr.shift();
+          setArr.push(dud1);
+          setArr.push(dud2);
+        } else if (setArr[3].rank === setArr[2].rank) {
+          dud1 = setArr.shift();
+          dud2 = setArr.pop();
+          setArr.push(dud1);
+          setArr.push(dud2);
+        }
+        // hand.cards.forEach(function(card,i) {
+        //   if (hand.instances[i] !== 3) {
+        //     dudArr.push(card);
+        //     setArr.splice(setArr.indexOf(card),1);
+        //   }
+        // });
+        // hand.sortByValue(dudArr);
+        // dudArr.forEach(function(cardObj,i) {
+        //   setArr.push(cardObj);
+        // });
+        hand.cards = setArr;
       },
       breakTie: function(){
 
@@ -323,13 +332,12 @@ function Table() {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 2 && hand.instances[2] === 2);
         if (isHand) {
-          this.arrange()
+          this.arrange(hand)
         }
         return isHand;
       },
       arrange: function(hand){
         hand.sortByValue();
-        console.log(hand.cards);
         if (hand.cards[0].rank !== hand.cards[1].rank) {
 
           hand.cards.push(hand.cards.shift());
@@ -360,16 +368,14 @@ function Table() {
         var isHand = (hand.instances[0] === 2 && hand.instances[2] === 1);
         var setArr = [];
         if (isHand) {
-          this.arrange()
+          this.arrange(hand)
         }
         return isHand;
       },
       arrange: function(hand) {
         hand.sortByValue()
-        console.log(hand.cards)
         for (var i=0; i<=3; i++) {
           if (hand.cards[i].rank === hand.cards[i+1].rank) {
-            console.log("pair found")
             setArr = hand.cards.splice(i,2);
             hand.sortByValue(hand.cards)
             hand.cards = setArr.concat(hand.cards)
@@ -513,7 +519,6 @@ Table.prototype.advanceRound = function() {
       });
     }
   }
-  console.log("--------------- ROUND " + table.rounds[table.roundIndex] + " -------------------")
 }
 Table.prototype.handIndex = function(handKey) {
   var keyArr = Object.keys(this.hands);
@@ -544,20 +549,18 @@ Table.prototype.getHands = function(multiCardArray) {
   return handArray;
 }
 Table.prototype.evaluateHand = function(hand) {
-  for (handKey in this.handEvaluators) { // iterate through eval functions
-    if (this.handEvaluators[handKey].evaluate(hand)) { // check current hand object
+  for (handKey in this.handEvaluators) {
+    if (this.handEvaluators[handKey].evaluate(hand)) {
       return handKey;
     }
   }
 }
 Table.prototype.findBestHand = function(handArray) {
-  // handArrays are produced by Table.getHands()
-  // takes array of 21 possible hands and returns best one
   var reversedHands = this.handKeys.slice().reverse()
   handArray.sort(function(hand1,hand2){
     return reversedHands.indexOf(hand2.handValue) - reversedHands.indexOf(hand1.handValue)
   })
-  return handArray[0]; // returns a handObject
+  return handArray[0];
 }
 Table.prototype.findWinner = function () {
   // compare player final hands, return winning player
@@ -597,17 +600,11 @@ function Card(suit, rank) {
 }
 function Hand(arr) {
   this.cards = arr;
-  console.log(arr);
   this.instances = getInstances(this.cards)
   this.handValue = table.evaluateHand(this);
-  console.log(this)
 }
 Hand.prototype.sortByValue = function(cardArr=this.cards) {
-  console.log("sorting:")
-  console.log(cardArr)
-  console.log("------------------");
   cardArr.sort(function(card1, card2){
-    console.log(card1.value + " " + card2.value)
      return card1.value - card2.value;
   })
   return cardArr;
@@ -679,48 +676,48 @@ $(document).ready(function() {
 });
 
 // Function just for testing purposes, will shuffle the deck, create a five card hand object.
-// function fiveCardHand() {
-//   var newDeck = table.shuffle();
-//   var cards = [];
-//   for (i = 0; i <= 4; i++) {
-//     cards.push(newDeck.pop());
-//   }
-//   var hand = new Hand(cards);
-//   return hand;
-// }
+function fiveCardHand() {
+  var newDeck = table.shuffle();
+  var cards = [];
+  for (i = 0; i <= 4; i++) {
+    cards.push(newDeck.pop());
+  }
+  var hand = new Hand(cards);
+  return hand;
+}
 // Pre-built common hands for testing purposes.
-//
-// card1 = new Card("diamonds", "five");
-// card2 = new Card("diamonds", "six");
-// card3 = new Card("diamonds", "seven");
-// card4 = new Card("diamonds", "eight");
-// card5 = new Card("diamonds", "nine");
-// reallyGoodCards = [card3, card1, card2, card5, card4];
-// straightFlush = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "ace");
-// card2 = new Card("diamonds", "king");
-// card3 = new Card("diamonds", "queen");
-// card4 = new Card("diamonds", "jack");
-// card5 = new Card("diamonds", "10");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// royalFlush = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "five");
+card2 = new Card("diamonds", "six");
+card3 = new Card("diamonds", "seven");
+card4 = new Card("diamonds", "eight");
+card5 = new Card("diamonds", "nine");
+reallyGoodCards = [card3, card1, card2, card5, card4];
+straightFlush = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "2");
-// card2 = new Card("diamonds", "7");
-// card3 = new Card("diamonds", "9");
-// card4 = new Card("diamonds", "4");
-// card5 = new Card("diamonds", "queen");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// flush = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "ace");
+card2 = new Card("diamonds", "king");
+card3 = new Card("diamonds", "queen");
+card4 = new Card("diamonds", "jack");
+card5 = new Card("diamonds", "ten");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+royalFlush = new Hand(reallyGoodCards);
 
-// card1 = new Card("clubs", "5");
-// card2 = new Card("diamonds", "6");
-// card3 = new Card("spades", "7");
-// card4 = new Card("diamonds", "8");
-// card5 = new Card("hearts", "9");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// straight = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "two");
+card2 = new Card("diamonds", "seven");
+card3 = new Card("diamonds", "nine");
+card4 = new Card("diamonds", "four");
+card5 = new Card("diamonds", "queen");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+flush = new Hand(reallyGoodCards);
+
+card1 = new Card("clubs", "five");
+card2 = new Card("diamonds", "six");
+card3 = new Card("spades", "seven");
+card4 = new Card("diamonds", "eight");
+card5 = new Card("hearts", "nine");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+straight = new Hand(reallyGoodCards);
 
 card1 = new Card("diamonds", "three");
 card2 = new Card("clubs", "three");
@@ -730,48 +727,48 @@ card5 = new Card("spades", "eight");
 reallyGoodCards = [card4, card3, card1, card2, card5];
 fullHouse = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "five");
-// card2 = new Card("clubs", "five");
-// card3 = new Card("hearts", "five");
-// card4 = new Card("spades", "five");
-// card5 = new Card("diamonds", "queen");
-// reallyGoodCards = [card1, card2, card5, card3, card4];
-// fourOfAKind = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "five");
+card2 = new Card("clubs", "five");
+card3 = new Card("hearts", "five");
+card4 = new Card("spades", "five");
+card5 = new Card("diamonds", "king");
+reallyGoodCards = [card1, card2, card5, card3, card4];
+fourOfAKind = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "seven");
-// card2 = new Card("clubs", "seven");
-// card3 = new Card("spades", "seven");
-// card4 = new Card("diamonds", "two");
-// card5 = new Card("diamonds", "jack");
-// reallyGoodCards = [card1, card5, card2, card3, card4];
-// threeOfAKind = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "seven");
+card2 = new Card("clubs", "seven");
+card3 = new Card("spades", "seven");
+card4 = new Card("diamonds", "two");
+card5 = new Card("diamonds", "jack");
+reallyGoodCards = [card1, card5, card2, card3, card4];
+threeOfAKind = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "5");
-// card2 = new Card("diamonds", "6");
-// card3 = new Card("diamonds", "7");
-// card4 = new Card("diamonds", "8");
-// card5 = new Card("diamonds", "9");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// straightFlush = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "five");
+card2 = new Card("diamonds", "six");
+card3 = new Card("diamonds", "seven");
+card4 = new Card("diamonds", "eight");
+card5 = new Card("diamonds", "nine");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+straightFlush = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "five");
-// card2 = new Card("clubs", "five");
-// card3 = new Card("diamonds", "seven");
-// card4 = new Card("spades", "seven");
-// card5 = new Card("hearts", "two");
-// reallyGoodCards = [card1, card5, card2, card4, card3];
-// twoPair = new Hand(reallyGoodCards);
+card1 = new Card("diamonds", "five");
+card2 = new Card("clubs", "five");
+card3 = new Card("diamonds", "seven");
+card4 = new Card("spades", "seven");
+card5 = new Card("hearts", "two");
+reallyGoodCards = [card1, card5, card2, card4, card3];
+twoPair = new Hand(reallyGoodCards);
 
-// card1 = new Card("diamonds", "ace");
-// card2 = new Card("clubs", "jack");
-// card3 = new Card("diamonds", "king");
-// card4 = new Card("hearts", "ace");
-// card5 = new Card("hearts", "three");
-// reallyGoodCards = [card1, card2, card3, card4, card5];
-// pair = new Hand(reallyGoodCards);
-// //
-// //
-// //
-// card6 = new Card("spades", "jack");
-// card7 = new Card("diamonds", "4");
-// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+card1 = new Card("diamonds", "ace");
+card2 = new Card("clubs", "jack");
+card3 = new Card("diamonds", "king");
+card4 = new Card("hearts", "ace");
+card5 = new Card("hearts", "three");
+reallyGoodCards = [card1, card2, card3, card4, card5];
+pair = new Hand(reallyGoodCards);
+//
+//
+//
+card6 = new Card("spades", "jack");
+card7 = new Card("diamonds", "four");
+sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
