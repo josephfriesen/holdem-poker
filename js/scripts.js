@@ -60,8 +60,8 @@ function Table() {
       arrange: function(hand){
           hand.sortByValue();
       },
-      breakTie: function() {
-
+      breakTie: function(hand1, hand2) {
+        return "tie";
       }
     },
     straightFlush: {
@@ -75,17 +75,17 @@ function Table() {
       arrange: function(hand){
         hand.sortByValue()
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          return "tie";
+        }
       }
     },
-    // straightFlush: function(hand) {
-    //   var isHand = (table.handEvaluators.flush.evaluate(hand) && table.handEvaluators.straight.evaluate(hand));
-    //   if (isHand) {
-    //     hand.sortByValue()
-    //   }
-    //   return isHand;
-    // },
+
     fourOfAKind: {
       evaluate: function(hand) {
         var isHand = (hand.instances[0] === 4);
@@ -101,38 +101,24 @@ function Table() {
           setArr.push(setArr.shift());
         }
         hand.cards = setArr;
-        // var dudArr = [];
-        // hand.cards.forEach(function(card,i) {
-        //   if (hand.instances[i] === 1) {
-        //     dudArr.push(setArr.splice(i,1)[0]);
-        //   }
-        // });
-        // dudArr.forEach(function(cardObj,i) {
-        //   setArr.push(cardObj);
-        // });
-        // hand.cards = setArr
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 4) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+            return "tie";
+          }
+        }
       }
     },
-    // fourOfAKind: function(hand) {
-    //   var isHand = (hand.instances[0] === 4);
-    //   var setArr = hand.cards.slice();
-    //   var dudArr = [];
-    //   if (isHand) {
-    //     hand.cards.forEach(function(card,i) {
-    //       if (hand.instances[i] === 1) {
-    //         dudArr.push(setArr.splice(i,1)[0]);
-    //       }
-    //     });
-    //     dudArr.forEach(function(cardObj,i) {
-    //       setArr.push(cardObj);
-    //     });
-    //     hand.cards = setArr
-    //   }
-    //   return (isHand);
-    // },
+
     fullHouse: {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 3 && hand.instances[3] === 2)
@@ -153,29 +139,22 @@ function Table() {
         hand.cards = setArr;
       },
       breakTie: function(){
-
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 4) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+            return "tie";
+          }
+        }
       }
     },
-    // fullHouse: function(hand){
-    //   var isHand = (hand.instances[0] === 3 && hand.instances[3] === 2)
-    //   var setArr = hand.cards.slice();
-    //   var dudArr = [];
-    //   if (isHand) {
-    //     hand.cards.forEach(function(card,i) {
-    //       if (hand.instances[i] === 2) {
-    //         console.log(card)
-    //         console.log("loop " + i)
-    //         dudArr.push(card)
-    //         setArr.splice(setArr.indexOf(card),1)
-    //       }
-    //     });
-    //     dudArr.forEach(function(cardObj,i) {
-    //       setArr.push(cardObj);
-    //     });
-    //     hand.cards = setArr
-    //   }
-    //   return isHand;
-    // },
+
     flush: {
       evaluate: function(hand){
         var isHand = (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit);
@@ -187,17 +166,41 @@ function Table() {
       arrange: function(hand){
         hand.sortByValue()
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 1) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 1) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 1) === "tie") {
+            if (table.compareCards(hand1, hand2, 2) === "card1") {
+              return hand1;
+            } else if (table.compareCards(hand1, hand2, 2) === "card2") {
+              return hand2;
+            } else if (table.compareCards(hand1, hand2, 2) === "tie") {
+              if (table.compareCards(hand1, hand2, 3) === "card1") {
+                return hand1;
+              } else if (table.compareCards(hand1, hand2, 3) === "card2") {
+                return hand2;
+              } else if (table.compareCards(hand1, hand2, 3) === "tie") {
+                if (table.compareCards(hand1, hand2, 4) === "card1") {
+                  return hand1;
+                } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+                  return hand2;
+                } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+                  return "tie"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    // flush: function(hand){
-    //   var isHand = (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit);
-    //   if (isHand) {
-    //     hand.sortByValue()
-    //   }
-    //   return isHand;
-    // },
+
     straight: {
       evaluate: function(hand){
         var isHand = false;
@@ -232,39 +235,17 @@ function Table() {
       arrange: function(hand){
         hand.sortByValue()
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          return "tie";
+        }
       }
     },
-    // straight: function(hand){
-    //   var isHand = false;
-    //   var uniqueArr = [1,1,1,1,1];
-    //   for (var n = 0; n <= 4; n++) {
-    //     if (hand.instances[n] !== uniqueArr[n]) {
-    //       return isHand;
-    //     }
-    //   }
-    //   var straightsList = [["two", "three", "four", "five", "ace"],
-    //   ["two", "three", "four", "five", "six"],
-    //   ["three", "four", "five", "six", "seven"],
-    //   ["four", "five","six", "seven", "eight"],
-    //   ["five", "six", "seven", "eight", "nine"],
-    //   ["ten", "six", "seven", "eight", "nine"],
-    //   ["ten", "seven", "eight", "nine", "jack"],
-    //   ["ten", "eight", "nine", "jack", "queen"],
-    //   ["ten", "nine", "jack", "king", "queen"],
-    //   ["ten", "ace", "jack", "king", "queen"]
-    //   ];
-    //   straightsList.forEach(function(straight) {
-    //     if (hand.cards[0] === straight[0] && hand.cards[1] === straight[1] && hand.cards[2] === straight[2] && hand.cards[3] === straight[3] && hand.cards[4] === straight[4]) {
-    //       isHand = true;
-    //     };
-    //   })
-    //   if (isHand) {
-    //     hand.sortByValue();
-    //   }
-    //   return isHand;
-    // },
+
     threeOfAKind: {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 3)
@@ -290,44 +271,31 @@ function Table() {
           setArr.push(dud1);
           setArr.push(dud2);
         }
-        // hand.cards.forEach(function(card,i) {
-        //   if (hand.instances[i] !== 3) {
-        //     dudArr.push(card);
-        //     setArr.splice(setArr.indexOf(card),1);
-        //   }
-        // });
-        // hand.sortByValue(dudArr);
-        // dudArr.forEach(function(cardObj,i) {
-        //   setArr.push(cardObj);
-        // });
         hand.cards = setArr;
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 3) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 3) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 3) === "tie") {
+            if (table.compareCards(hand1, hand2, 4) === "card1") {
+              return hand1;
+            } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+              return hand2;
+            } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+              return "tie";
+            }
+          }
+        }
       }
     },
-    // threeOfAKind: function(hand){
-    //   var isHand = (hand.instances[0] === 3)
-    //   var setArr = hand.cards.slice();
-    //   var dudArr = [];
-    //   if (isHand) {
-    //     hand.cards.forEach(function(card,i) {
-    //       if (hand.instances[i] !== 3) {
-    //         console.log("pushing into dudArr " + card.rank)
-    //         dudArr.push(card)
-    //         setArr.splice(setArr.indexOf(card),1)
-    //       }
-    //     });
-    //     hand.sortByValue(dudArr);
-    //     console.log("dudArr")
-    //     console.log(dudArr);
-    //     dudArr.forEach(function(cardObj,i) {
-    //       setArr.push(cardObj);
-    //     });
-    //     hand.cards = setArr
-    //   }
-    //   return isHand;
-    // },
+
     twoPair: {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 2 && hand.instances[2] === 2);
@@ -345,24 +313,29 @@ function Table() {
           hand.cards.push(hand.cards.splice(2,1));
         }
       },
-      breakTie: function(){
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 3) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 3) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 3) === "tie") {
+            if (table.compareCards(hand1, hand2, 4) === "card1") {
+              return hand1;
+            } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+              return hand2;
+            } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+              return "tie";
+            }
+          }
+        }
       }
     },
-    // twoPair: function(hand){
-    //   var isHand = (hand.instances[0] === 2 && hand.instances[2] === 2);
-    //   if (isHand) {
-    //     hand.sortByValue();
-    //     console.log(hand.cards);
-    //     if (hand.cards[0].rank !== hand.cards[1].rank) {
-    //
-    //       hand.cards.push(hand.cards.shift());
-    //     } else if (hand.cards[2].rank !== hand.cards[3].rank) {
-    //       hand.cards.push(hand.cards.splice(2,1));
-    //     }
-    //   }
-    //   return isHand;
-    // },
+
     pair: {
       evaluate: function(hand){
         var isHand = (hand.instances[0] === 2 && hand.instances[2] === 1);
@@ -383,44 +356,77 @@ function Table() {
           }
         }
       },
-      breakTie: {
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 2) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 2) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 2) === "tie") {
+            if (table.compareCards(hand1, hand2, 3) === "card1") {
+              return hand1;
+            } else if (table.compareCards(hand1, hand2, 3) === "card2") {
+              return hand2;
+            } else if (table.compareCards(hand1, hand2, 3) === "tie") {
+              if (table.compareCards(hand1, hand2, 4) === "card1") {
+                return hand1;
+              } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+                return hand2;
+              } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+                return "tie";
+              }
+            }
+          }
+        }
       }
     },
-    // pair: function(hand){
-    //   var isHand = (hand.instances[0] === 2 && hand.instances[2] === 1);
-    //   var setArr = [];
-    //   if (isHand) {
-    //     hand.sortByValue()
-    //     console.log(hand.cards)
-    //     for (var i=0; i<=3; i++) {
-    //       if (hand.cards[i].rank === hand.cards[i+1].rank) {
-    //         console.log("pair found")
-    //         setArr = hand.cards.splice(i,2);
-    //         hand.sortByValue(hand.cards)
-    //         hand.cards = setArr.concat(hand.cards)
-    //         continue;
-    //       }
-    //     }
-    //   }
-    //   return isHand;
-    // },
+
     highCard: {
       evaluate: function(hand) {
-        hand.sortByValue()
         return (hand.instances[0] === 1);
       },
       arrange: function(hand){
-
+        hand.sortByValue();
       },
-      breakTie: function() {
-
+      breakTie: function(hand1, hand2){
+        if (table.compareCards(hand1, hand2, 0) === "card1") {
+          return hand1;
+        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
+          return hand2;
+        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
+          if (table.compareCards(hand1, hand2, 1) === "card1") {
+            return hand1;
+          } else if (table.compareCards(hand1, hand2, 1) === "card2") {
+            return hand2;
+          } else if (table.compareCards(hand1, hand2, 1) === "tie") {
+            if (table.compareCards(hand1, hand2, 2) === "card1") {
+              return hand1;
+            } else if (table.compareCards(hand1, hand2, 2) === "card2") {
+              return hand2;
+            } else if (table.compareCards(hand1, hand2, 2) === "tie") {
+              if (table.compareCards(hand1, hand2, 3) === "card1") {
+                return hand1;
+              } else if (table.compareCards(hand1, hand2, 3) === "card2") {
+                return hand2;
+              } else if (table.compareCards(hand1, hand2, 3) === "tie") {
+                if (table.compareCards(hand1, hand2, 4) === "card1") {
+                  return hand1;
+                } else if (table.compareCards(hand1, hand2, 4) === "card2") {
+                  return hand2;
+                } else if (table.compareCards(hand1, hand2, 4) === "tie") {
+                  return "tie"
+                }
+              }
+            }
+          }
+        }
       }
     }
-    // highCard: function(hand) {
-    //   hand.sortByValue()
-    //   return (hand.instances[0] === 1);
-    // }
+
   }
 
   this.handKeys = Object.keys(this.handEvaluators)
@@ -437,7 +443,15 @@ Table.prototype.createDeck = function(){
   },this)
 }
 table.createDeck();
-
+Table.prototype.compareCards = function(hand1, hand2, index) {
+  if (this.ranks.indexOf(hand1.cards[index].rank) > this.ranks.indexOf(hand2.cards[index].rank)) {
+    return "card1";
+  } else if (this.ranks.indexOf(hand1.cards[index].rank) < this.ranks.indexOf(hand2.cards[index].rank)) {
+    return "card2";
+  } else if (this.ranks.indexOf(hand1.cards[index].rank) === this.ranks.indexOf(hand2.cards[index].rank)) {
+    return "tie";
+  }
+}
 Table.prototype.shuffle = function() {
   var newDeck = [];
   this.deck.forEach(function(card) {
@@ -522,6 +536,9 @@ Table.prototype.advanceRound = function() {
 }
 Table.prototype.handIndex = function(handKey) {
   var keyArr = Object.keys(this.hands);
+  console.log(handKey);
+  console.log(keyArr);
+  console.log(keyArr.indexOf(handKey));
   return keyArr.indexOf(handKey);
 }
 Table.prototype.getHands = function(multiCardArray) {
@@ -734,6 +751,14 @@ card4 = new Card("spades", "five");
 card5 = new Card("diamonds", "king");
 reallyGoodCards = [card1, card2, card5, card3, card4];
 fourOfAKind = new Hand(reallyGoodCards);
+
+card1 = new Card("diamonds", "six");
+card2 = new Card("clubs", "six");
+card3 = new Card("hearts", "six");
+card4 = new Card("spades", "six");
+card5 = new Card("diamonds", "king");
+reallyGoodCards = [card1, card2, card5, card3, card4];
+fourOfAKind2 = new Hand(reallyGoodCards);
 
 card1 = new Card("diamonds", "seven");
 card2 = new Card("clubs", "seven");
