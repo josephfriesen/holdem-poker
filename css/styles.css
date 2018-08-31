@@ -17,12 +17,6 @@
   opacity: 0;
   transform-origin: center bottom;
 }
-.retracted {
-  transform: scaleY(0.5);
-}
-.protruding {
-  transform: translateY(-50%);
-}
 body {
   background: rgb(241,241,233);
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
@@ -106,7 +100,25 @@ body {
   font-size: 1rem;
   opacity: 0;
 }
-
+.dealer-label:after {
+  content: "D" !important;
+}
+.winning-label {
+  color:white;
+  font-family: 'Bevan', cursive;
+  text-shadow: 1px 1px 3px black;
+  z-index:10;
+  font-size: 1rem;
+}
+.winning-label:after {
+  content: "WINNER" !important;
+}
+.retracted {
+  transform: scaleY(0.5);
+}
+.protruding {
+  transform: translateY(-50%);
+}
 #cards {
   width: 960px;
   height: 100px;
