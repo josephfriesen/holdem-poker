@@ -44,7 +44,7 @@ function Card(suit, rank) {
         if ($(self).css("background-image").includes("cardsheet")) {
           $(self).css({
             'background-image': 'url(img/cardback.png)',
-            'background-size': 'contain',
+            'background-size': (card.dimensions.width)+'px '+(card.dimensions.height)+'px',
             'background-position': '0 0'
           });
         } else {
@@ -63,7 +63,7 @@ function Card(suit, rank) {
           'transform':'scaleX(1)'
         });
       },180);
-    })
+    });
     if (faceDown) {
       this.toggleFlip();
       var self = this;
@@ -72,21 +72,21 @@ function Card(suit, rank) {
           var pos = {};
           pos.left = table.ranks.indexOf(self.rank) * self.dimensions.width;
           pos.top = table.suits.indexOf(self.suit) * self.dimensions.height;
+          
+          self.div.css({
+            'transform':'scaleX(0)'
+          })
+        },400);
+        setTimeout(function(){
           self.div.css({
             'background-image': 'url(img/cardsheet.png)',
             'background-size': (self.dimensions.width*13)+'px '+(self.dimensions.height*4)+'px',
             'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
           });
           self.div.css({
-            'transform':'scaleX(0)'
-          })
-        },400);
-
-        setTimeout(function(){
-          self.div.css({
             'transform':'scaleX(1)'
           })
-        },600);
+        },580);
       }
     }
     table.dealtCards.push(this);
@@ -161,10 +161,6 @@ function Player(human, name, bank) {
   this.holeCards = [];
   this.hand = undefined;
   this.blind = this.currentBet = table.blinds.small.amount;
-  this.addToPot = function(amount) {
-    this.changeBankAmountBy(-amount);
-    table.pot += amount;
-  }
   if (!table.players.length) {
     this.slots = [
       $('#holeOne>.holeCard:first-child'),
@@ -209,35 +205,45 @@ $(document).ready(function() {
     table.initiateGame(names);
   });
   $('#call-check').click(function(){
-    // call
     var player = table.atBat;
-    var amountToAdd = table.minimumBet - player.currentBet
-    console.log(amountToAdd)
-    // update bet display
-    player.addToPot(amountToAdd);
+    var amountToAdd = 0;
+    if (table.minimumBet) {
+      // call
+      amountToAdd = table.minimumBet - player.currentBet;
+      player.currentBet += amountToAdd;
+      table.minimumBet = player.currentBet;
+      table.calledOrChecked.push(player);
+      player.addToPot(amountToAdd);
+      table.advanceRound();
+    } else {
+      // check
+      table.calledOrChecked.push(player);
+      table.advanceTurn();
+      if (table.calledOrChecked.length === table.players.length) {
+        table.advanceRound();
+      }
+    }
+    
     table.updateFigures();
-    table.advanceRound();
   });
-  $('#bet-raise').click(function(){
-    // raise
+  $('#bet-raise').click(function() {
     var player = table.atBat;
     var raiseAmount = parseInt($('#funds').val());
-    if (raiseAmount) {
-      console.log(raiseAmount)
-      var matchAmount = table.minimumBet-player.currentBet
-      console.log(matchAmount)
-      var amountToAdd = matchAmount+raiseAmount
-      console.log("total bet " + amountToAdd)
-      table.minimumBet = player.currentBet;
-      player.addToPot(amountToAdd);
-      table.updateFigures();
-      table.advanceTurn();
-    }
+    var matchAmount = table.minimumBet-player.currentBet
+    var amountToAdd = matchAmount+raiseAmount
+    player.currentBet += amountToAdd;
+    table.minimumBet = player.currentBet;
+    player.addToPot(amountToAdd);
+    $('#call-check').text("Call " + table.minimumBet)
+    table.calledOrChecked = [];
+    table.updateFigures();
+    table.advanceTurn();
   });
   $('#allIn').click(function(){
     var player = table.atBat;
     var raiseAmount = player.currentBet = table.minimumBet = player.bank
     player.addToPot(raiseAmount);
+    table.calledOrChecked = [];
     table.updateFigures();
     table.advanceTurn();
   });
@@ -251,7 +257,7 @@ $(document).ready(function() {
     winner.bank += table.pot;
     setTimeout(function(){
       table.startNewHand();
-    },1000)
+    },1500)
     player.holeCards[0].div.animate({
       'opacity': '0'
     },600);
@@ -293,6 +299,17 @@ window.addEventListener("resize", function() {
       });
     }
   });
+});
+
+window.addEventListener("input",function(event){
+  if (event.target.id === "funds") {
+    if ($('#bet-raise').text() === "Bet") {
+      $('#bet-raise').text("Bet " + $('#funds').val());
+    } else {
+      $('#bet-raise').text("Raise " + $('#funds').val());
+    }
+    
+  }
 });
 
 // Function just for testing purposes, will shuffle the deck, create a five card hand object.
