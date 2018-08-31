@@ -15,8 +15,11 @@
 }
 .playing-card {
   opacity: 0;
+  transform-origin: center bottom;
 }
-
+.retracted {
+  transform: scaleY(0.5);
+}
 body {
   background: rgb(241,241,233);
   background: linear-gradient(90deg, rgba(241,241,233,1) 11%, rgba(223,223,203,1) 50%, rgba(221,223,183,1) 89%);
@@ -90,6 +93,15 @@ body {
   height: 500px;
   z-index: 1;
   display: none;
+}
+.dealer-label {
+  color:rgb(22, 102, 16);
+  font-weight: bold;
+  font-family: 'Bevan', cursive;
+  text-shadow: 1px 1px 3px black;
+  z-index:10;
+  font-size: 1rem;
+  opacity: 0;
 }
 
 #cards {
