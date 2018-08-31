@@ -1,11 +1,7 @@
-var table = new Table();
-var startingBank = 1500;
-var handsPlayed = 0;
-
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
-  this.cardHTML = `<div class="playing-card" id="`+this.rank+`-of-`+this.suit+`"></div>`;
+  this.cardHTML = `<div class="playing-card protruding" id="`+this.rank+`-of-`+this.suit+`"></div>`;
   this.dimensions = {
     width: 225,
     height: 315
@@ -17,6 +13,7 @@ function Card(suit, rank) {
   this.place = function (targetElement,resize,faceDown,stayFlipped) {
     targetElement.html(this.cardHTML);
     this.div = $('#'+this.rank+`-of-`+this.suit);
+    
     if (resize) {
       this.dimensions.width = targetElement.width();
       this.dimensions.height = targetElement.height();
@@ -30,11 +27,12 @@ function Card(suit, rank) {
       'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
       'background-repeat': 'no-repeat',
       'width': this.dimensions.width + 'px',
-      'height': this.dimensions.height + 'px',
+      'height': this.dimensions.height + 'px'
     });
     this.div.animate({
       'opacity': '1'
-    },200)
+    },200);
+    this.div.delay(500).removeClass('protruding')
     this.div.click(function(){
       $(this).css({
         'transform':'scaleX(0)'
@@ -75,8 +73,8 @@ function Card(suit, rank) {
           
           self.div.css({
             'transform':'scaleX(0)'
-          })
-        },400);
+          });
+        },300);
         setTimeout(function(){
           self.div.css({
             'background-image': 'url(img/cardsheet.png)',
@@ -85,8 +83,8 @@ function Card(suit, rank) {
           });
           self.div.css({
             'transform':'scaleX(1)'
-          })
-        },580);
+          });
+        },480);
       }
     }
     table.dealtCards.push(this);
@@ -109,7 +107,6 @@ function Card(suit, rank) {
       });
     }
   }
-
   this.value = this.getValue();
 }
 function Hand(arr) {
@@ -160,7 +157,8 @@ function Player(human, name, bank) {
   this.bank = bank;
   this.holeCards = [];
   this.hand = undefined;
-  this.blind = this.currentBet = table.blinds.small.amount;
+  this.blind;
+  this.currentBet;
   if (!table.players.length) {
     this.slots = [
       $('#holeOne>.holeCard:first-child'),
@@ -176,6 +174,7 @@ function Player(human, name, bank) {
   }
   table.players.push(this);
   this.div = $('#player' + table.players.length);
+  this.statusLabel = $('#dealer-' + table.players.length)
 }
 Player.prototype.addToPot = function(amount) {
   this.changeBankAmountBy(-amount);
@@ -193,6 +192,7 @@ Player.prototype.amountLeft = function (action, amount) {
   return amountLeft;
 }
 Player.prototype.changeBankAmountBy = function (amount) {
+  console.log("adding " + amount)
   this.bank += amount;
 }
 
@@ -201,29 +201,28 @@ $(document).ready(function() {
     event.preventDefault();
     $(".sign-in").hide();
     $("#table").show();
-    var names = [($("#name1").val() || "Player 1" ),( $("#name2").val() || "Player 2" )];
+    var names = [($("#name1").val() || "Player 1" ), ( $("#name2").val() || "Player 2" )];
     table.initiateGame(names);
   });
   $('#call-check').click(function(){
+    console.log("min bet " + table.minimumBet)
     var player = table.atBat;
     var amountToAdd = 0;
+    table.calledOrChecked.push(player);
     if (table.minimumBet) {
       // call
       amountToAdd = table.minimumBet - player.currentBet;
       player.currentBet += amountToAdd;
       table.minimumBet = player.currentBet;
-      table.calledOrChecked.push(player);
       player.addToPot(amountToAdd);
       table.advanceRound();
     } else {
       // check
-      table.calledOrChecked.push(player);
       table.advanceTurn();
       if (table.calledOrChecked.length === table.players.length) {
         table.advanceRound();
       }
     }
-    
     table.updateFigures();
   });
   $('#bet-raise').click(function() {
@@ -241,8 +240,10 @@ $(document).ready(function() {
   });
   $('#allIn').click(function(){
     var player = table.atBat;
-    var raiseAmount = player.currentBet = table.minimumBet = player.bank
+    var raiseAmount = table.minimumBet = player.bank;
+    player.currentBet += raiseAmount;
     player.addToPot(raiseAmount);
+    $('#call-check').text("Call " + table.minimumBet)
     table.calledOrChecked = [];
     table.updateFigures();
     table.advanceTurn();
@@ -255,25 +256,11 @@ $(document).ready(function() {
       var winner = table.players[0]
     }
     winner.bank += table.pot;
+    player.holeCards[0].div.addClass('retracted');
+    player.holeCards[1].div.addClass('retracted');
     setTimeout(function(){
       table.startNewHand();
-    },1500)
-    player.holeCards[0].div.animate({
-      'opacity': '0'
-    },600);
-    player.holeCards[1].div.animate({
-      'opacity': '0'
-    },600);
-    if (table.players.indexOf(player) === 0) {
-      $('#playerOneName').animate({
-        'color': 'gray'
-      },800);
-    } else {
-      $('#playerTwoName').animate({
-        'color': 'gray'
-      },800);
-    }
-    // end game state
+    },2000);
   });
 });
 window.addEventListener("resize", function() {
@@ -313,15 +300,15 @@ window.addEventListener("input",function(event){
 });
 
 // Function just for testing purposes, will shuffle the deck, create a five card hand object.
-function fiveCardHand() {
-  var newDeck = table.shuffle();
-  var cards = [];
-  for (i = 0; i <= 4; i++) {
-    cards.push(newDeck.pop());
-  }
-  var hand = new Hand(cards);
-  return hand;
-}
+// function fiveCardHand() {
+//   var newDeck = table.shuffle();
+//   var cards = [];
+//   for (i = 0; i <= 4; i++) {
+//     cards.push(newDeck.pop());
+//   }
+//   var hand = new Hand(cards);
+//   return hand;
+// }
 // Pre-built common hands for testing purposes.
 
 // card1 = new Card("diamonds", "ace");
@@ -396,16 +383,16 @@ function fiveCardHand() {
 // reallyGoodCards = [card1, card5, card2, card4, card3];
 // twoPair = new Hand(reallyGoodCards);
 //
-card1 = new Card("diamonds", "ace");
-card2 = new Card("clubs", "jack");
-card3 = new Card("diamonds", "king");
-card4 = new Card("hearts", "ace");
-card5 = new Card("hearts", "three");
-reallyGoodCards = [card1, card2, card3, card4, card5];
-pair = new Hand(reallyGoodCards);
-//
-//
-//
-card6 = new Card("spades", "jack");
-card7 = new Card("diamonds", "four");
-sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
+// card1 = new Card("diamonds", "ace");
+// card2 = new Card("clubs", "jack");
+// card3 = new Card("diamonds", "king");
+// card4 = new Card("hearts", "ace");
+// card5 = new Card("hearts", "three");
+// reallyGoodCards = [card1, card2, card3, card4, card5];
+// pair = new Hand(reallyGoodCards);
+// //
+// //
+// //
+// card6 = new Card("spades", "jack");
+// card7 = new Card("diamonds", "four");
+// sevenCardArr = [card1, card2, card3, card4, card5, card6, card7]
