@@ -27,64 +27,63 @@
           <label for="name1">Player 1:</label>
           <input placeholder="Player 1" class="enterName" id="name1">
         </div>
-          <br />
+        <br />
         <div class="nameDiv">
           <label for="name2">Player 2:</label>
           <input placeholder="Player 2"  class="enterName" id="name2">
         </div>
-          <br />
-          <button type="submit" class="action" id="name-btn">Submit</button>
+        <br />
+        <button type="submit" class="action" id="name-btn">Submit</button>
       </form>
     </div>
       <div id="table">
-      <div id="cards">
-        <div class="hole" id="holeOne">
-          <div class="holeCard"></div>
-          <div class="holeCard"></div>
+        <div id="cards">
+          <div class="hole" id="holeOne">
+            <div class="holeCard"></div>
+            <div class="holeCard"></div>
+          </div>
+          <div id="community">
+            <div class="commCard"></div>
+            <div class="commCard"></div>
+            <div class="commCard"></div>
+            <div class="commCard"></div>
+            <div class="commCard"></div>
+          </div>
+          <div class="hole" id="holeTwo">
+            <div class="holeCard"></div>
+            <div class="holeCard"></div>
+          </div>
         </div>
-        <div id="community">
-          <div class="commCard"></div>
-          <div class="commCard"></div>
-          <div class="commCard"></div>
-          <div class="commCard"></div>
-          <div class="commCard"></div>
+        <div id="pot">Pot: 100</div>
+        <div id="playerAlign">
+          <div class="player" id="player1">
+            <p><span id="playerOneName" class="box"></span></p>
+            <p><span id="playerOneBank" class="box"></span></p>
+            <p>Bet: <span id="playerOneBet" class="box">100</span></p>
+          </div>
+          <div class="player" id="player2">
+            <p><span id="playerTwoName" class="box"></span></p>
+            <p><span id="playerTwoBank" class="box"></span></p>
+            <p>Bet: <span id="playerTwoBet" class="box">100</span></p>
+          </div>
         </div>
-        <div class="hole" id="holeTwo">
-          <div class="holeCard"></div>
-          <div class="holeCard"></div>
+          <div id="boardWrite">
+            <p><span class="write">No Limit Hold'Em</span></p>
+            <p><span class="write">Blinds 40/80</span></p>
+            <p><span class="write">Buy-in 1500</span></p>
+          </div>
+          <div id="boardWriteMobile">
+            <p><span class="write">No Limit Hold'Em - Blinds 40/80 - BuyIn 1500</span></p>
+          </div>
+
+          <div class="actionButtons">
+            <button class="action" id="call-check"></button>
+            <button class="action" id="bet-raise"></button>
+            <input type="number" id="funds">
+            <button class="action" id="allIn">All In</button>
+            <button class="action" id="fold">Fold</button>
+          </div>
         </div>
       </div>
-      <div id="pot">Pot: 100</div>
-      <div id="playerAlign">
-        <div class="player" id="player1">
-          <p><span id="playerOneName" class="box"></span></p>
-          <p><span id="playerOneBank" class="box"></span></p>
-          <p><span id="playerOneBet" class="box">Bet: 100</span></p>
-        </div>
-        <div class="player" id="player2">
-          <p><span id="playerTwoName" class="box"></span></p>
-          <p><span id="playerTwoBank" class="box"></span></p>
-          <p><span id="playerTwoBet" class="box">Bet: 100</span></p>
-        </div>
-      </div>
-         <div id="boardWrite">
-          <p><span class="write">No Limit Hold'Em</span></p>
-          <p><span class="write">Blinds 40/80</span></p>
-          <p><span class="write">Buy-in 1500</span></p>
-        </div>
-        <div id="boardWriteMobile">
-          <p><span class="write">No Limit Hold'Em - Blinds 40/80 - BuyIn 1500</span></p>
-        </div>
-
-         <div class="actionButtons">
-          <!-- <button type="submit" id="funds-btn">Submit</button> -->
-          <button class="action" id="call-check"></button>
-          <button class="action" id="bet-raise"></button>
-          <input type="number" id="funds">
-
-          <button class="action" id="allIn">All In</button>
-          <button class="action" id="fold">Fold</button>
-        </div>
-    </div>
   </body>
 </html>
