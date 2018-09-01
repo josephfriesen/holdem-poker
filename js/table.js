@@ -475,6 +475,7 @@ Table.prototype.startNewHand = function() {
   $('.holeCard').removeClass('protruding')
   $('#funds').val(this.bigBlind);
   $('.playing-card').remove();
+  $('#space-for-next').fadeOut();
   console.log("deck after hand")
   console.log(this.deck)
   this.deck = [];
@@ -716,6 +717,9 @@ Table.prototype.beginShowdown = function() {
     winner.addToPot(-this.pot);
     this.setDealer(winner);
     winner.statusLabel.addClass("winning-label")
+    winner.div.css({
+      'border': '5% solid green'
+    })
     this.players[0].hole.removeClass('at-bat');
     this.players[1].hole.removeClass('at-bat');
     this.players[0].holeCards[0].toggleFlip()
@@ -723,11 +727,8 @@ Table.prototype.beginShowdown = function() {
     this.players[1].holeCards[0].toggleFlip()
     this.players[1].holeCards[1].toggleFlip()
     $('.holeCard').addClass('protruding')
+    $('#space-for-next').fadeIn();
     var self = this;
-    setTimeout(function(){
-      alert(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
-      self.startNewHand();
-    },600)
     console.log(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
   }
 }

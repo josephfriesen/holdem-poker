@@ -10,10 +10,30 @@ function Card(suit, rank) {
   this.getValue = function(){
     return table.ranks.slice().reverse().indexOf(this.rank);
   }
+  this.animateFlipUp = function() {
+    var self = this;
+    var pos = {};
+    pos.left = table.ranks.indexOf(self.rank) * self.dimensions.width;
+    pos.top = table.suits.indexOf(self.suit) * self.dimensions.height;
+    setTimeout(function(){
+      self.div.css({
+        'transform':'scaleX(0)'
+      });
+    },300);
+    setTimeout(function(){
+      self.div.css({
+        'background-image': 'url(img/cardsheet.png)',
+        'background-size': (self.dimensions.width*13)+'px '+(self.dimensions.height*4)+'px',
+        'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
+      });
+      self.div.css({
+        'transform':'scaleX(1)'
+      });
+    },480);
+  }
   this.place = function (targetElement,resize,faceDown,stayFlipped) {
     targetElement.html(this.cardHTML);
     this.div = $('#'+this.rank+`-of-`+this.suit);
-    
     if (resize) {
       this.dimensions.width = targetElement.width();
       this.dimensions.height = targetElement.height();
@@ -66,25 +86,7 @@ function Card(suit, rank) {
       this.toggleFlip();
       var self = this;
       if (!stayFlipped) {
-        setTimeout(function(){
-          var pos = {};
-          pos.left = table.ranks.indexOf(self.rank) * self.dimensions.width;
-          pos.top = table.suits.indexOf(self.suit) * self.dimensions.height;
-          
-          self.div.css({
-            'transform':'scaleX(0)'
-          });
-        },300);
-        setTimeout(function(){
-          self.div.css({
-            'background-image': 'url(img/cardsheet.png)',
-            'background-size': (self.dimensions.width*13)+'px '+(self.dimensions.height*4)+'px',
-            'background-position': '-' + pos.left + 'px -' + pos.top + 'px'
-          });
-          self.div.css({
-            'transform':'scaleX(1)'
-          });
-        },480);
+        self.animateFlipUp()
       }
     }
     table.dealtCards.push(this);
@@ -260,7 +262,7 @@ $(document).ready(function() {
     player.holeCards[1].div.addClass('retracted');
     setTimeout(function(){
       table.startNewHand();
-    },2000);
+    },1200);
   });
 });
 window.addEventListener("resize", function() {
@@ -287,7 +289,14 @@ window.addEventListener("resize", function() {
     }
   });
 });
-
+document.onkeydown = function(event) {
+  event.preventDefault();
+  if (event.keyCode == 32 && $('#space-for-next').css('display') !== 'none') {
+    table.startNewHand()
+    console.log($('#space-for-next').css('opacity'))
+  }
+  // arrow keys for swipe actions?
+};
 window.addEventListener("input",function(event){
   if (event.target.id === "funds") {
     if ($('#bet-raise').text() === "Bet") {

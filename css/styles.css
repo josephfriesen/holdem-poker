@@ -106,6 +106,7 @@ body {
 .winning-label {
   color:white;
   font-family: 'Bevan', cursive;
+  font-weight: normal;
   text-shadow: 1px 1px 3px black;
   z-index:10;
   font-size: 1rem;
@@ -204,7 +205,18 @@ margin-right: 60px;
   float: left;
 }
 
-
+#space-for-next {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #F1D804;
+  /* line-height: 12px; */
+  letter-spacing: 2.1px;
+  font-family: 'Sawarabi Mincho', sans-serif;
+  margin-top: 1.5%;
+  display: none;
+}
 #boardWrite {
   position: relative;
   font-size: 24px;
