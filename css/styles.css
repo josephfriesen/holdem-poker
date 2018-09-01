@@ -91,6 +91,12 @@ body {
   z-index: 1;
   display: none;
 }
+/* .highlighted {
+  
+} */
+.dimmed {
+  opacity: 0.3 !important;
+}
 .dealer-label {
   color:rgb(22, 102, 16);
   font-weight: bold;
@@ -217,6 +223,18 @@ margin-right: 60px;
   margin-top: 1.5%;
   display: none;
 }
+#winner-message {
+  position: absolute;
+  width: 100%;
+  color: white;
+  text-align: center;
+  font-family: 'Bevan', cursive;
+  text-shadow: 1px 1px 3px black;
+  z-index:10;
+  margin-top: 12%;
+  font-size: 1.3rem;
+  display: none;
+}
 #boardWrite {
   position: relative;
   font-size: 24px;
@@ -235,6 +253,18 @@ margin-right: 60px;
 
 button {
   cursor: pointer;
+  outline: none;
+  border: outset rgb(163,153,153);
+  transition: transform 24ms ease;
+}
+button:disabled {
+  cursor: default;
+  color:gray;
+  border-style: outset !important;
+}
+button:active {
+  border: inset rgb(153, 153, 153);
+  transform: scale(0.97);
 }
 
 .actionButtons {
@@ -245,7 +275,7 @@ button {
   border: 2px solid yellow;
   padding: 5px;
   width: 700px;
-  height: 40px;
+  /* height: 40px; */
 }
 
 .action {
