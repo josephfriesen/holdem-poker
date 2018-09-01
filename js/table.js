@@ -30,6 +30,17 @@ function Table() {
   this.ranks = [
     'ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king'
   ];
+  this.fullHandNames = {
+    royalFlush: "a Royal Flush",
+    straightFlush: "a Straight Flush",
+    fourOfAKind: "Four of a Kind",
+    fullHouse: "a Full House",
+    flush: "a Flush",
+    straight: "a Straight",
+    threeOfAKind: "Three of a Kind",
+    twoPair: "Two Pair",
+    pair: "a Pair",
+  }
   this.handEvaluators = {
     royalFlush: {
       evaluate: function(hand){
@@ -421,6 +432,7 @@ Table.prototype.refresh = function() {
   this.deck = [];
   this.board = [];
   this.roundIndex = 0;
+  this.minimumBet = this.bigBlind
 }
 Table.prototype.initiateGame = function(playerNameArray){
   this.slots = [
@@ -475,13 +487,14 @@ Table.prototype.startNewHand = function() {
   $('.holeCard').removeClass('protruding')
   $('#funds').val(this.bigBlind);
   $('.playing-card').remove();
-  console.log("deck after hand")
-  console.log(this.deck)
+  $('#space-for-next').fadeOut();
+  $('#winner-message').fadeOut();
+  $('button').prop("disabled", false);
+  $('#call-check').text("Call " + this.minimumBet);
+  $('#bet-raise').text("Raise " + this.bigBlind);
   this.deck = [];
   this.refresh();
   this.createDeck();
-  console.log("deck")
-  console.log(this.deck)
   this.shuffle();
   this.advanceRound(); // calls table.updateFigures
 }
@@ -535,7 +548,7 @@ Table.prototype.advanceTurn = function() {
 }
 Table.prototype.deal = function(amount) {
   var self = this;
-  if (amount === 2) {
+  if (amount === 2) { // hole
     for (var p=0; p<this.players.length; p++) {
       var player = this.players[p];
       for (var i=0; i<amount; i++) {
@@ -544,54 +557,59 @@ Table.prototype.deal = function(amount) {
         newCard.place(player.slots[i],true,true,true);
       }
     };
-  } else { // 3 or 1
-    var startAt = this.communityCards.length;
-    for (var i=0; i<amount; i++) {
+  } else { // community
+    $('button').prop("disabled", true);
+    if (amount === 3) {
       var newCard = self.deck.shift();
       this.communityCards.push(newCard);
-      newCard.place(this.slots[startAt+i],true,true);
-    }
+      newCard.place(this.slots[0],true,true);
+      setTimeout(function(){
+        var newCard = self.deck.shift();
+        self.communityCards.push(newCard);
+        newCard.place(self.slots[1],true,true);
+      },480);
+      setTimeout(function(){
+        var newCard = self.deck.shift();
+        self.communityCards.push(newCard);
+        newCard.place(self.slots[2],true,true);
+      },960);
+      setTimeout(function(){
+        $('button').prop("disabled", false);
+      },1440)
+    } else {
+      var startAt = this.communityCards.length;
+      console.log(this.deck)
+      var newCard = this.deck.shift();
+      this.communityCards.push(newCard);
+      newCard.place(this.slots[startAt],true,true);
+      setTimeout(function(){
+        $('button').prop("disabled", false);
+      },480)
+    }    
   }
-
 }
 Table.prototype.advanceRound = function() {
-  /** 
-   * 
-   * -one card is 'burned' before flop, turn, river cards are dealt
-   * -player to left of dealer always goes first from flop on
-   * 
-   * preFlop, no cards dealt - left of dealer bets small blind, next one left bets big blind
-   * preFlop - players dealt 2 cards at a time, starting with person at dealer's left
-   *           player to left of big blind goes first
-   * flop - 3 cards dealt to community 
-   *        - player left of dealer first
-   * turn - 1 cards dealt to community
-   *        - player left of dealer first
-   * river - 1 cards dealt to community 
-   *        - player left of dealer first
-   */
-  
   this.roundIndex++;
   var roundName = this.rounds[this.roundIndex];
   if (!this.rounds[this.roundIndex]) {
-    console.log("no more rounds to advance to")
+    // console.log("no more rounds to advance to")
     // table.beginShowdown should not allow this to be reached
     return;
   } else if (roundName === "preFlop") {
-    console.log("play 1 " + this.players[0].blind)
-    console.log("play 2 " + this.players[1].blind)
+    // console.log("play 1 " + this.players[0].blind)
+    // console.log("play 2 " + this.players[1].blind)
     this.players[0].addToPot(this.players[0].blind); // compulsory bets
     this.players[1].addToPot(this.players[1].blind);
     this.deal(2); // hole cards
-    $('#call-check').text("Call  " + table.minimumBet);
-    $('#bet-raise').text("Raise  " + table.bigBlind);
+    $('#call-check').text("Call " + table.minimumBet);
+    $('#bet-raise').text("Raise " + table.bigBlind);
     this.updateFigures();
   } else if (roundName === "flop") {
     this.deal(3);
-    console.log("DEAL")
-    console.log(this.dealer)
-    console.log("ATBAT")
-    console.log(this.atBat)
+    // console.log("DEAL")
+    // console.log(this.dealer)
+    // console.log("ATBAT")
+    // console.log(this.atBat)
     $('#call-check').text("Check");
     $('#bet-raise').text("Bet " + table.bigBlind);
   } else if (roundName === "turn") {
@@ -695,7 +713,6 @@ Table.prototype.findWinner = function (player1, player2) {
   }
 }
 Table.prototype.beginShowdown = function() {
-  console.log("------- SHOWDOWN----------")
   var arr1 = this.players[0].holeCards.concat(this.communityCards);
   var handArr1 = this.getHands(arr1);
   this.players[0].hand = this.findBestHand(handArr1);
@@ -716,24 +733,31 @@ Table.prototype.beginShowdown = function() {
     winner.addToPot(-this.pot);
     this.setDealer(winner);
     winner.statusLabel.addClass("winning-label")
+    $('#winner-message').text(winner.name + " wins with " + table.fullHandNames[winner.hand.handValue]);
+    $('#winner-message').fadeIn();
+    $('button').prop("disabled", true);
     this.players[0].hole.removeClass('at-bat');
     this.players[1].hole.removeClass('at-bat');
-    this.players[0].holeCards[0].toggleFlip()
-    this.players[0].holeCards[1].toggleFlip()
-    this.players[1].holeCards[0].toggleFlip()
-    this.players[1].holeCards[1].toggleFlip()
-    $('.holeCard').addClass('protruding')
-    var self = this;
+    this.players[0].holeCards[0].animateFlip("front");
+    this.players[0].holeCards[1].animateFlip("front");
+    this.players[1].holeCards[0].animateFlip("front");
+    this.players[1].holeCards[1].animateFlip("front");
+    var self = this
     setTimeout(function(){
-      alert(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
-      self.startNewHand();
-    },600)
-    console.log(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
+      self.dealtCards.forEach(function(card,i){
+        card.div.addClass('dimmed')
+      });
+      winner.hand.cards.forEach(function(card,i) {
+        card.div.removeClass('dimmed')
+      });
+    },180)
+    $('.holeCard').addClass('protruding');
+    $('#space-for-next').fadeIn();
+    var self = this;
+    console.log("loser hand: " + loser.hand.handValue);
   }
 }
 Table.prototype.updateFigures = function() {
-  console.log("update")
-  console.log(this.players[0].bank)
   $('#pot').text("Pot: " + this.pot);
   $('#playerOneBank').text(this.players[0].bank);
   $('#playerTwoBank').text(this.players[1].bank);
