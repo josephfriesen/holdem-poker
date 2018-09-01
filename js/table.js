@@ -1,4 +1,8 @@
+var table = new Table();
+var lobby = {};
 function Table() {
+  this.handsPlayed = 0;
+  this.startingBank = 1500;
   this.players = [];
   this.calledOrChecked = [];
   this.communityCards = [];
@@ -11,19 +15,10 @@ function Table() {
     "river",
     "showdown"
   ];
-  this.blinds = {
-    small: {
-      amount: 40,
-      player: undefined
-    },
-    big: {
-      amount: 80,
-      player: undefined
-    }
-  };
+  this.bigBlind = 80;
   this.dealer;
   this.atBat;
-  this.minimumBet = this.blinds.big.amount;
+  this.minimumBet = this.bigBlind;
   this.round = "";
   this.pot = 0;
   this.suits = [
@@ -413,54 +408,87 @@ function Table() {
       }
     }
   }
+  
   this.handKeys = Object.keys(this.handEvaluators);
   this.deck = [];
   this.board = [];
   this.roundIndex = 0;
 };
+Table.prototype.refresh = function() {
+  this.calledOrChecked = [];
+  this.communityCards = [];
+  this.dealtCards = [];
+  this.deck = [];
+  this.board = [];
+  this.roundIndex = 0;
+}
 Table.prototype.initiateGame = function(playerNameArray){
   this.slots = [
     $('.commCard:first-child'),
     $('.commCard:nth-child(2)'),
     $('.commCard:nth-child(3)'),
     $('.commCard:nth-child(4)'),
-    $('.commCard:nth-child(5)'),
+    $('.commCard:nth-child(5)')
   ];
   playerNameArray.forEach(function(name,i){
-    new Player(true, name, startingBank);
+    new Player(true, name, this.startingBank);
     if (i===0) {
       $('#playerOneName').text(name);
     } else {
       $('#playerTwoName').text(name);
     }
-  })
-  this.dealer = this.players[((handsPlayed+1) % 2)];
-  this.dealer.blind = this.dealer.currentBet = this.blinds.big.amount;
+  },this);
+  this.setDealer(this.players[(this.handsPlayed % 2)]);
+  this.atBat = this.players[((this.handsPlayed+1) % 2)];
+  this.dealer.blind = this.dealer.currentBet = this.bigBlind;
+  this.atBat.blind = this.atBat.currentBet = this.bigBlind/2;
+  this.dealer.hole.removeClass('at-bat');
+  this.atBat.hole.addClass('at-bat');
+  $('#funds').val(this.bigBlind);
   this.createDeck();
   this.shuffle();
   this.advanceRound();
-  this.advanceTurn();
+}
+Table.prototype.setDealer = function(newDealer) {
+  this.dealer = newDealer;
+  var playerNum = this.players.indexOf(this.dealer)+1;
+  $('.dealer-label').css({
+    'opacity': '0'
+  })
+  $('#dealer-'+playerNum).animate({
+    'opacity': '1'
+  },300);
 }
 Table.prototype.startNewHand = function() {
+  this.players.forEach(function(player,i) {
+    player.holeCards = [];
+    player.hand = undefined;
+  });
+  this.handsPlayed++;
+  this.setDealer(this.players[(this.handsPlayed % 2)]);
+  this.atBat = this.players[((this.handsPlayed+1) % 2)];
+  this.dealer.blind = this.dealer.currentBet = this.bigBlind;
+  this.atBat.blind = this.atBat.currentBet = (this.bigBlind/2);
+  this.dealer.statusLabel.removeClass('winning-label')
+  this.dealer.hole.removeClass('at-bat');
+  this.atBat.hole.addClass('at-bat');
+  $('.holeCard').removeClass('protruding')
+  $('#funds').val(this.bigBlind);
   $('.playing-card').remove();
-  this.dealer = this.players[((handsPlayed+1) % 2)];
-  this.dealer.blind = this.dealer.currentBet = this.blinds.big.amount;
-  this.communityCards = []
+  console.log("deck after hand")
+  console.log(this.deck)
   this.deck = [];
+  this.refresh();
   this.createDeck();
+  console.log("deck")
+  console.log(this.deck)
   this.shuffle();
-  this.advanceTurn();
-  this.roundIndex = 0;
-  this.advanceRound();
-  this.minimumBet = this.blinds.big.amount;
-  this.pot = 0;
-  this.calledOrChecked = [];
-  this.updateFigures();
+  this.advanceRound(); // calls table.updateFigures
 }
 Table.prototype.createDeck = function(){
   this.suits.forEach(function(suit,i){
     this.ranks.forEach(function(rank,j){
-      this.deck.push(new Card(suit,rank) )
+      this.deck.push(new Card(suit,rank));
     },this)
   },this)
 }
@@ -500,10 +528,9 @@ Table.prototype.advanceTurn = function() {
   this.atBat = this.players[playerIndex];
   $('.hole').removeClass('at-bat');
   this.atBat.hole.addClass('at-bat');
-  $('#funds').val(this.blinds.big.amount);
+  $('#funds').val(this.bigBlind);
   if (this.minimumBet) {
-    $('#bet-raise').text("Raise " + this.blinds.big.amount);
-    
+    $('#bet-raise').text("Raise " + this.bigBlind);
   }
 }
 Table.prototype.deal = function(amount) {
@@ -528,39 +555,53 @@ Table.prototype.deal = function(amount) {
 
 }
 Table.prototype.advanceRound = function() {
-  table.roundIndex++;
-  var roundName = table.rounds[table.roundIndex];
-  if (!table.rounds[table.roundIndex]) {
+  /** 
+   * 
+   * -one card is 'burned' before flop, turn, river cards are dealt
+   * -player to left of dealer always goes first from flop on
+   * 
+   * preFlop, no cards dealt - left of dealer bets small blind, next one left bets big blind
+   * preFlop - players dealt 2 cards at a time, starting with person at dealer's left
+   *           player to left of big blind goes first
+   * flop - 3 cards dealt to community 
+   *        - player left of dealer first
+   * turn - 1 cards dealt to community
+   *        - player left of dealer first
+   * river - 1 cards dealt to community 
+   *        - player left of dealer first
+   */
+  
+  this.roundIndex++;
+  var roundName = this.rounds[this.roundIndex];
+  if (!this.rounds[this.roundIndex]) {
     console.log("no more rounds to advance to")
     // table.beginShowdown should not allow this to be reached
     return;
   } else if (roundName === "preFlop") {
-    if (this.players.length === 2) {
-      this.players[0].addToPot(this.players[0].blind);
-      this.players[1].addToPot(this.players[1].blind);
-      this.updateFigures();
-      this.deal(2);
-      $('#call-check').text("Call  " + table.minimumBet);
-      $('#bet-raise').text("Raise  " + table.blinds.big.amount);
-    }
+    console.log("play 1 " + this.players[0].blind)
+    console.log("play 2 " + this.players[1].blind)
+    this.players[0].addToPot(this.players[0].blind); // compulsory bets
+    this.players[1].addToPot(this.players[1].blind);
+    this.deal(2); // hole cards
+    $('#call-check').text("Call  " + table.minimumBet);
+    $('#bet-raise').text("Raise  " + table.bigBlind);
+    this.updateFigures();
   } else if (roundName === "flop") {
-    if (this.dealer === this.players[0]) {
-      // whose turn?
-    } else {
-
-    }
-    $('#call-check').text("Check");
-    $('#bet-raise').text("Bet " + table.blinds.big.amount);
     this.deal(3);
-
+    console.log("DEAL")
+    console.log(this.dealer)
+    console.log("ATBAT")
+    console.log(this.atBat)
+    $('#call-check').text("Check");
+    $('#bet-raise').text("Bet " + table.bigBlind);
   } else if (roundName === "turn") {
     this.deal(1);
     $('#call-check').text("Check");
-    $('#bet-raise').text("Bet " + table.blinds.big.amount);
+    $('#bet-raise').text("Bet " + table.bigBlind);
   } else if (roundName === "river") {
     this.deal(1);
     $('#call-check').text("Check");
-    $('#bet-raise').text("Bet " + table.blinds.big.amount);
+    $('#bet-raise').text("Bet " + table.bigBlind);
   } else if (roundName === "showdown") {
     this.beginShowdown()
   }
@@ -568,7 +609,7 @@ Table.prototype.advanceRound = function() {
     this.players[0].currentBet = 0;
     this.players[1].currentBet = 0;
     this.minimumBet = 0;
-    $('#funds').val(this.blinds.big.amount)
+    $('#funds').val(this.bigBlind)
     // table.updateFigures();
   }
   table.calledOrChecked = [];
@@ -655,13 +696,13 @@ Table.prototype.findWinner = function (player1, player2) {
 }
 Table.prototype.beginShowdown = function() {
   console.log("------- SHOWDOWN----------")
-  var arr1 = table.players[0].holeCards.concat(table.communityCards);
-  var handArr1 = table.getHands(arr1);
-  table.players[0].hand = table.findBestHand(handArr1);
-  var arr2 = table.players[1].holeCards.concat(table.communityCards);
-  var handArr2 = table.getHands(arr2);
-  table.players[1].hand = table.findBestHand(handArr2);
-  var winner = table.findWinner(table.players[0], table.players[1]);
+  var arr1 = this.players[0].holeCards.concat(this.communityCards);
+  var handArr1 = this.getHands(arr1);
+  this.players[0].hand = this.findBestHand(handArr1);
+  var arr2 = this.players[1].holeCards.concat(this.communityCards);
+  var handArr2 = this.getHands(arr2);
+  this.players[1].hand = this.findBestHand(handArr2);
+  var winner = this.findWinner(this.players[0], this.players[1]);
   if (winner === "tie") {
     console.log("IT'S A TIE >>>>>>>>>>>>>>>>>>>>>>>>>>")
     // tie stuff
@@ -673,20 +714,26 @@ Table.prototype.beginShowdown = function() {
     }
     var winnings = this.pot;
     winner.addToPot(-this.pot);
-    table.players[0].hole.removeClass('at-bat');
-    table.players[1].hole.removeClass('at-bat');
-    table.players[0].holeCards[0].toggleFlip()
-    table.players[0].holeCards[1].toggleFlip()
-    table.players[1].holeCards[0].toggleFlip()
-    table.players[1].holeCards[1].toggleFlip()
-    $('.holeCard').css({
-      'transform': 'translateY(-50%)'
-    },2000)
+    this.setDealer(winner);
+    winner.statusLabel.addClass("winning-label")
+    this.players[0].hole.removeClass('at-bat');
+    this.players[1].hole.removeClass('at-bat');
+    this.players[0].holeCards[0].toggleFlip()
+    this.players[0].holeCards[1].toggleFlip()
+    this.players[1].holeCards[0].toggleFlip()
+    this.players[1].holeCards[1].toggleFlip()
+    $('.holeCard').addClass('protruding')
+    var self = this;
+    setTimeout(function(){
+      alert(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
+      self.startNewHand();
+    },600)
     console.log(winner.name + "'s " + winner.hand.handValue + " WINS " + winnings + "!\n Sure beats " + loser.name + "'s lousy " + loser.hand.handValue + ".");
   }
 }
 Table.prototype.updateFigures = function() {
   console.log("update")
+  console.log(this.players[0].bank)
   $('#pot').text("Pot: " + this.pot);
   $('#playerOneBank').text(this.players[0].bank);
   $('#playerTwoBank').text(this.players[1].bank);
