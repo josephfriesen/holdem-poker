@@ -124,6 +124,7 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: ease;
   animation-play-state: paused;
+  display:none;
 }
 .space-flip {
   transform: scale(0.75)
@@ -135,7 +136,7 @@ body {
   transform: scale(1);
 }
 .space-next:after {
-  content: "PRESS SPACE FOR NEXT HAND" !important;
+  content: "PRESS SPACE FOR NEXT HAND";
 }
 .dimmed {
   opacity: 0.3 !important;
@@ -185,14 +186,13 @@ body {
   font-weight: normal;
   text-shadow: 1px 1px 3px black;
   top: 150px;
+  transition: transform 800ms ease;
 }
 #player-1-action {
   left: 190px;
-  transition: transform 800ms ease;
 }
 #player-2-action {
   right: 190px;
-  transition: transform 800ms ease;
 }
 .holeCard {
   flex: 1;
@@ -221,7 +221,7 @@ body {
   height: 100px;
   margin-left: 150px;
   float:left;
-  /* display: flex; */
+  display: flex;
 }
 
 #pot, #bet {
@@ -302,7 +302,7 @@ margin-right: 60px;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 34%;
+  margin-top: 33%;
   font-size: 0.9rem;
   opacity: 0.75;
   /* display: none; */
@@ -341,6 +341,9 @@ button.action:active {
   left:8px;
   background: lightgrey;
   display:none;
+}
+#new-hand {
+  display: none;
 }
 .actionButtons {
   border: outset rgb(163,153,153);
