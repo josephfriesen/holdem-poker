@@ -1,8 +1,12 @@
 * {
   transition: box-shadow 500ms ease, transform 180ms ease;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none;
 }
 .at-bat {
-  box-shadow: 0px 0px 60px 10px yellow;
+  box-sizing: border-box;
   animation-name: pulse;
   animation-duration: 1000ms;
   animation-iteration-count: infinite;
@@ -10,12 +14,23 @@
 }
 @keyframes pulse {
   50% {
-    box-shadow: 0px 0px 40px 8px yellow;
+    box-shadow: 0px 0px 24px 3px yellow;
+    color: yellow;
   }
 }
+.player-bet {
+  font-family: 'Bevan', cursive;
+}
+#playerOneBet, #playerTwoBet {
+  font-size: 1.2rem;
+}
 .playing-card {
+  box-sizing: border-box;
   opacity: 0;
+  box-shadow: 0px 0px 3px rgb(49, 49, 49);
+  border-radius: 8%;
   transform-origin: center bottom;
+  z-index: 12;
 }
 body {
   background: rgb(241,241,233);
@@ -23,6 +38,7 @@ body {
   font-family: Helvetica;
   margin: 0;
   padding: 0;
+  overflow:hidden;
 }
 
 .header {
@@ -35,7 +51,7 @@ body {
   -webkit-margin-after: 0;
   -webkit-margin-before: 0;
   padding: 8px;
-  font-family: Helvetica;
+  font-family: 'Bevan', cursive;
   color: rgb(72, 72, 72);
   font-size: 16px;
   z-index: 1;
@@ -94,6 +110,34 @@ body {
 /* .highlighted {
   
 } */
+#top-message {
+  position: absolute;
+  margin-top: 1.5%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #F1D804;
+  letter-spacing: 2.1px;
+  font-family: 'Sawarabi Mincho', sans-serif;
+  animation-name: throb;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+  animation-play-state: paused;
+  display:none;
+}
+.space-flip {
+  transform: scale(0.75)
+}
+.space-flip:after {
+  content: "HOLD SPACE TO REVEAL CARDS" !important;
+}
+.space-next {
+  transform: scale(1);
+}
+.space-next:after {
+  content: "PRESS SPACE FOR NEXT HAND";
+}
 .dimmed {
   opacity: 0.3 !important;
 }
@@ -105,11 +149,12 @@ body {
   z-index:10;
   font-size: 1rem;
   opacity: 0;
+  transition: all 200ms ease;
 }
 .dealer-label:after {
   content: "D" !important;
 }
-.winning-label {
+.winner-label, .fold-label {
   color:white;
   font-family: 'Bevan', cursive;
   font-weight: normal;
@@ -117,19 +162,37 @@ body {
   z-index:10;
   font-size: 1rem;
 }
-.winning-label:after {
+.winner-label:after {
   content: "WINNER" !important;
 }
+.fold-label:after {
+  content: "FOLD"
+}
 .retracted {
-  transform: scaleY(0.5);
+  transform: scaleY(0.5) !important;
 }
 .protruding {
-  transform: translateY(-50%);
+  transform: translateY(-75%) !important;
 }
 #cards {
   width: 960px;
   height: 100px;
   margin-top: 160px;
+}
+.player-action {
+  position: absolute;
+  color:white;
+  font-family: 'Bevan', cursive;
+  font-weight: normal;
+  text-shadow: 1px 1px 3px black;
+  top: 150px;
+  transition: transform 800ms ease;
+}
+#player-1-action {
+  left: 190px;
+}
+#player-2-action {
+  right: 190px;
 }
 .holeCard {
   flex: 1;
@@ -139,7 +202,6 @@ body {
 
 .hole {
   position: relative;
-  background: rgba(0, 0, 0, 0.4);
   width: 120px;
   height: 100px;
   z-index: 4;
@@ -152,7 +214,9 @@ body {
 }
 
 #community {
-  background: rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  /* background: rgba(0, 0, 0, 0.4); */
+  border: 2px solid darkgreen;
   width: 300px;
   height: 100px;
   margin-left: 150px;
@@ -166,7 +230,6 @@ body {
   font-size: 20px;
   color: #F1D804;
 }
-
 .commCard {
   flex: 1;
   /* border: 1px solid yellow; */
@@ -210,30 +273,39 @@ margin-right: 60px;
   background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
   float: left;
 }
-
-#space-for-next {
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  font-size: 1.5rem;
-  color: #F1D804;
-  /* line-height: 12px; */
-  letter-spacing: 2.1px;
-  font-family: 'Sawarabi Mincho', sans-serif;
-  margin-top: 1.5%;
-  display: none;
+@keyframes throb {
+  50% {
+    text-shadow: 0px 0px 12px rgb(136, 136, 136)
+  }
+}
+.player-action {
+  opacity: 0;
+  transition: all 500ms ease;
 }
 #winner-message {
   position: absolute;
-  width: 100%;
+  width: 100vw;
   color: white;
   text-align: center;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 12%;
+  margin-top: 8%;
   font-size: 1.3rem;
   display: none;
+}
+#loser-message {
+  position: absolute;
+  width: 100vw;
+  color: white;
+  text-align: center;
+  font-family: 'Bevan', cursive;
+  text-shadow: 1px 1px 3px black;
+  z-index:10;
+  margin-top: 33%;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  /* display: none; */
 }
 #boardWrite {
   position: relative;
@@ -250,26 +322,35 @@ margin-right: 60px;
   text-transform: uppercase;
   z-index: 5;
 }
-
 button {
   cursor: pointer;
   outline: none;
-  border: outset rgb(163,153,153);
-  transition: transform 24ms ease;
 }
-button:disabled {
+button.action:disabled {
   cursor: default;
   color:gray;
   border-style: outset !important;
 }
-button:active {
+button.action:active {
   border: inset rgb(153, 153, 153);
   transform: scale(0.97);
 }
-
+#new-game-button {
+  float:left;
+  position: absolute;
+  left:8px;
+  background: lightgrey;
+  display:none;
+}
+#new-hand {
+  display: none;
+}
 .actionButtons {
+  border: outset rgb(163,153,153);
+  transition: transform 24ms ease;
   box-sizing: border-box;
   margin: 100px auto 0 auto;
+  margin-top:3%;
   text-align: center;
   background: #383737;
   border: 2px solid yellow;
@@ -277,7 +358,9 @@ button:active {
   width: 700px;
   /* height: 40px; */
 }
-
+.post-game-button {
+  /* display:none; */
+}
 .action {
   background: rgb(163,153,153);
   background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
@@ -285,10 +368,14 @@ button:active {
   width: 100px;
   height: 25px;
   color: #fff;
+  margin: 5px;
 }
 
 #funds {
-  width: 160px;
+  width: 50px;
+  height:25px;
+  padding-left: 5px;
+  margin-right: 10px;
 }
 
 #boardWriteMobile {

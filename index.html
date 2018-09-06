@@ -9,18 +9,24 @@
     <title>Texas Hold 'Em</title>
     <script src="js/jquery.js"></script>
     <script src="js/table.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="js/deck.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/init.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Bevan" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Sawarabi+Mincho" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   </head>
   <body>
-      <img style="display:none" src="img/cardsheet.png">
-      <img style="display:none" src="img/cardback.png">
-      <p class="header">Texas Hold'Em</p>
-    <div id="space-for-next">PRESS SPACE FOR NEXT HAND</div>
-    <div id="winner-message">DSHJBGDS DSFKJHDFS KJHSDKJ DSFKJKJH</div>
+    <img src="img/cardsheet.png" style="display:none">
+    <img src="img/cardback.png" style="display:none">
+    <p class="header">
+      <button id="new-game-button">< New Game</button>
+      Texas Hold'Em
+    </p>
+    <div id="top-message" class="space-flip"><span></span></div>
+    <div class="win-lose-message" id="winner-message"></div>
+    <div class="win-lose-message" id="loser-message"></div>
     <div id="container">
       <div class="sign-in">
         <h2 id="signInHead">Please enter your names:</h2>
@@ -32,14 +38,16 @@
           <br />
           <div class="nameDiv">
             <label for="name2">Player 2:</label>
-            <input placeholder="Player 2"  class="enterName" id="name2">
+            <input placeholder="Computer"  class="enterName" id="name2">
           </div>
           <br />
           <button type="submit" class="action" id="name-btn">Submit</button>
         </form>
       </div>
       <div id="table">
-        <div id="cards">
+        <div class="player-action" id="player-1-action">Check</div>
+        <div class="player-action" id="player-2-action">Bet 80</div>
+          <div id="cards">
           <div class="hole" id="holeOne">
             <div class="holeCard"></div>
             <div class="holeCard"></div>
@@ -61,30 +69,31 @@
           <div class="player" id="player1">
             <p><span id="playerOneName" class="box"></span></p>
             <p><span id="playerOneBank" class="box"></span></p>
-            <p>Bet: <span id="playerOneBet" class="box">100</span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="playerOneBet" class="box">100</span></p>
             <p><span id="dealer-1" class="dealer-label"><span></span></span></p>
           </div>
           <div class="player" id="player2">
             <p><span id="playerTwoName" class="box"></span></p>
             <p><span id="playerTwoBank" class="box"></span></p>
-            <p>Bet: <span id="playerTwoBet" class="box">100</span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="playerTwoBet" class="box">100</span></p>
             <p><span id="dealer-2" class="dealer-label"><span></span></span></p>
           </div>
         </div>
         <div id="boardWrite">
           <p><span class="write">No Limit Hold'Em</span></p>
-          <p><span class="write">Blinds 40/80</span></p>
-          <p><span class="write">Buy-in 1500</span></p>
+          <p><span class="write">Blinds <span class="blind-amounts"></span></span></p>
+          <p><span class="write">Buy-in <span class="starting-bank"></span></span></p>
         </div>
         <div id="boardWriteMobile">
-          <p><span class="write">No Limit Hold'Em - Blinds 40/80 - BuyIn 1500</span></p>
+          <p><span class="write">No Limit Hold'Em - Blinds <span class="blind-amounts"></span> - Buy-in <span class="starting-bank"></span></span></p>
         </div>
         <div class="actionButtons">
-          <button class="action" id="call-check"></button>
-          <button class="action" id="bet-raise"></button>
-          <input type="number" id="funds">
-          <button class="action" id="allIn">All In</button>
-          <button class="action" id="fold">Fold</button>
+          <button class="action game-button" id="call-check"></button>
+          <button class="action game-button" id="bet-raise"></button>
+          <input class="game-button" type="tel" id="funds">
+          <button class="action game-button" id="allIn">All In</button>
+          <button class="action game-button" id="fold">Fold</button>
+          <button class="action post-game-button" id="new-hand">Next Hand</button>
         </div>
       </div>
     </div>
