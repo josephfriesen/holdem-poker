@@ -18,11 +18,45 @@
     color: yellow;
   }
 }
+.player-name {
+  margin-top:5%;
+  margin-bottom:5%;
+}
+.enterName {
+  padding-left:1%;
+}
 .player-bet {
   font-family: 'Bevan', cursive;
+  animation-name: bounce;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  transform: scale(1);
+  margin-top: 0;
 }
-#playerOneBet, #playerTwoBet {
+.player-bank {
+  font-family: 'Bevan', cursive;
+  font-size: 1.3rem;
+  margin-top:0;
+}
+#pot {
+  width:10%;
+  left: 0
+}
+.bouncing {
+  animation-play-state: running;
+}
+@keyframes bounce {
+  50% {
+    transform: scale(1.2);
+    /* font-size: 1.25rem; */
+  }
+}
+#player-1-bet, #player-2-bet, #pot-amount {
   font-size: 1.2rem;
+}
+#pot {
+  font-size: 0.8rem !important;
 }
 .playing-card {
   box-sizing: border-box;
@@ -38,6 +72,7 @@ body {
   font-family: Helvetica;
   margin: 0;
   padding: 0;
+  display:none;
   overflow:hidden;
 }
 
@@ -89,7 +124,8 @@ body {
   background: rgb(7,10,88);
   background: linear-gradient(90deg, rgba(7,10,88,0.8090423669467788) 6%, rgba(25,37,170,0.7418154761904762) 19%, rgba(7,10,88,0.8146446078431373) 41%);
   width: 100%;
-  height: 800px;
+  /* height: 800px; */
+  height: 100%;
   margin: 0;
   padding: 0;
   z-index: 0;
@@ -130,13 +166,21 @@ body {
   transform: scale(0.75)
 }
 .space-flip:after {
-  content: "HOLD SPACE TO REVEAL CARDS" !important;
+  content: "HOLD SPACE TO REVEAL CARDS";
 }
 .space-next {
   transform: scale(1);
 }
 .space-next:after {
   content: "PRESS SPACE FOR NEXT HAND";
+}
+#thinking-message {
+  margin-left:auto;
+  margin-right:auto;
+  color: white;
+  font-family: 'Sawarabi Mincho', sans-serif;
+  font-size: 1.1rem;
+  display:none;
 }
 .dimmed {
   opacity: 0.3 !important;
@@ -196,7 +240,6 @@ body {
 }
 .holeCard {
   flex: 1;
-  /* border: 1px solid yellow; */
 }
 
 
@@ -215,7 +258,6 @@ body {
 
 #community {
   box-sizing: border-box;
-  /* background: rgba(0, 0, 0, 0.4); */
   border: 2px solid darkgreen;
   width: 300px;
   height: 100px;
@@ -232,7 +274,6 @@ body {
 }
 .commCard {
   flex: 1;
-  /* border: 1px solid yellow; */
 }
 
 #holeTwo {
@@ -284,13 +325,13 @@ margin-right: 60px;
 }
 #winner-message {
   position: absolute;
-  width: 100vw;
+  width: 100%;
   color: white;
   text-align: center;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 8%;
+  margin-top: 115px;
   font-size: 1.3rem;
   display: none;
 }
@@ -302,7 +343,7 @@ margin-right: 60px;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 33%;
+  margin-top: 400px;
   font-size: 0.9rem;
   opacity: 0.75;
   /* display: none; */
@@ -315,9 +356,9 @@ margin-right: 60px;
   letter-spacing: 2.1px;
   font-family: 'Sawarabi Mincho', sans-serif;
   margin-left: 330px;
-  margin-top: 40px;
+  /* margin-top: 30px; */
   width: 300px;
-  height: 120px;
+  /* height: 120px; */
   text-align: center;
   text-transform: uppercase;
   z-index: 5;
@@ -356,9 +397,13 @@ button.action:active {
   border: 2px solid yellow;
   padding: 5px;
   width: 700px;
-  /* height: 40px; */
+  height: 50px;
+  min-height: 50px;
+  display: none;
 }
 .post-game-button {
+  margin-left:auto;
+  margin-right: auto;
   /* display:none; */
 }
 .action {
@@ -388,6 +433,7 @@ button.action:active {
 } */
 
 @media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* @media screen and (min-width: 768px) and (max-width: 1024px) { */
 
   #container {
     padding-top: 60px;
@@ -437,7 +483,7 @@ button.action:active {
     }
 
     .player {
-      height: 60px;
+      /* height: 60px; */
       width: 120px;
       font-size: 12px;
     }

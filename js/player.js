@@ -1,5 +1,6 @@
 function Player(human, name, bank) {
   this.human = human;
+  this.moveDelay = 2000;
   this.name = name;
   this.handsWon = 0;
   this.bank = bank;
@@ -8,7 +9,7 @@ function Player(human, name, bank) {
   this.blind;
   this.currentBet;
   this.flippedCards = false;
-  this.options = ["call-check","bet-raise","allIn","fold"]
+  this.options = ["call-check"]
   if (!table.players.length) {
     this.slots = [
       $('#holeOne>.holeCard:first-child'),
@@ -26,9 +27,12 @@ function Player(human, name, bank) {
   this.div = $('#player' + table.players.length);
   this.statusLabel = $('#dealer-' + table.players.length)
 }
-Player.prototype.addToPot = function(amount) {
+Player.prototype.addToPot = function(amount,noBounce) {
   this.changeBankAmountBy(-amount);
   table.pot += amount;
+  if (!noBounce) {
+    $('#pot').bounce();
+  }
 }
 Player.prototype.emitAction = function(actionMessage) {
   var p = table.players.indexOf(this)+1;
@@ -40,18 +44,16 @@ Player.prototype.emitAction = function(actionMessage) {
   $('#player-'+p+'-action').html(actionMessage);
   $('#player-'+p+'-action').animate({
     'opacity': '1'
-  },50).css({
+  },10).css({
     'transform': 'translateX('+moveX+')'
   }).delay(800);
   $('#player-'+p+'-action').animate({
     'opacity': '0',
-    // 'transition': 'none'
   },200);
   
   setTimeout(function(){
-    // $('#player-'+p+'-action').css('transition','initial');
     $('#player-'+p+'-action').css('transform','none');
-  },1200)
+  },1550)
 }
 Player.prototype.fold = function() {
   var player = table.atBat;
@@ -64,7 +66,6 @@ Player.prototype.fold = function() {
   table.handWinner.handsWon++;
   $('#winner-message').text(this.name + " folded");
   $('.win-lose-message').fadeIn();
-  this.div.removeClass("at-bat");
   this.swapLabel("fold-label")
   this.div.removeClass("at-bat");
   table.showStatusLabel(player);
@@ -74,7 +75,6 @@ Player.prototype.fold = function() {
   table.updateFigures();
 }
 Player.prototype.swapLabel = function(newLabel) {
-  
   this.statusLabel.removeClass("fold-label");
   this.statusLabel.removeClass("dealer-label");
   this.statusLabel.removeClass("winner-label");
@@ -94,22 +94,17 @@ Player.prototype.amountLeft = function (action, amount) {
 Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount;
 }
-Player.prototype.makeMove = function(action) {
+Player.prototype.makeMove = function(action,delay) {
   var moveAction = action
-  $('button').prop('disabled',true)
-  $('#top-message').removeClass('space-flip');
-  $('#top-message').css({
-    'animation-play-state': 'paused'
-  })
-  $('#top-message').html("COMPUTER IS THINKING...");
+  $('.game-button').prop('disabled',true)
+  $('.game-button').hide()
+  $('#thinking-message').fadeIn();
   setTimeout(function(){
     $('#'+moveAction).click();
-    console.log("cpu made a move!")
     $('#top-message').css({
       'animation-play-state': 'paused'
     })
-    $('#top-message').empty()
-    $('#top-message').addClass('space-flip');
-    console.log("advancing after cpu move")
-  },2000)
+    $('.game-button').fadeIn();
+    $('#thinking-message').hide();
+  },delay)
 }

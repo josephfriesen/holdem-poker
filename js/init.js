@@ -1,10 +1,12 @@
 $(document).ready(function() {
+  $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
   $("#enterName").submit(function(event) {
     event.preventDefault();
     $(".sign-in").hide();
-    $("#table").show();
+    $("#table").fadeIn();
+    $(".actionButtons").fadeIn();
     $('#new-game-button').show();
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
     table.initiateGame(names);
@@ -23,9 +25,11 @@ $(document).ready(function() {
       table.advanceRound();
     } else {
       player.emitAction($(this).text());
-      table.advanceTurn();
+      
       if (table.calledOrChecked.length === table.players.length) {
         table.advanceRound();
+      } else if (table.roundIndex < 5) {
+        table.advanceTurn();
       }
     }
     table.updateFigures();
@@ -40,9 +44,9 @@ $(document).ready(function() {
     player.addToPot(amountToAdd);
     player.emitAction($(this).text());
     $('#call-check').text("Call " + table.minimumBet)
-    table.calledOrChecked = [];
     table.updateFigures();
     table.advanceTurn();
+    table.calledOrChecked = [];
   });
   $('#allIn').click(function(){
     var player = table.atBat;
@@ -51,9 +55,9 @@ $(document).ready(function() {
     player.addToPot(raiseAmount);
     player.emitAction($(this).text());
     $('#call-check').text("Call " + table.minimumBet)
-    table.calledOrChecked = [];
     table.updateFigures();
     table.advanceTurn();
+    table.calledOrChecked = [];
   });
   $('#fold').click(function(){
     table.atBat.fold()
@@ -65,16 +69,20 @@ $(document).ready(function() {
     window.location.reload()
   });
   document.getElementById("holeOne").onmousedown = function(){
-    table.players[0].flippedCards = true;
-    table.players[0].holeCards.forEach(function(card){
-      card.animateFlip("auto",64)
-    });
+    if (!table.vsCPU) {
+      table.players[0].flippedCards = true;
+      table.players[0].holeCards.forEach(function(card){
+        card.animateFlip("auto",64)
+      });
+    }
   };
   document.getElementById("holeTwo").onmousedown = function(){
-    table.players[1].flippedCards = true;
-    table.players[1].holeCards.forEach(function(card){
-      card.animateFlip("auto",64)
-    });
+    if (!table.vsCPU) {
+      table.players[1].flippedCards = true;
+      table.players[1].holeCards.forEach(function(card){
+        card.animateFlip("auto",64)
+      });
+    }
   };
   document.body.onmouseup = function(){
     table.players.forEach(function(player,i){
@@ -96,9 +104,9 @@ function hasLetters(string) {
   }
 }
 window.addEventListener("resize", function() {
-  table.dealtCards.forEach(function(card,i){
-    card.dimensions.width = $('.commCard').width();
-    card.dimensions.height = $('.commCard').height();
+  table.dealtCards.forEach(function(card,i) {
+    card.dimensions.width = $('.holeCard').width();
+    card.dimensions.height = $('.holeCard').height();
     if (card.div.css("background-image").includes("cardsheet")) {
       var pos = {};
       pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;
@@ -120,7 +128,7 @@ window.addEventListener("resize", function() {
   });
 });
 document.onkeydown = function(event) {
-  if (event.keyCode == 32) {
+  if (!table.vsCPU && event.keyCode == 32) {
     if ($('#top-message').css('cursor') === 'pointer') {
       event.preventDefault();
       table.startNewHand()
@@ -134,7 +142,7 @@ document.onkeydown = function(event) {
   }
 };
 document.onkeyup = function(event) {
-  if (event.keyCode == 32) {
+  if (!table.vsCPU && event.keyCode == 32) {
     if ($('#top-message').css('cursor') !== 'pointer') {
       if (table.atBat.flippedCards) {
         event.preventDefault();
@@ -170,3 +178,10 @@ window.addEventListener("input",function(event){
 function randomInt(min,max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+jQuery.prototype.bounce = function() {
+  this.addClass('bouncing');
+  var self = this;
+  setTimeout(function(){
+    self.removeClass('bouncing')
+  },500)
+}

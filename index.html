@@ -64,37 +64,39 @@
             <div class="holeCard"></div>
           </div>
         </div>
-        <div id="pot">Pot: 100</div>
+        <div id="pot" class="player-bet">Pot: &nbsp;<span id="pot-amount">100</span></div>
         <div id="playerAlign">
           <div class="player" id="player1">
-            <p><span id="playerOneName" class="box"></span></p>
-            <p><span id="playerOneBank" class="box"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="playerOneBet" class="box">100</span></p>
+            <p class="player-name"><span id="player-1-name" class="box"></span></p>
+            <p class="player-bank"><span id="player-1-bank"></span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="player-1-bet" class="box">100</span></p>
             <p><span id="dealer-1" class="dealer-label"><span></span></span></p>
           </div>
           <div class="player" id="player2">
-            <p><span id="playerTwoName" class="box"></span></p>
-            <p><span id="playerTwoBank" class="box"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="playerTwoBet" class="box">100</span></p>
+            <p class="player-name"><span id="player-2-name" class="box"></span></p>
+            <p class="player-bank"><span id="player-2-bank"></span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="player-2-bet" class="box">100</span></p>
             <p><span id="dealer-2" class="dealer-label"><span></span></span></p>
           </div>
         </div>
-        <div id="boardWrite">
+        <!-- <div id="boardWrite">
           <p><span class="write">No Limit Hold'Em</span></p>
           <p><span class="write">Blinds <span class="blind-amounts"></span></span></p>
           <p><span class="write">Buy-in <span class="starting-bank"></span></span></p>
         </div>
         <div id="boardWriteMobile">
           <p><span class="write">No Limit Hold'Em - Blinds <span class="blind-amounts"></span> - Buy-in <span class="starting-bank"></span></span></p>
-        </div>
-        <div class="actionButtons">
-          <button class="action game-button" id="call-check"></button>
-          <button class="action game-button" id="bet-raise"></button>
-          <input class="game-button" type="tel" id="funds">
-          <button class="action game-button" id="allIn">All In</button>
-          <button class="action game-button" id="fold">Fold</button>
-          <button class="action post-game-button" id="new-hand">Next Hand</button>
-        </div>
+        </div> -->
+        
+      </div>
+      <div class="actionButtons">
+        <div id="thinking-message">Computer is thinking...</div>
+        <button class="action game-button" id="call-check"></button>
+        <button class="action game-button" id="bet-raise"></button>
+        <input class="game-button" type="tel" id="funds">
+        <button class="action game-button" id="allIn">All In</button>
+        <button class="action game-button" id="fold">Fold</button>
+        <button class="action post-game-button" id="new-hand">Next Hand</button>
       </div>
     </div>
   </body>
