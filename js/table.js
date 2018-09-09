@@ -171,7 +171,7 @@ function Table() {
         }
         hand.cards = setArr;
       },
-      breakTie: function(){
+      breakTie: function(hand1,hand2){
         if (table.compareCards(hand1, hand2, 0) === "card1") {
           return "hand1";
         } else if (table.compareCards(hand1, hand2, 0) === "card2") {
@@ -467,8 +467,6 @@ Table.prototype.playerCoords = function(playerIndex) {
   return coords
 }
 Table.prototype.placeOrb = function(playerIndex) {
-  console.log("placing an orvb")
-  console.log("placing orb")
   var playerCoords = this.playerCoords(playerIndex)
   this.turnOrb.css({
     'left': playerCoords.x +'px',
@@ -476,11 +474,8 @@ Table.prototype.placeOrb = function(playerIndex) {
   });
 }
 Table.prototype.moveOrb = function(playerIndex) {
-  console.log("moving at orb")
   var playerCoords = this.playerCoords(playerIndex);
   var orbX =  (this.turnOrb.css('left'));
-  console.log("corord " + playerCoords.x)
-  console.log("orb style left " + orbX)
   if (playerCoords.x !== orbX) {
     
     if (playerIndex === 0) {
@@ -522,6 +517,8 @@ Table.prototype.refresh = function() {
   this.dealing = false;
   this.autoDealing = false;
   this.minimumBet = this.bigBlind;
+  $('.holeCard').empty();
+  $('.commCard').empty();
 }
 Table.prototype.initiateGame = function(playerNameArray){
   this.turnOrb = $('#turn-orb');
@@ -650,6 +647,7 @@ Table.prototype.changeButtonSelection = function(handOver,gameOver) {
       self.startNewHand()
     });
   } else {
+    $('.post-game-button').hide();    
     $('.game-button').fadeIn();    
   }
 }
@@ -740,10 +738,6 @@ Table.prototype.advanceTurn = function() {
   }
   $('.player').removeClass('at-bat');
   this.atBat.div.addClass('at-bat');
-  this.turnOrb.css({
-
-  })
-  
   $('.game-button').prop('disabled', false)
   $('#funds').val(this.bigBlind);
   // decide which buttons should be available
@@ -769,13 +763,12 @@ Table.prototype.advanceTurn = function() {
     var makeCPUMove = true
     if (makeCPUMove) {
       // $('.game-button').fadeIn();
-      var cpuMove = this.atBat.options[randomInt(0,this.atBat.options.length-1)];
       if (this.roundIndex === 2) {
         var delay = 3000
       } else {
         var delay = this.atBat.moveDelay
       }
-      this.atBat.makeMove(cpuMove,delay);
+      this.atBat.makeMove(delay);
     } else {
       // $('.game-button').animate({
       //   'opacity': '1'
@@ -783,7 +776,7 @@ Table.prototype.advanceTurn = function() {
     }
   }
 }
-Table.prototype.deal = function(amount,handOver) {
+Table.prototype.deal = function(amount) {
   var self = this;
   this.dealing = true;
   if (amount === 2) { // hole
@@ -795,7 +788,8 @@ Table.prototype.deal = function(amount,handOver) {
         if (this.vsCPU) {
           var isCPU = (player === this.cpu);
           var cpuTurn = (this.atBat === this.cpu)
-          newCard.place(player.slots[i],true,isCPU,isCPU);
+          // newCard.place(player.slots[i],true,isCPU,isCPU);
+          newCard.place(player.slots[i],true,false,false);
         } else {
           newCard.place(player.slots[i],true,true,true);
         }
@@ -1004,6 +998,7 @@ Table.prototype.beginShowdown = function() {
     this.players[1].addToPot(-this.pot);
     $('#winner-message').text("It's a tie!");
     $('#loser-message').text("Both players have " + this.players[0].hand.handValue);
+    $('.win-lose-message').fadeIn();
     // this.atBat.div.removeClass("at-bat");
     this.atBat.statusLabel.removeClass("status-label");
     this.atBat.statusLabel.removeClass("winner-label");
@@ -1101,4 +1096,5 @@ Table.prototype.updateFigures = function() {
   $('#player-2-bank').text(this.players[1].bank);
   $('#player-1-bet').text(this.players[0].currentBet);
   $('#player-2-bet').text(this.players[1].currentBet);
+  $('#player-2-name').html("Computer - "+this.cpu.confidence)
 };

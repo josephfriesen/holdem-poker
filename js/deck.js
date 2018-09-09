@@ -31,6 +31,7 @@ Card.prototype.showBack = function() {
 Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
   var self = this;
   targetElement.html(this.cardHTML);
+  console.log("placing a " + this.rank + " of " + this.suit)
   this.div = $('#'+this.rank+`-of-`+this.suit);
   if (resize) {
     this.dimensions.width = Math.round(targetElement.width());

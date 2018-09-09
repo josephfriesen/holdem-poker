@@ -66,6 +66,7 @@ $(document).ready(function() {
     table.atBat.fold()
   });
   $('#new-hand').click(function(){
+    $(this).fadeOut();
     table.startNewHand()
   });
   $('#new-game-button').click(function(){
@@ -132,7 +133,8 @@ function hasLetters(string) {
 // });
 document.onkeydown = function(event) {
   if (!table.vsCPU && event.keyCode == 32) {
-    if ($('#top-message').css('cursor') === 'pointer') {
+    // if (event.keyCode == 32) {
+      if ($('#top-message').css('cursor') === 'pointer') {
       event.preventDefault();
       table.startNewHand()
     } else if (!table.atBat.flippedCards) {
@@ -146,7 +148,8 @@ document.onkeydown = function(event) {
 };
 document.onkeyup = function(event) {
   if (!table.vsCPU && event.keyCode == 32) {
-    if ($('#top-message').css('cursor') !== 'pointer') {
+    // if (event.keyCode == 32) {
+      if ($('#top-message').css('cursor') !== 'pointer') {
       if (table.atBat.flippedCards) {
         event.preventDefault();
         table.atBat.holeCards.forEach(function(card){
