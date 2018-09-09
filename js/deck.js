@@ -3,8 +3,8 @@ function Card(suit, rank) {
   this.rank = rank;
   this.cardHTML = `<div class="playing-card protruding" id="`+this.rank+`-of-`+this.suit+`"></div>`;
   this.dimensions = {
-    width: 225,
-    height: 315
+    width: ($('#cardsheet').width()/13),
+    height: ($('#cardsheet').height()/4)
   };
   this.value = this.getValue();
 }
@@ -33,8 +33,8 @@ Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
   targetElement.html(this.cardHTML);
   this.div = $('#'+this.rank+`-of-`+this.suit);
   if (resize) {
-    this.dimensions.width = targetElement.width();
-    this.dimensions.height = targetElement.height();
+    this.dimensions.width = Math.round(targetElement.width());
+    this.dimensions.height = Math.round(targetElement.height());
   }
   var pos = {};
   pos.left = table.ranks.indexOf(this.rank) * this.dimensions.width;
@@ -59,10 +59,10 @@ Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
     'opacity': '1'
   },180);
   this.div.delay(500).removeClass('protruding')
-  if (Array.from($(targetElement)[0].classList).includes("holeCard")) {
-    // document.getElementById(this.rank+`-of-`+this.suit).onmousedown = function(){
-    //   self.animateFlip();
-    // };
+  if (!table.vsCPU && Array.from($(targetElement)[0].classList).includes("holeCard")) {
+    document.getElementById(this.rank+`-of-`+this.suit).onmousedown = function(){
+      self.animateFlip();
+    };
   }
   table.dealtCards.push(this);
 }

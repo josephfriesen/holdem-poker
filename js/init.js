@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  
   $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
@@ -6,8 +7,10 @@ $(document).ready(function() {
     event.preventDefault();
     $(".sign-in").hide();
     $("#table").fadeIn();
-    $(".actionButtons").fadeIn();
-    $('#new-game-button').show();
+    $("#table").removeClass("off-to-right");
+    $("#actionButtons").removeClass("off-to-bottom");
+    $("#actionButtons").fadeIn();
+    $('#new-game-button').fadeIn();
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
     table.initiateGame(names);
   });
@@ -103,30 +106,30 @@ function hasLetters(string) {
     return true;
   }
 }
-window.addEventListener("resize", function() {
-  table.dealtCards.forEach(function(card,i) {
-    card.dimensions.width = $('.holeCard').width();
-    card.dimensions.height = $('.holeCard').height();
-    if (card.div.css("background-image").includes("cardsheet")) {
-      var pos = {};
-      pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;
-      pos.top = table.suits.indexOf(card.suit) * card.dimensions.height;
-      card.div.css({
-        'background-size': (card.dimensions.width*13)+'px '+(card.dimensions.height*4)+'px',
-        'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
-        'width': card.dimensions.width + 'px',
-        'height': card.dimensions.height + 'px',
-      });
-    } else {
-      card.div.css({
-        'background-size': (card.dimensions.width)+'px '+(card.dimensions.height)+'px',
-        'background-position': '0 0',
-        'width': card.dimensions.width + 'px',
-        'height': card.dimensions.height + 'px',
-      });
-    }
-  });
-});
+// window.addEventListener("resize", function() {
+//   table.dealtCards.forEach(function(card,i) {
+//     card.dimensions.width = $('.holeCard').width();
+//     card.dimensions.height = $('.holeCard').height();
+//     if (card.div.css("background-image").includes("cardsheet")) {
+//       var pos = {};
+//       pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;
+//       pos.top = table.suits.indexOf(card.suit) * card.dimensions.height;
+//       card.div.css({
+//         'background-size': (card.dimensions.width*13)+'px '+(card.dimensions.height*4)+'px',
+//         'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
+//         'width': card.dimensions.width + 'px',
+//         'height': card.dimensions.height + 'px',
+//       });
+//     } else {
+//       card.div.css({
+//         'background-size': (card.dimensions.width)+'px '+(card.dimensions.height)+'px',
+//         'background-position': '0 0',
+//         'width': card.dimensions.width + 'px',
+//         'height': card.dimensions.height + 'px',
+//       });
+//     }
+//   });
+// });
 document.onkeydown = function(event) {
   if (!table.vsCPU && event.keyCode == 32) {
     if ($('#top-message').css('cursor') === 'pointer') {
@@ -178,10 +181,14 @@ window.addEventListener("input",function(event){
 function randomInt(min,max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
-jQuery.prototype.bounce = function() {
-  this.addClass('bouncing');
+jQuery.prototype.timeAnimation = function(duration) {
+  this.css({
+    'animation-play-state': 'running'
+  })
   var self = this;
   setTimeout(function(){
-    self.removeClass('bouncing')
-  },500)
+    self.css({
+      'animation-play-state': 'paused',
+    })
+  },duration)
 }

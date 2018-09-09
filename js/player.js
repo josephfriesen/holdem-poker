@@ -1,6 +1,7 @@
-function Player(human, name, bank) {
+function Player(table, human, name, bank) {
+  this.table = table;
   this.human = human;
-  this.moveDelay = 2000;
+  this.moveDelay = 1500;
   this.name = name;
   this.handsWon = 0;
   this.bank = bank;
@@ -10,7 +11,7 @@ function Player(human, name, bank) {
   this.currentBet;
   this.flippedCards = false;
   this.options = ["call-check"]
-  if (!table.players.length) {
+  if (!this.table.players.length) {
     this.slots = [
       $('#holeOne>.holeCard:first-child'),
       $('#holeOne>.holeCard:nth-child(2)'),
@@ -23,19 +24,19 @@ function Player(human, name, bank) {
     ];
     this.hole = $('#holeTwo')
   }
-  table.players.push(this);
-  this.div = $('#player' + table.players.length);
-  this.statusLabel = $('#dealer-' + table.players.length)
+  this.table.players.push(this);
+  this.div = $('#player-' + this.table.players.length);
+  this.statusLabel = $('#dealer-' + this.table.players.length)
 }
 Player.prototype.addToPot = function(amount,noBounce) {
   this.changeBankAmountBy(-amount);
-  table.pot += amount;
+  this.table.pot += amount;
   if (!noBounce) {
-    $('#pot').bounce();
+    $('#pot-amount').timeAnimation(500);
   }
 }
 Player.prototype.emitAction = function(actionMessage) {
-  var p = table.players.indexOf(this)+1;
+  var p = this.table.players.indexOf(this)+1;
   if (p === 1) {
     var moveX = '120%'
   } else {
@@ -56,27 +57,27 @@ Player.prototype.emitAction = function(actionMessage) {
   },1550)
 }
 Player.prototype.fold = function() {
-  var player = table.atBat;
-  if (table.players[0]===table.atBat) {
-    table.handWinner = table.players[1];
+  var player = this.table.atBat;
+  if (this.table.players[0]===this.table.atBat) {
+    this.table.handWinner = this.table.players[1];
   } else {
-    table.handWinner = table.players[0];
+    this.table.handWinner = this.table.players[0];
   }
-  table.handWinner.addToPot(-table.pot);
-  table.handWinner.handsWon++;
+  this.table.handWinner.addToPot(-this.table.pot);
+  this.table.handWinner.handsWon++;
   $('#winner-message').text(this.name + " folded");
-  $('.win-lose-message').fadeIn();
+  $('#winner-message').fadeIn();
   this.swapLabel("fold-label")
   this.div.removeClass("at-bat");
-  table.showStatusLabel(player);
+  this.table.showStatusLabel(player);
   this.holeCards[0].div.addClass('retracted');
   this.holeCards[1].div.addClass('retracted');
-  table.showHandResults(true);
-  table.updateFigures();
+  this.table.showHandResults(true);
+  this.table.updateFigures();
 }
 Player.prototype.swapLabel = function(newLabel) {
   this.statusLabel.removeClass("fold-label");
-  this.statusLabel.removeClass("dealer-label");
+  this.statusLabel.removeClass("status-label");
   this.statusLabel.removeClass("winner-label");
   this.statusLabel.addClass(newLabel);
 }
@@ -95,16 +96,22 @@ Player.prototype.changeBankAmountBy = function (amount) {
   this.bank += amount;
 }
 Player.prototype.makeMove = function(action,delay) {
-  var moveAction = action
-  $('.game-button').prop('disabled',true)
-  $('.game-button').hide()
-  $('#thinking-message').fadeIn();
-  setTimeout(function(){
-    $('#'+moveAction).click();
-    $('#top-message').css({
-      'animation-play-state': 'paused'
-    })
-    $('.game-button').fadeIn();
-    $('#thinking-message').hide();
-  },delay)
+  console.log("making move...")
+  if (!this.table.autoDealing) {
+    var moveAction = action
+    $('.game-button').prop('disabled',true)
+    $('.game-button').fadeOut()
+    $('#thinking-message').show();
+    setTimeout(function(){
+      $('#'+moveAction).click();
+      $('#top-message').css({
+        'animation-play-state': 'paused'
+      })
+      console.log("CPU moved!")
+      $('.game-button').fadeIn();
+      $('#thinking-message').hide();
+    },delay)
+  } else {
+    console.log("tried to move when hand was over!")
+  }
 }
