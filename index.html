@@ -18,8 +18,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   </head>
   <body>
-    <img src="img/cardsheet.png" style="display:none">
-    <img src="img/cardback.png" style="display:none">
+    <img id="cardsheet" src="img/cardsheet.png" style="display:none">
+    <img id="cardback" src="img/cardback.png" style="display:none">
+    <div id="turn-orb"></div>
     <p class="header">
       <button id="new-game-button">< New Game</button>
       Texas Hold'Em
@@ -64,37 +65,39 @@
             <div class="holeCard"></div>
           </div>
         </div>
-        <div id="pot">Pot: 100</div>
+        <div id="pot" class="player-bet">Pot<br /><div id="pot-amount"></div></div>
         <div id="playerAlign">
-          <div class="player" id="player1">
-            <p><span id="playerOneName" class="box"></span></p>
-            <p><span id="playerOneBank" class="box"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="playerOneBet" class="box">100</span></p>
-            <p><span id="dealer-1" class="dealer-label"><span></span></span></p>
+          <div class="player" id="player-1">
+            <p class="player-name"><span id="player-1-name" class="box"></span></p>
+            <p class="player-bank"><span id="player-1-bank"></span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="player-1-bet"></span></p>
+            <p><span id="dealer-1" class="status-label"><span></span></span></p>
           </div>
-          <div class="player" id="player2">
-            <p><span id="playerTwoName" class="box"></span></p>
-            <p><span id="playerTwoBank" class="box"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="playerTwoBet" class="box">100</span></p>
-            <p><span id="dealer-2" class="dealer-label"><span></span></span></p>
+          <div class="player" id="player-2">
+            <p class="player-name"><span id="player-2-name" class="box"></span></p>
+            <p class="player-bank"><span id="player-2-bank"></span></p>
+            <p class="player-bet">Bet: &nbsp;<span id="player-2-bet" class="box"></span></p>
+            <p><span id="dealer-2" class="status-label"><span></span></span></p>
           </div>
         </div>
-        <div id="boardWrite">
+        <!-- <div id="boardWrite">
           <p><span class="write">No Limit Hold'Em</span></p>
           <p><span class="write">Blinds <span class="blind-amounts"></span></span></p>
           <p><span class="write">Buy-in <span class="starting-bank"></span></span></p>
         </div>
         <div id="boardWriteMobile">
           <p><span class="write">No Limit Hold'Em - Blinds <span class="blind-amounts"></span> - Buy-in <span class="starting-bank"></span></span></p>
-        </div>
-        <div class="actionButtons">
-          <button class="action game-button" id="call-check"></button>
-          <button class="action game-button" id="bet-raise"></button>
-          <input class="game-button" type="tel" id="funds">
-          <button class="action game-button" id="allIn">All In</button>
-          <button class="action game-button" id="fold">Fold</button>
-          <button class="action post-game-button" id="new-hand">Next Hand</button>
-        </div>
+        </div> -->
+        
+      </div>
+      <div class="off-to-bottom" id="actionButtons">
+        <div id="thinking-message">Computer is thinking...</div>
+        <button class="action game-button" id="call-check"></button>
+        <button class="action game-button" id="bet-raise"></button>
+        <input class="game-button" type="tel" id="funds">
+        <button class="action game-button" id="allIn">All In</button>
+        <button class="action game-button" id="fold">Fold</button>
+        <button class="action post-game-button" id="new-hand">Next Hand</button>
       </div>
     </div>
   </body>

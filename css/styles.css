@@ -18,17 +18,107 @@
     color: yellow;
   }
 }
+#turn-orb {
+  position:absolute;
+  border-radius: 50%;
+  box-shadow: 0px 0px 84px 32px yellow;
+  transform-origin: center;
+  z-index:12;
+  transform: translateY(0%);
+  animation-name: bob-up;
+  animation-duration: 600ms;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  animation-timing-function: linear;
+  display:none;
+}
+@keyframes bob-up {
+  /* 25% {
+    top: 25%
+  } */
+  45% {
+    transform: translateY(-140px)
+  }
+  55% {
+    transform: translateY(-140px)
+  }
+  /* 75% {
+    top: 25%
+  } */
+}
+@keyframes bob-down {
+  /* 25% {
+    top: 50%
+  } */
+  45% {
+    transform: translateY(96px)
+  }
+  55% {
+    transform: translateY(96px)
+  }
+  /* 75% {
+    top: 50%
+  } */
+}
+.player-name {
+  margin-top:5%;
+  margin-bottom:5%;
+}
+.enterName {
+  padding-left:1%;
+}
 .player-bet {
   font-family: 'Bevan', cursive;
+  margin-top: 0;
 }
-#playerOneBet, #playerTwoBet {
+.player-bank {
+  font-family: 'Bevan', cursive;
+  font-size: 1.3rem;
+  margin-top:0;
+}
+#pot {
+  text-align: center;
+  width:10%;
+  left: 0;
+  font-size: 0.8rem !important;
+  color: #F1D804;
+  margin-left:45%;
+  margin-top:1.5%;
+  line-height: 1.2rem;
+  animation-name: bounce;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+#pot-amount {
+  text-shadow: 1px 1px 2px black;
+  margin-top: 5%;
+  font-size: 2rem !important;
+  animation-name: bounce;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  /* transform: scale(1) */
+}
+.bouncing {
+  animation-play-state: running;
+}
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+#player-1-bet, #player-2-bet, #pot-amount {
   font-size: 1.2rem;
 }
 .playing-card {
   box-sizing: border-box;
   opacity: 0;
   box-shadow: 0px 0px 3px rgb(49, 49, 49);
-  border-radius: 8%;
+  /* border-radius: 8%; */
   transform-origin: center bottom;
   z-index: 12;
 }
@@ -38,6 +128,7 @@ body {
   font-family: Helvetica;
   margin: 0;
   padding: 0;
+  display:none;
   overflow:hidden;
 }
 
@@ -89,27 +180,29 @@ body {
   background: rgb(7,10,88);
   background: linear-gradient(90deg, rgba(7,10,88,0.8090423669467788) 6%, rgba(25,37,170,0.7418154761904762) 19%, rgba(7,10,88,0.8146446078431373) 41%);
   width: 100%;
-  height: 800px;
+  /* height: 800px; */
+  height: 100%;
   margin: 0;
   padding: 0;
   z-index: 0;
   padding-top: 80px;
 }
-
 #table {
+  position: relative;
   background: rgb(12,88,7);
   background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
   margin: 0 auto;
+  left: 0;
   border: 10px solid #F1D804;;
-  border-radius: 40px;
+  /* border-radius: 40px; */
+  border-radius: 90px;
   width: 980px;
   height: 500px;
-  z-index: 1;
+  z-index: 0;
+  transform: scale(2);
+  transition: all 500ms ease;
   display: none;
 }
-/* .highlighted {
-  
-} */
 #top-message {
   position: absolute;
   margin-top: 1.5%;
@@ -130,7 +223,7 @@ body {
   transform: scale(0.75)
 }
 .space-flip:after {
-  content: "HOLD SPACE TO REVEAL CARDS" !important;
+  content: "HOLD SPACE TO REVEAL CARDS";
 }
 .space-next {
   transform: scale(1);
@@ -138,10 +231,19 @@ body {
 .space-next:after {
   content: "PRESS SPACE FOR NEXT HAND";
 }
+#thinking-message {
+  margin-left:auto;
+  margin-right:auto;
+  line-height:36px;
+  color: white;
+  font-family: 'Sawarabi Mincho', sans-serif;
+  font-size: 1.1rem;
+  display:none;
+}
 .dimmed {
   opacity: 0.3 !important;
 }
-.dealer-label {
+.status-label {
   color:rgb(22, 102, 16);
   font-weight: bold;
   font-family: 'Bevan', cursive;
@@ -151,8 +253,8 @@ body {
   opacity: 0;
   transition: all 200ms ease;
 }
-.dealer-label:after {
-  content: "D" !important;
+.status-label:after {
+  content: "Dealer" !important;
 }
 .winner-label, .fold-label {
   color:white;
@@ -185,7 +287,7 @@ body {
   font-family: 'Bevan', cursive;
   font-weight: normal;
   text-shadow: 1px 1px 3px black;
-  top: 150px;
+  top: 72px;
   transition: transform 800ms ease;
 }
 #player-1-action {
@@ -196,12 +298,11 @@ body {
 }
 .holeCard {
   flex: 1;
-  /* border: 1px solid yellow; */
 }
 
 
 .hole {
-  position: relative;
+  /* position: relative; */
   width: 120px;
   height: 100px;
   z-index: 4;
@@ -215,8 +316,8 @@ body {
 
 #community {
   box-sizing: border-box;
-  /* background: rgba(0, 0, 0, 0.4); */
   border: 2px solid darkgreen;
+  /* border-radius: 0.5rem; */
   width: 300px;
   height: 100px;
   margin-left: 150px;
@@ -224,7 +325,7 @@ body {
   display: flex;
 }
 
-#pot, #bet {
+#bet {
   margin-left: 440px;
   margin-top: 10px;
   font-size: 20px;
@@ -232,7 +333,6 @@ body {
 }
 .commCard {
   flex: 1;
-  /* border: 1px solid yellow; */
 }
 
 #holeTwo {
@@ -253,12 +353,13 @@ margin-right: 60px;
   height: 80px;
   width: 160px;
   border: 2px solid yellow;
-  z-index: 5;
+  z-index: 1;
   color: #fff;
   font-family: Helvetica;
   text-align: center;
 }
-#player1 {
+#player-1 {
+  z-index: 12;
   margin-top: -55px;
   margin-left: 40px;
   background: rgb(163,153,153);
@@ -266,7 +367,7 @@ margin-right: 60px;
   float: left;
 }
 
-#player2 {
+#player-2 {
   margin-left: 560px;
   margin-top: -55px;
   background: rgb(163,153,153);
@@ -284,13 +385,13 @@ margin-right: 60px;
 }
 #winner-message {
   position: absolute;
-  width: 100vw;
+  width: 100%;
   color: white;
   text-align: center;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 8%;
+  margin-top: 115px;
   font-size: 1.3rem;
   display: none;
 }
@@ -302,9 +403,9 @@ margin-right: 60px;
   font-family: 'Bevan', cursive;
   text-shadow: 1px 1px 3px black;
   z-index:10;
-  margin-top: 33%;
-  font-size: 0.9rem;
-  opacity: 0.75;
+  margin-top: 460px;
+  font-size: 0.85rem;
+  opacity: 0.7;
   /* display: none; */
 }
 #boardWrite {
@@ -315,9 +416,9 @@ margin-right: 60px;
   letter-spacing: 2.1px;
   font-family: 'Sawarabi Mincho', sans-serif;
   margin-left: 330px;
-  margin-top: 40px;
+  /* margin-top: 30px; */
   width: 300px;
-  height: 120px;
+  /* height: 120px; */
   text-align: center;
   text-transform: uppercase;
   z-index: 5;
@@ -345,21 +446,34 @@ button.action:active {
 #new-hand {
   display: none;
 }
-.actionButtons {
+#actionButtons {
+  position: relative;
   border: outset rgb(163,153,153);
+  border-radius: 6px;
   transition: transform 24ms ease;
   box-sizing: border-box;
   margin: 100px auto 0 auto;
   margin-top:3%;
+  padding-top:0;
   text-align: center;
   background: #383737;
   border: 2px solid yellow;
   padding: 5px;
   width: 700px;
-  /* height: 40px; */
+  height: 50px;
+  min-height: 50px;
+  opacity: 1;
+  transition: all 500ms ease;
+}
+.off-to-bottom {
+  margin-top: 200px !important;
+  opacity: 0 !important;
 }
 .post-game-button {
-  /* display:none; */
+  margin-left:auto;
+  margin-right: auto;
+}.game-button {
+  display:none;
 }
 .action {
   background: rgb(163,153,153);
@@ -388,6 +502,7 @@ button.action:active {
 } */
 
 @media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* @media screen and (min-width: 768px) and (max-width: 1024px) { */
 
   #container {
     padding-top: 60px;
@@ -398,7 +513,12 @@ button.action:active {
     width: 745px;
     height: 375px;
   }
-
+  #winner-message {
+    margin-top: 84px;
+  }
+  #loser-message {
+    margin-top: 360px;
+  }
   #cards {
     width: 725px;
     height: 75px;
@@ -410,6 +530,7 @@ button.action:active {
     height: 75px;
     z-index: 4;
     display: flex;
+    
   }
 
   #holeOne {
@@ -442,12 +563,12 @@ button.action:active {
       font-size: 12px;
     }
 
-    #player1 {
+    #player-1 {
       margin-top: -40px;
       margin-left: 30px;
     }
 
-    #player2 {
+    #player-2 {
       margin-left: 425px;
       margin-top: -40px;
     }
@@ -534,12 +655,12 @@ button.action:active {
       font-size: 12px;
     }
 
-    #player1 {
+    #player-1 {
       margin-top: -130px;
       margin-left: -570px;
     }
 
-    #player2 {
+    #player-2 {
       margin-left: -155px;
       margin-top: -130px;
     }

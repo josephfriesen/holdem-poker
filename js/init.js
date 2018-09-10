@@ -1,13 +1,22 @@
 $(document).ready(function() {
+  
+  $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
   $("#enterName").submit(function(event) {
     event.preventDefault();
     $(".sign-in").hide();
-    $("#table").show();
-    $('#new-game-button').show();
+    $("#table").fadeIn(1);
+    $("#table").css({
+      'transform': 'scale(1)'
+    });
+    $("#actionButtons").removeClass("off-to-bottom");
+    $("#actionButtons").fadeIn();
+    $('#new-game-button').fadeIn();
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
-    table.initiateGame(names);
+    setTimeout(function(){
+      table.initiateGame(names);
+    },500)
   });
   $('#call-check').click(function(){
     var player = table.atBat;
@@ -19,13 +28,15 @@ $(document).ready(function() {
       player.currentBet += amountToAdd;
       table.minimumBet = player.currentBet;
       player.emitAction($(this).text());
+      console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
       player.addToPot(amountToAdd);
       table.advanceRound();
     } else {
       player.emitAction($(this).text());
-      table.advanceTurn();
       if (table.calledOrChecked.length === table.players.length) {
         table.advanceRound();
+      } else if (table.roundIndex < 5) {
+        table.advanceTurn();
       }
     }
     table.updateFigures();
@@ -37,44 +48,53 @@ $(document).ready(function() {
     var amountToAdd = matchAmount+raiseAmount;
     player.currentBet += amountToAdd;
     table.minimumBet = player.currentBet;
+    console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
     player.addToPot(amountToAdd);
     player.emitAction($(this).text());
-    $('#call-check').text("Call " + table.minimumBet)
-    table.calledOrChecked = [];
+    // $('#call-check').text("Call " + table.minimumBet);
+    // $('#bet-raise').text("Raise " + table.bigBlind);
     table.updateFigures();
     table.advanceTurn();
+    table.calledOrChecked = [];
   });
   $('#allIn').click(function(){
     var player = table.atBat;
     var raiseAmount = table.minimumBet = player.bank;
     player.currentBet += raiseAmount;
     player.addToPot(raiseAmount);
+    console.log("ADDDDDDINNNGG " + raiseAmount + " to pot! -----------------------------")
     player.emitAction($(this).text());
-    $('#call-check').text("Call " + table.minimumBet)
-    table.calledOrChecked = [];
+    // $('#call-check').text("Call " + table.minimumBet);
+    // $('#bet-raise').text("Raise " + table.bigBlind);
     table.updateFigures();
     table.advanceTurn();
+    table.calledOrChecked = [];
   });
   $('#fold').click(function(){
     table.atBat.fold()
   });
   $('#new-hand').click(function(){
+    $(this).fadeOut();
     table.startNewHand()
   });
   $('#new-game-button').click(function(){
     window.location.reload()
   });
   document.getElementById("holeOne").onmousedown = function(){
-    table.players[0].flippedCards = true;
-    table.players[0].holeCards.forEach(function(card){
-      card.animateFlip("auto",64)
-    });
+    if (!table.vsCPU) {
+      table.players[0].flippedCards = true;
+      table.players[0].holeCards.forEach(function(card){
+        card.animateFlip("auto",64)
+      });
+    }
   };
   document.getElementById("holeTwo").onmousedown = function(){
-    table.players[1].flippedCards = true;
-    table.players[1].holeCards.forEach(function(card){
-      card.animateFlip("auto",64)
-    });
+    if (!table.vsCPU) {
+      table.players[1].flippedCards = true;
+      table.players[1].holeCards.forEach(function(card){
+        card.animateFlip("auto",64)
+      });
+    }
   };
   document.body.onmouseup = function(){
     table.players.forEach(function(player,i){
@@ -95,33 +115,34 @@ function hasLetters(string) {
     return true;
   }
 }
-window.addEventListener("resize", function() {
-  table.dealtCards.forEach(function(card,i){
-    card.dimensions.width = $('.commCard').width();
-    card.dimensions.height = $('.commCard').height();
-    if (card.div.css("background-image").includes("cardsheet")) {
-      var pos = {};
-      pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;
-      pos.top = table.suits.indexOf(card.suit) * card.dimensions.height;
-      card.div.css({
-        'background-size': (card.dimensions.width*13)+'px '+(card.dimensions.height*4)+'px',
-        'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
-        'width': card.dimensions.width + 'px',
-        'height': card.dimensions.height + 'px',
-      });
-    } else {
-      card.div.css({
-        'background-size': (card.dimensions.width)+'px '+(card.dimensions.height)+'px',
-        'background-position': '0 0',
-        'width': card.dimensions.width + 'px',
-        'height': card.dimensions.height + 'px',
-      });
-    }
-  });
-});
+// window.addEventListener("resize", function() {
+//   table.dealtCards.forEach(function(card,i) {
+//     card.dimensions.width = $('.holeCard').width();
+//     card.dimensions.height = $('.holeCard').height();
+//     if (card.div.css("background-image").includes("cardsheet")) {
+//       var pos = {};
+//       pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;
+//       pos.top = table.suits.indexOf(card.suit) * card.dimensions.height;
+//       card.div.css({
+//         'background-size': (card.dimensions.width*13)+'px '+(card.dimensions.height*4)+'px',
+//         'background-position': '-' + pos.left + 'px -' + pos.top + 'px',
+//         'width': card.dimensions.width + 'px',
+//         'height': card.dimensions.height + 'px',
+//       });
+//     } else {
+//       card.div.css({
+//         'background-size': (card.dimensions.width)+'px '+(card.dimensions.height)+'px',
+//         'background-position': '0 0',
+//         'width': card.dimensions.width + 'px',
+//         'height': card.dimensions.height + 'px',
+//       });
+//     }
+//   });
+// });
 document.onkeydown = function(event) {
-  if (event.keyCode == 32) {
-    if ($('#top-message').css('cursor') === 'pointer') {
+  if (!table.vsCPU && event.keyCode == 32) {
+    // if (event.keyCode == 32) {
+      if ($('#top-message').css('cursor') === 'pointer') {
       event.preventDefault();
       table.startNewHand()
     } else if (!table.atBat.flippedCards) {
@@ -134,8 +155,9 @@ document.onkeydown = function(event) {
   }
 };
 document.onkeyup = function(event) {
-  if (event.keyCode == 32) {
-    if ($('#top-message').css('cursor') !== 'pointer') {
+  if (!table.vsCPU && event.keyCode == 32) {
+    // if (event.keyCode == 32) {
+      if ($('#top-message').css('cursor') !== 'pointer') {
       if (table.atBat.flippedCards) {
         event.preventDefault();
         table.atBat.holeCards.forEach(function(card){
@@ -170,3 +192,14 @@ window.addEventListener("input",function(event){
 function randomInt(min,max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+jQuery.prototype.timeAnimation = function(duration) {
+  this.css({
+    'animation-play-state': 'running'
+  })
+  var self = this;
+  setTimeout(function(){
+    self.css({
+      'animation-play-state': 'paused',
+    })
+  },duration)
+}
