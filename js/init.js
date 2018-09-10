@@ -6,13 +6,17 @@ $(document).ready(function() {
   $("#enterName").submit(function(event) {
     event.preventDefault();
     $(".sign-in").hide();
-    $("#table").fadeIn();
-    $("#table").removeClass("off-to-right");
+    $("#table").fadeIn(1);
+    $("#table").css({
+      'transform': 'scale(1)'
+    });
     $("#actionButtons").removeClass("off-to-bottom");
     $("#actionButtons").fadeIn();
     $('#new-game-button').fadeIn();
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
-    table.initiateGame(names);
+    setTimeout(function(){
+      table.initiateGame(names);
+    },500)
   });
   $('#call-check').click(function(){
     var player = table.atBat;
@@ -24,11 +28,11 @@ $(document).ready(function() {
       player.currentBet += amountToAdd;
       table.minimumBet = player.currentBet;
       player.emitAction($(this).text());
+      console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
       player.addToPot(amountToAdd);
       table.advanceRound();
     } else {
       player.emitAction($(this).text());
-      
       if (table.calledOrChecked.length === table.players.length) {
         table.advanceRound();
       } else if (table.roundIndex < 5) {
@@ -44,9 +48,11 @@ $(document).ready(function() {
     var amountToAdd = matchAmount+raiseAmount;
     player.currentBet += amountToAdd;
     table.minimumBet = player.currentBet;
+    console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
     player.addToPot(amountToAdd);
     player.emitAction($(this).text());
-    $('#call-check').text("Call " + table.minimumBet)
+    // $('#call-check').text("Call " + table.minimumBet);
+    // $('#bet-raise').text("Raise " + table.bigBlind);
     table.updateFigures();
     table.advanceTurn();
     table.calledOrChecked = [];
@@ -56,8 +62,10 @@ $(document).ready(function() {
     var raiseAmount = table.minimumBet = player.bank;
     player.currentBet += raiseAmount;
     player.addToPot(raiseAmount);
+    console.log("ADDDDDDINNNGG " + raiseAmount + " to pot! -----------------------------")
     player.emitAction($(this).text());
-    $('#call-check').text("Call " + table.minimumBet)
+    // $('#call-check').text("Call " + table.minimumBet);
+    // $('#bet-raise').text("Raise " + table.bigBlind);
     table.updateFigures();
     table.advanceTurn();
     table.calledOrChecked = [];

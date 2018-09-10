@@ -26,6 +26,46 @@ function Table() {
   this.autoDealing = false;
   this.vsCPU = false;
   this.cpu = undefined;
+  this.cpuMessages = {
+    "preFlop": [
+      "Computer seems upset with its cards.",
+      "Computer seems neutral about its cards.",
+      "Computer seems okay with its cards.",
+      "Computer looks excited about its cards.",
+      "Computer is struggling to play it cool.",
+      "Computer can barely contain its joy."
+    ],
+    "flop": [
+      "Computer seems disappointed with its cards.",
+      "Computer seems neutral about its cards.",
+      "Computer seems okay with its cards.",
+      "Computer looks pleased with its cards.",
+      "Computer seems quite confident in its cards.",
+      "Computer appears very happy about its cards.",
+      "Computer is struggling to play it cool.",
+      "Computer can barely contain its joy."
+    ],
+    "turn": [
+      "Computer seems disappointed with its cards.",
+      "Computer seems neutral about its cards.",
+      "Computer seems okay with its cards.",
+      "Computer looks pleased with its cards.",
+      "Computer seems quite confident in its cards.",
+      "Computer appears very happy about its cards.",
+      "Computer is struggling to play it cool.",
+      "Computer can barely contain its joy."
+    ],
+    "river": [
+      "Computer seems disappointed with its cards.",
+      "Computer seems neutral about its cards.",
+      "Computer seems okay with its cards.",
+      "Computer looks pleased with its cards.",
+      "Computer seems quite confident in its cards.",
+      "Computer appears very happy about its cards.",
+      "Computer is struggling to play it cool.",
+      "Computer can barely contain its joy."
+    ]
+  }
   this.suits = [
     'hearts',
     'spades',
@@ -529,8 +569,6 @@ Table.prototype.initiateGame = function(playerNameArray){
     $('.commCard:nth-child(4)'),
     $('.commCard:nth-child(5)')
   ];
-  // $('#community').width($('#community').width()*1.2)
-  // $('#community').height($('#community').height()*1.2)
   playerNameArray.forEach(function(name,i){
     new Player(this, playerNameArray[i] !== "Computer", name, this.startingBank);
     if (i===0) {
@@ -547,6 +585,8 @@ Table.prototype.initiateGame = function(playerNameArray){
     $('.space-flip').css({
       'opacity': '0'
     });
+  } else {
+    $('.game-button').fadeIn();
   }
   
   this.setDealer(this.players[(this.handsPlayed % 2)]);
@@ -554,8 +594,6 @@ Table.prototype.initiateGame = function(playerNameArray){
   this.dealer.blind = this.dealer.currentBet = this.bigBlind;
   this.atBat.blind = this.atBat.currentBet = this.bigBlind/2;
   this.atBat = this.dealer;
-  // $('.player').removeClass('at-bat');
-  // this.atBat.div.addClass('at-bat');
   $('#funds').val(this.bigBlind);
   $('#top-message').fadeIn();
   this.createDeck();
@@ -593,6 +631,7 @@ Table.prototype.startNewHand = function() {
     player.swapLabel();
     player.holeCards = [];
     player.hand = undefined;
+    player.confidence = 0;
   });
   this.handsPlayed++;
   this.setDealer(this.players[(this.handsPlayed % 2)]);
@@ -726,43 +765,45 @@ Table.prototype.advanceTurn = function() {
   var previousBatter = this.atBat;
   this.atBat = this.players[playerIndex];
   if (this.roundIndex > 1 && this.atBat !== previousBatter) {
+    console.log("moving orb")
     this.moveOrb(this.players.indexOf(this.atBat));
   }
   // see if player has money
   if (!this.atBat.bank) {
     if (!this.autoDealing) {
       this.autoDealing = true;
-      this.advanceRound();
+      this.advanceRound(true);
     }
     return;
   }
   $('.player').removeClass('at-bat');
   this.atBat.div.addClass('at-bat');
   $('.game-button').prop('disabled', false)
-  $('#funds').val(this.bigBlind);
-  // decide which buttons should be available
+  $('#funds').val(this.bigBlind); // default bet/raise amount
+  // decide which buttons to disable or change
   if (this.minimumBet) {
     // a bet exists
-    var raiseAmount = (this.minimumBet+this.bigBlind);
     var betAmount = this.minimumBet;
-    var bankAmount = this.atBat.bank
-    if (bankAmount < raiseAmount) {
-      // bank not enough to raise
-      $('#call-check').prop("disabled", true);
-      $('#call-check').text("Check " + betAmount);
+    var raiseAmount = parseInt($('#funds').val());
+    var totalStake = (this.atBat.bank+this.atBat.currentBet)
+    $('#call-check').text("Call " + betAmount);
+    $('#bet-raise').text("Raise " + raiseAmount);
+    if (totalStake < (betAmount+raiseAmount)) {
+      // not enough to raise
+      console.log("not enough to raise")
       $('#bet-raise').prop("disabled", true);
-      $('#bet-raise').text("Raise " + raiseAmount);
     }
-    if (bankAmount < betAmount) {
-      // bank not enough to call
+    if (totalStake < betAmount) {
+      // not enough to call
+      console.log("not enough to call")
       $('#call-check').prop("disabled", true);
-      $('#call-check').text("Check " + betAmount);
+      $('#bet-raise').prop("disabled", true);
     }
   }
   if (this.atBat === this.cpu) {
     var makeCPUMove = true
     if (makeCPUMove) {
-      // $('.game-button').fadeIn();
+      $('.game-button').fadeIn();
       if (this.roundIndex === 2) {
         var delay = 3000
       } else {
@@ -774,6 +815,8 @@ Table.prototype.advanceTurn = function() {
       //   'opacity': '1'
       // },300);
     }
+  } else {
+    $('.game-button').fadeIn();
   }
 }
 Table.prototype.deal = function(amount) {
@@ -870,9 +913,7 @@ Table.prototype.advanceRound = function(handOver) {
     $('#funds').val(this.bigBlind); 
   }
   var roundName = this.rounds[this.roundIndex];
-  if (roundName !== "showdown") {
-    this.advanceTurn();
-  }
+  
   if (roundName === "preFlop") {
     this.players[0].addToPot(this.players[0].blind,true); // compulsory bets
     this.players[1].addToPot(this.players[1].blind,true);
@@ -901,6 +942,9 @@ Table.prototype.advanceRound = function(handOver) {
     setTimeout(function(){ // pause for suspense
       self.beginShowdown()
     },500);
+  }
+  if (roundName !== "showdown") {
+    this.advanceTurn();
   }
 }
 Table.prototype.handIndex = function(handKey) {
@@ -983,6 +1027,24 @@ Table.prototype.findWinner = function (player1, player2) {
     }
   }
 };
+Table.prototype.numberOfSuit = function(arr,suit) {
+  var suits = 0;
+  arr.forEach(function(card){
+    if (card.suit === suit) {
+      suits++
+    }
+  })
+  return suits;
+}
+Table.prototype.numberOfRank = function(arr,rank) {
+  var ranks = 0;
+  arr.forEach(function(card){
+    if (card.rank === rank) {
+      ranks++
+    }
+  })
+  return rank;
+}
 
 Table.prototype.beginShowdown = function() {
   var arr1 = this.players[0].holeCards.concat(this.communityCards);
@@ -992,12 +1054,18 @@ Table.prototype.beginShowdown = function() {
   var handArr2 = this.getHands(arr2);
   this.players[1].hand = this.findBestHand(handArr2);
   this.handWinner = this.findWinner(this.players[0], this.players[1]);
+  
   if (this.handWinner === "tie") {
     var half = Math.round(this.pot/2);
     this.players[0].addToPot(-half);
     this.players[1].addToPot(-this.pot);
+    if (this.players[0].hand.handValue === "highCard") {
+      var appendage = " " + this.players[0].hand.cards[0].rank;
+    } else {
+      var appendage = "";
+    }
     $('#winner-message').text("It's a tie!");
-    $('#loser-message').text("Both players have " + this.players[0].hand.handValue);
+    $('#loser-message').text("Both players have " + this.handInfo[this.players[0].hand.handValue].fullName + appendage);
     $('.win-lose-message').fadeIn();
     // this.atBat.div.removeClass("at-bat");
     this.atBat.statusLabel.removeClass("status-label");
@@ -1012,14 +1080,19 @@ Table.prototype.beginShowdown = function() {
     } else {
       var loser = this.players[0];
     }
-    // this.handWinner.addToPot(-this.pot);
-    this.drainPot(this.handWinner)
+    this.drainPot(this.handWinner);
     this.updateFigures();
     this.showStatusLabel(this.handWinner);
     this.handWinner.statusLabel.addClass("winner-label");
-    $('#winner-message').text(this.handWinner.name + " wins with " + this.handInfo[this.handWinner.hand.handValue].fullName);
-
-    $('#loser-message').text(loser.name + " had " + this.handInfo[loser.hand.handValue].fullName);
+    if (this.handWinner.hand.value === "highCard") {
+      var appendage1 = " " + this.handWinner.hand.cards[0].rank;
+      var appendage2 = " " + loser.hand.cards[0].rank;
+    } else {
+      var appendage1 = "";
+      var appendage2 = "";
+    }
+    $('#winner-message').text(this.handWinner.name + " wins with " + this.handInfo[this.handWinner.hand.handValue].fullName + appendage1);
+    $('#loser-message').text(loser.name + " had " + this.handInfo[loser.hand.handValue].fullName + appendage2);
     $('.win-lose-message').fadeIn();
     this.revealHands();
     this.showHandResults();
@@ -1096,5 +1169,7 @@ Table.prototype.updateFigures = function() {
   $('#player-2-bank').text(this.players[1].bank);
   $('#player-1-bet').text(this.players[0].currentBet);
   $('#player-2-bet').text(this.players[1].currentBet);
-  $('#player-2-name').html("Computer - "+this.cpu.confidence)
+  if (this.cpu) {
+    $('#player-2-name').html("Computer : "+this.cpu.confidence);
+  }
 };

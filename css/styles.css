@@ -36,7 +36,10 @@
   /* 25% {
     top: 25%
   } */
-  50% {
+  45% {
+    transform: translateY(-140px)
+  }
+  55% {
     transform: translateY(-140px)
   }
   /* 75% {
@@ -47,7 +50,10 @@
   /* 25% {
     top: 50%
   } */
-  50% {
+  45% {
+    transform: translateY(96px)
+  }
+  55% {
     transform: translateY(96px)
   }
   /* 75% {
@@ -193,11 +199,9 @@ body {
   width: 980px;
   height: 500px;
   z-index: 0;
+  transform: scale(2);
   transition: all 500ms ease;
   display: none;
-}
-.off-to-right {
-  left: 100vw !important;
 }
 #top-message {
   position: absolute;
@@ -230,6 +234,7 @@ body {
 #thinking-message {
   margin-left:auto;
   margin-right:auto;
+  line-height:36px;
   color: white;
   font-family: 'Sawarabi Mincho', sans-serif;
   font-size: 1.1rem;
@@ -458,7 +463,7 @@ button.action:active {
   height: 50px;
   min-height: 50px;
   opacity: 1;
-  transition: all 200ms ease;
+  transition: all 500ms ease;
 }
 .off-to-bottom {
   margin-top: 200px !important;
@@ -467,6 +472,8 @@ button.action:active {
 .post-game-button {
   margin-left:auto;
   margin-right: auto;
+}.game-button {
+  display:none;
 }
 .action {
   background: rgb(163,153,153);

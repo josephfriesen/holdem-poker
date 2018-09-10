@@ -110,6 +110,7 @@ function Hand(arr) {
   this.cards = arr;
   this.instances = this.getInstances(this.cards);
   this.handValue = table.evaluateHand(this);
+  this.rated = false;
 }
 Hand.prototype.sortByValue = function(cardArr=this.cards) {
   cardArr.sort(function(card1, card2){
