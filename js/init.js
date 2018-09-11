@@ -1,5 +1,4 @@
 $(document).ready(function() {
-  
   $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
@@ -28,7 +27,6 @@ $(document).ready(function() {
       player.currentBet += amountToAdd;
       table.minimumBet = player.currentBet;
       player.emitAction($(this).text());
-      console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
       player.addToPot(amountToAdd);
       table.advanceRound();
     } else {
@@ -44,11 +42,11 @@ $(document).ready(function() {
   $('#bet-raise').click(function() {
     var player = table.atBat;
     var raiseAmount = parseInt($('#funds').val());
+    console.log("raise amount is " + raiseAmount)
     var matchAmount = table.minimumBet-player.currentBet
     var amountToAdd = matchAmount+raiseAmount;
     player.currentBet += amountToAdd;
     table.minimumBet = player.currentBet;
-    console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
     player.addToPot(amountToAdd);
     player.emitAction($(this).text());
     // $('#call-check').text("Call " + table.minimumBet);
@@ -62,7 +60,6 @@ $(document).ready(function() {
     var raiseAmount = table.minimumBet = player.bank;
     player.currentBet += raiseAmount;
     player.addToPot(raiseAmount);
-    console.log("ADDDDDDINNNGG " + raiseAmount + " to pot! -----------------------------")
     player.emitAction($(this).text());
     // $('#call-check').text("Call " + table.minimumBet);
     // $('#bet-raise').text("Raise " + table.bigBlind);
