@@ -1,22 +1,26 @@
 $(document).ready(function() {
-  
   $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
-  $("#enterName").submit(function(event) {
+  $(".start-button").click(function(event) {
     event.preventDefault();
-    $(".sign-in").hide();
+    $("#sign-in-box").hide();
     $("#table").fadeIn(1);
     $("#table").css({
       'transform': 'scale(1)'
     });
-    $("#actionButtons").removeClass("off-to-bottom");
-    $("#actionButtons").fadeIn();
+    $("#action-buttons").removeClass("off-to-bottom");
+    $("#action-buttons").fadeIn();
     $('#new-game-button').fadeIn();
+    
+    var name1 = $("#name-input-1")[0];
+    var name2 = $("#name-input-2")[0];
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
-    setTimeout(function(){
-      table.initiateGame(names);
-    },500)
+    var humanOpponent = $(this)[0].id === "two-player-start"
+    if (!humanOpponent && !name2.value) {
+      names[1] = "Computer"
+    }
+    table.initiateGame(names,humanOpponent);
   });
   $('#call-check').click(function(){
     var player = table.atBat;
@@ -28,7 +32,6 @@ $(document).ready(function() {
       player.currentBet += amountToAdd;
       table.minimumBet = player.currentBet;
       player.emitAction($(this).text());
-      console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
       player.addToPot(amountToAdd);
       table.advanceRound();
     } else {
@@ -48,7 +51,6 @@ $(document).ready(function() {
     var amountToAdd = matchAmount+raiseAmount;
     player.currentBet += amountToAdd;
     table.minimumBet = player.currentBet;
-    console.log("ADDDDDDINNNGG " + amountToAdd + " to pot! -----------------------------")
     player.addToPot(amountToAdd);
     player.emitAction($(this).text());
     // $('#call-check').text("Call " + table.minimumBet);
@@ -62,7 +64,6 @@ $(document).ready(function() {
     var raiseAmount = table.minimumBet = player.bank;
     player.currentBet += raiseAmount;
     player.addToPot(raiseAmount);
-    console.log("ADDDDDDINNNGG " + raiseAmount + " to pot! -----------------------------")
     player.emitAction($(this).text());
     // $('#call-check').text("Call " + table.minimumBet);
     // $('#bet-raise').text("Raise " + table.bigBlind);
@@ -80,7 +81,7 @@ $(document).ready(function() {
   $('#new-game-button').click(function(){
     window.location.reload()
   });
-  document.getElementById("holeOne").onmousedown = function(){
+  document.getElementById("hole-1").onmousedown = function(){
     if (!table.vsCPU) {
       table.players[0].flippedCards = true;
       table.players[0].holeCards.forEach(function(card){
@@ -88,7 +89,7 @@ $(document).ready(function() {
       });
     }
   };
-  document.getElementById("holeTwo").onmousedown = function(){
+  document.getElementById("hole-2").onmousedown = function(){
     if (!table.vsCPU) {
       table.players[1].flippedCards = true;
       table.players[1].holeCards.forEach(function(card){
@@ -117,8 +118,8 @@ function hasLetters(string) {
 }
 // window.addEventListener("resize", function() {
 //   table.dealtCards.forEach(function(card,i) {
-//     card.dimensions.width = $('.holeCard').width();
-//     card.dimensions.height = $('.holeCard').height();
+//     card.dimensions.width = $('.hole-card').width();
+//     card.dimensions.height = $('.hole-card').height();
 //     if (card.div.css("background-image").includes("cardsheet")) {
 //       var pos = {};
 //       pos.left = table.ranks.indexOf(card.rank) * card.dimensions.width;

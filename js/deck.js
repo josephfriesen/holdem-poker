@@ -9,12 +9,12 @@ function Card(suit, rank) {
   this.value = this.getValue();
 }
 Card.prototype.getValue = function(){
-  return table.ranks.slice().reverse().indexOf(this.rank);
+  return poker.ranks.slice().reverse().indexOf(this.rank);
 }
 Card.prototype.showFront = function() {
   var pos = {};
-  pos.left = table.ranks.indexOf(this.rank) * this.dimensions.width;
-  pos.top = table.suits.indexOf(this.suit) * this.dimensions.height;
+  pos.left = poker.ranks.indexOf(this.rank) * this.dimensions.width;
+  pos.top = poker.suits.indexOf(this.suit) * this.dimensions.height;
   this.div.css({
     'background-image': 'url(img/cardsheet.png)',
     'background-size': (this.dimensions.width*13)+'px '+(this.dimensions.height*4)+'px',
@@ -31,15 +31,15 @@ Card.prototype.showBack = function() {
 Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
   var self = this;
   targetElement.html(this.cardHTML);
-  console.log("placing a " + this.rank + " of " + this.suit)
+  // console.log("placing a " + this.rank + " of " + this.suit)
   this.div = $('#'+this.rank+`-of-`+this.suit);
   if (resize) {
     this.dimensions.width = Math.round(targetElement.width());
     this.dimensions.height = Math.round(targetElement.height());
   }
   var pos = {};
-  pos.left = table.ranks.indexOf(this.rank) * this.dimensions.width;
-  pos.top = table.suits.indexOf(this.suit) * this.dimensions.height;
+  pos.left = poker.ranks.indexOf(this.rank) * this.dimensions.width;
+  pos.top = poker.suits.indexOf(this.suit) * this.dimensions.height;
   this.div.css({
     'background-image': 'url(img/cardsheet.png)',
     'background-repeat': 'no-repeat',
@@ -59,8 +59,17 @@ Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
   this.div.animate({
     'opacity': '1'
   },180);
-  this.div.delay(500).removeClass('protruding')
-  if (!table.vsCPU && Array.from($(targetElement)[0].classList).includes("holeCard")) {
+  var classList = Array.from(targetElement[0].classList);
+  var holeCard = classList.indexOf("hole-card") > -1;
+  if (holeCard) {
+    this.div.addClass('slow-move');
+  }
+  var self = this
+  setTimeout(function(){
+    self.div.removeClass('slow-move');
+  },600);
+  this.div.delay(500).removeClass('protruding');
+  if (!table.vsCPU && classList.includes("hole-card")) {
     document.getElementById(this.rank+`-of-`+this.suit).onmousedown = function(){
       self.animateFlip();
     };
@@ -91,8 +100,8 @@ Card.prototype.animateFlip = function(side="auto",speed=200) {
         'transform':'scaleX(0)'
       });
       var pos = {};
-      pos.left = table.ranks.indexOf(self.rank) * self.dimensions.width;
-      pos.top = table.suits.indexOf(self.suit) * self.dimensions.height;
+      pos.left = poker.ranks.indexOf(self.rank) * self.dimensions.width;
+      pos.top = poker.suits.indexOf(self.suit) * self.dimensions.height;
       setTimeout(function(){
         self.div.css({
           'background-image': 'url(img/cardsheet.png)',

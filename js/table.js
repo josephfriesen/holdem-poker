@@ -1,5 +1,4 @@
 var table = new Table();
-var lobby = {};
 function Table() {
   this.handsPlayed = 0;
   this.handWinner = undefined;
@@ -8,15 +7,6 @@ function Table() {
   this.calledOrChecked = [];
   this.communityCards = [];
   this.dealtCards = [];
-  
-  this.rounds = [
-    "preStart",
-    "preFlop",
-    "flop",
-    "turn",
-    "river",
-    "showdown"
-  ];
   this.bigBlind = 80;
   this.dealer;
   this.atBat;
@@ -26,498 +16,29 @@ function Table() {
   this.autoDealing = false;
   this.vsCPU = false;
   this.cpu = undefined;
-  this.cpuMessages = {
-    "preFlop": [
-      "Computer seems upset with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks excited about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
-    ],
-    "flop": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
-    ],
-    "turn": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
-    ],
-    "river": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
-    ]
-  }
-  this.suits = [
-    'hearts',
-    'spades',
-    'diamonds',
-    'clubs'
-  ];
-  this.ranks = [
-    'two','three','four','five','six','seven','eight','nine','ten','jack','queen','king','ace'
-  ];
-  this.handInfo = {
-    royalFlush: {
-      fullName: "a Royal Flush",
-      cardsInvolved: 5
-    },
-    straightFlush: {
-      fullName: "a Straight Flush",
-      cardsInvolved: 5
-    },
-    fourOfAKind: {
-      fullName: "Four of a Kind",
-      cardsInvolved: 4
-    },
-    fullHouse: {
-      fullName: "a Full House",
-      cardsInvolved: 5
-    },
-    flush: {
-      fullName: "a Flush",
-      cardsInvolved: 5
-    },
-    straight: {
-      fullName: "a Straight",
-      cardsInvolved: 5
-    },
-    threeOfAKind: {
-      fullName: "Three of a Kind",
-      cardsInvolved: 3
-    },
-    twoPair: {
-      fullName: "Two Pair",
-      cardsInvolved: 4
-    },
-    pair: {
-      fullName: "a Pair",
-      cardsInvolved: 2
-    },
-    highCard: {
-      fullName: "High Card",
-      cardsInvolved: 1
-    }
-  }
-  this.handEvaluators = {
-    royalFlush: {
-      evaluate: function(hand){
-        var aceCheck = false;
-        for (var i = 0; i <= 4; i++) {
-          if (hand.cards[i].rank === "ace") {
-            aceCheck = true;
-          }
-        }
-        var isHand = (table.handEvaluators.flush.evaluate(hand) && table.handEvaluators.straight.evaluate(hand) && aceCheck)
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-          hand.sortByValue();
-      },
-      breakTie: function(hand1, hand2) {
-        return "tie";
-      }
-    },
-    straightFlush: {
-      evaluate: function(hand) {
-        var isHand = (table.handEvaluators.flush.evaluate(hand) && table.handEvaluators.straight.evaluate(hand));
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        hand.sortByValue();
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          return "tie";
-        }
-      }
-    },
-    fourOfAKind: {
-      evaluate: function(hand) {
-        var isHand = (hand.instances[0] === 4);
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        var setArr = hand.cards.slice();
-        hand.sortByValue(setArr);
-        if (setArr[0].rank !== setArr[1].rank) {
-          setArr.push(setArr.shift());
-        }
-        hand.cards = setArr;
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 4) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-            return "tie";
-          }
-        }
-      }
-    },
-    fullHouse: {
-      evaluate: function(hand){
-        var isHand = (hand.instances[0] === 3 && hand.instances[3] === 2)
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        var setArr = hand.cards.slice();
-        hand.sortByValue(setArr);
-        if (setArr[1].rank !== setArr[2].rank) {
-          var dud1 = setArr.shift();
-          var dud2 = setArr.shift();
-          setArr.push(dud1);
-          setArr.push(dud2);
-        }
-        hand.cards = setArr;
-      },
-      breakTie: function(hand1,hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 4) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-            return "tie";
-          }
-        }
-      }
-    },
-    flush: {
-      evaluate: function(hand){
-        var isHand = (hand.cards[0].suit === hand.cards[1].suit && hand.cards[1].suit === hand.cards[2].suit && hand.cards[2].suit === hand.cards[3].suit && hand.cards[3].suit === hand.cards[4].suit);
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        hand.sortByValue();
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 1) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 1) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 1) === "tie") {
-            if (table.compareCards(hand1, hand2, 2) === "card1") {
-              return "hand1";
-            } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-              return "hand2";
-            } else if (table.compareCards(hand1, hand2, 2) === "tie") {
-              if (table.compareCards(hand1, hand2, 3) === "card1") {
-                return "hand1";
-              } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-                return "hand2";
-              } else if (table.compareCards(hand1, hand2, 3) === "tie") {
-                if (table.compareCards(hand1, hand2, 4) === "card1") {
-                  return "hand1";
-                } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                  return "hand2";
-                } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-                  return "tie"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    straight: {
-      evaluate: function(hand){
-        var isHand = false;
-        var uniqueArr = [1,1,1,1,1];
-        for (var n = 0; n <= 4; n++) {
-          if (hand.instances[n] !== uniqueArr[n]) {
-            return isHand;
-          }
-        }
-        hand.sortByValue();
-        var straightsList = [[ "ace", "five", "four", "three", "two" ],
-        [ "six", "five", "four", "three", "two" ],
-        [ "seven", "six", "five", "four", "three" ],
-        [ "eight", "seven", "six", "five", "four" ],
-        [ "nine", "eight", "seven", "six", "five" ],
-        [ "ten", "nine", "eight", "seven", "six" ],
-        [ "jack", "ten", "nine", "eight", "seven" ],
-        [ "queen", "jack", "ten", "nine", "eight" ],
-        [ "king", "queen", "jack", "ten", "nine" ],
-        [ "ace", "king", "queen", "jack", "ten" ]
-        ];
-        straightsList.forEach(function(straight) {
-          if (hand.cards[0].rank === straight[0] && hand.cards[1].rank === straight[1] && hand.cards[2].rank === straight[2] && hand.cards[3].rank === straight[3] && hand.cards[4].rank === straight[4]) {
-            isHand = true;
-          };
-        })
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        hand.sortByValue();
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          return "tie";
-        }
-      }
-    },
-
-    threeOfAKind: {
-      evaluate: function(hand){
-        var isHand = (hand.instances[0] === 3)
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        var setArr = hand.cards.slice();
-        setArr = hand.sortByValue(setArr);
-        var dudArr = [];
-        var dud1;
-        var dud2;
-        if (setArr[4].rank === setArr[3].rank) {
-          dud1 = setArr.shift();
-          dud2 = setArr.shift();
-          setArr.push(dud1);
-          setArr.push(dud2);
-        } else if (setArr[3].rank === setArr[2].rank) {
-          dud1 = setArr.shift();
-          dud2 = setArr.pop();
-          setArr.push(dud1);
-          setArr.push(dud2);
-        }
-        hand.cards = setArr;
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 3) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 3) === "tie") {
-            if (table.compareCards(hand1, hand2, 4) === "card1") {
-              return "hand1";
-            } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-              return "hand2";
-            } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-              return "tie";
-            }
-          }
-        }
-      }
-    },
-    twoPair: {
-      evaluate: function(hand){
-        var isHand = (hand.instances[0] === 2 && hand.instances[2] === 2);
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand){
-        hand.sortByValue();
-        if (hand.cards[0].rank !== hand.cards[1].rank) {
-
-          hand.cards.push(hand.cards.shift());
-        } else if (hand.cards[2].rank !== hand.cards[3].rank) {
-          hand.cards.push(hand.cards.splice(2,1)[0]);
-        }
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 3) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 3) === "tie") {
-            if (table.compareCards(hand1, hand2, 4) === "card1") {
-              return "hand1";
-            } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-              return "hand2";
-            } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-              return "tie";
-            }
-          }
-        }
-      }
-    },
-    pair: {
-      evaluate: function(hand){
-        var isHand = (hand.instances[0] === 2 && hand.instances[2] === 1);
-        var setArr = [];
-        if (isHand) {
-          this.arrange(hand);
-        }
-        return isHand;
-      },
-      arrange: function(hand) {
-        hand.sortByValue();
-        for (var i=0; i<=3; i++) {
-          if (hand.cards[i].rank === hand.cards[i+1].rank) {
-            setArr = hand.cards.splice(i,2);
-            hand.sortByValue(hand.cards);
-            hand.cards = setArr.concat(hand.cards);
-            continue;
-          }
-        }
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 2) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 2) === "tie") {
-            if (table.compareCards(hand1, hand2, 3) === "card1") {
-              return "hand1";
-            } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-              return "hand2";
-            } else if (table.compareCards(hand1, hand2, 3) === "tie") {
-              if (table.compareCards(hand1, hand2, 4) === "card1") {
-                return "hand1";
-              } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                return "hand2";
-              } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-                return "tie";
-              }
-            }
-          }
-        }
-      }
-    },
-    highCard: {
-      evaluate: function(hand) {
-        return (hand.instances[0] === 1);
-      },
-      arrange: function(hand){
-        hand.sortByValue();
-      },
-      breakTie: function(hand1, hand2){
-        if (table.compareCards(hand1, hand2, 0) === "card1") {
-          return "hand1";
-        } else if (table.compareCards(hand1, hand2, 0) === "card2") {
-          return "hand2";
-        } else if (table.compareCards(hand1, hand2, 0) === "tie") {
-          if (table.compareCards(hand1, hand2, 1) === "card1") {
-            return "hand1";
-          } else if (table.compareCards(hand1, hand2, 1) === "card2") {
-            return "hand2";
-          } else if (table.compareCards(hand1, hand2, 1) === "tie") {
-            if (table.compareCards(hand1, hand2, 2) === "card1") {
-              return "hand1";
-            } else if (table.compareCards(hand1, hand2, 2) === "card2") {
-              return "hand2";
-            } else if (table.compareCards(hand1, hand2, 2) === "tie") {
-              if (table.compareCards(hand1, hand2, 3) === "card1") {
-                return "hand1";
-              } else if (table.compareCards(hand1, hand2, 3) === "card2") {
-                return "hand2";
-              } else if (table.compareCards(hand1, hand2, 3) === "tie") {
-                if (table.compareCards(hand1, hand2, 4) === "card1") {
-                  return "hand1";
-                } else if (table.compareCards(hand1, hand2, 4) === "card2") {
-                  return "hand2";
-                } else if (table.compareCards(hand1, hand2, 4) === "tie") {
-                  return "tie"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  this.handKeys = Object.keys(this.handEvaluators);
-  this.deck = [];
-  this.board = [];
+ this.deck = [];
   this.roundIndex = 0;
 };
 Table.prototype.playerCoords = function(playerIndex) {
-  var coords = {x:0,y:0}
+  var coords = {};
   coords.x = (this.players[playerIndex].div.offset().left+(this.players[playerIndex].div.width()/2));
   coords.y = (this.players[playerIndex].div.offset().top+(this.players[playerIndex].div.height()/2));
-  return coords
+  return coords;
 }
 Table.prototype.placeOrb = function(playerIndex) {
   var playerCoords = this.playerCoords(playerIndex)
   this.turnOrb.css({
     'left': playerCoords.x +'px',
-    'top': playerCoords.y +'px',
+    'top': playerCoords.y +'px'
   });
 }
 Table.prototype.moveOrb = function(playerIndex) {
   var playerCoords = this.playerCoords(playerIndex);
-  var orbX =  (this.turnOrb.css('left'));
-  if (playerCoords.x !== orbX) {
-    
+  var playerX = Math.round(playerCoords.x);
+  var playerY = Math.round(playerCoords.y);
+  var orbX =  parseInt(this.turnOrb.css('left'));
+  var orbY =  parseInt(this.turnOrb.css('top'));
+  if (playerX !== orbX || playerY !== orbY) {
     if (playerIndex === 0) {
       this.turnOrb.css({
         'animation-name': 'bob-down'
@@ -527,23 +48,23 @@ Table.prototype.moveOrb = function(playerIndex) {
         'animation-name': 'bob-up'
       })
     }
-    this.turnOrb.fadeIn(1)
     this.turnOrb.css({
-      'animation-play-state': 'running'
+      'animation-play-state': 'running',
+      'opacity': '1'
     })
+    // this.turnOrb.fadeIn(100)
     var self = this;
     var playerCoords = this.playerCoords(playerIndex)
-    this.turnOrb.animate({
-      'left': playerCoords.x + 'px',
-      'top': playerCoords.y + 'px'
-    },600,function(){
-      self.turnOrb.css({
-        'animation-play-state': 'paused'
-      })
+    this.turnOrb.css({
+      'left': playerX + 'px',
+      'top': playerY + 'px'
     });
     setTimeout(function(){
-      self.turnOrb.fadeOut(200)
-    },300)
+      self.turnOrb.css({
+        'animation-play-state': 'paused',
+        'opacity': '0'
+      });
+    },500);
   }
 }
 Table.prototype.refresh = function() {
@@ -552,25 +73,24 @@ Table.prototype.refresh = function() {
   this.communityCards = [];
   this.dealtCards = [];
   this.deck = [];
-  this.board = [];
   this.roundIndex = 0;
   this.dealing = false;
   this.autoDealing = false;
   this.minimumBet = this.bigBlind;
-  $('.holeCard').empty();
-  $('.commCard').empty();
+  $('.hole-card').empty();
+  $('.community-card').empty();
 }
-Table.prototype.initiateGame = function(playerNameArray){
+Table.prototype.initiateGame = function(playerNameArray,humanOpponent){
   this.turnOrb = $('#turn-orb');
   this.slots = [
-    $('.commCard:first-child'),
-    $('.commCard:nth-child(2)'),
-    $('.commCard:nth-child(3)'),
-    $('.commCard:nth-child(4)'),
-    $('.commCard:nth-child(5)')
+    $('.community-card:first-child'),
+    $('.community-card:nth-child(2)'),
+    $('.community-card:nth-child(3)'),
+    $('.community-card:nth-child(4)'),
+    $('.community-card:nth-child(5)')
   ];
   playerNameArray.forEach(function(name,i){
-    new Player(this, playerNameArray[i] !== "Computer", name, this.startingBank);
+    new Player(this, humanOpponent, name, this.startingBank);
     if (i===0) {
       $('#player-1-name').text(name);
     } else {
@@ -588,7 +108,13 @@ Table.prototype.initiateGame = function(playerNameArray){
   } else {
     $('.game-button').fadeIn();
   }
-  
+  this.players.forEach(function(player,i){
+    if (this.players.indexOf(player)-1 >= 0) {
+      player.previousPlayer = this.players[this.players.indexOf(player)-1]
+    } else {
+      player.previousPlayer = this.players[this.players.length-1]
+    }
+  },this);
   this.setDealer(this.players[(this.handsPlayed % 2)]);
   this.atBat = this.players[((this.handsPlayed+1) % 2)];
   this.dealer.blind = this.dealer.currentBet = this.bigBlind;
@@ -599,7 +125,7 @@ Table.prototype.initiateGame = function(playerNameArray){
   this.createDeck();
   this.shuffle();
   this.advanceRound();
-  this.placeOrb(this.players.indexOf(this.atBat),true)
+  
 }
 Table.prototype.showStatusLabel = function(player) {
   var playerNum = this.players.indexOf(player)+1;
@@ -638,12 +164,10 @@ Table.prototype.startNewHand = function() {
   this.atBat = this.players[((this.handsPlayed+1) % 2)];
   this.dealer.blind = this.dealer.currentBet = this.bigBlind;
   this.atBat.blind = this.atBat.currentBet = (this.bigBlind/2);
-  this.atBat.div.addClass('at-bat');
   this.dealer.statusLabel.addClass('status-label');  
-  this.dealer.div.removeClass('at-bat');
   this.dealer.statusLabel.removeClass('winner-label');
   this.atBat = this.dealer;
-  // $('.holeCard').removeClass('protruding');
+  // $('.hole-card').removeClass('protruding');
   $('#funds').val(this.bigBlind);
   $('.playing-card').fadeOut(200);
   $('#top-message').animate({
@@ -691,18 +215,18 @@ Table.prototype.changeButtonSelection = function(handOver,gameOver) {
   }
 }
 Table.prototype.createDeck = function(){
-  this.suits.forEach(function(suit,i){
-    this.ranks.forEach(function(rank,j){
+  poker.suits.forEach(function(suit,i){
+    poker.ranks.forEach(function(rank,j){
       this.deck.push(new Card(suit,rank));
     },this)
   },this)
 }
 Table.prototype.compareCards = function(hand1, hand2, index) {
-  if (this.ranks.indexOf(hand1.cards[index].rank) > this.ranks.indexOf(hand2.cards[index].rank)) {
+  if (poker.ranks.indexOf(hand1.cards[index].rank) > poker.ranks.indexOf(hand2.cards[index].rank)) {
     return "card1";
-  } else if (this.ranks.indexOf(hand1.cards[index].rank) < this.ranks.indexOf(hand2.cards[index].rank)) {
+  } else if (poker.ranks.indexOf(hand1.cards[index].rank) < poker.ranks.indexOf(hand2.cards[index].rank)) {
     return "card2";
-  } else if (this.ranks.indexOf(hand1.cards[index].rank) === this.ranks.indexOf(hand2.cards[index].rank)) {
+  } else if (poker.ranks.indexOf(hand1.cards[index].rank) === poker.ranks.indexOf(hand2.cards[index].rank)) {
     return "tie";
   }
 }
@@ -763,21 +287,37 @@ Table.prototype.advanceTurn = function() {
     }
   }
   var previousBatter = this.atBat;
+  this.fadeTurnGlow(previousBatter)
   this.atBat = this.players[playerIndex];
-  if (this.roundIndex > 1 && this.atBat !== previousBatter) {
-    console.log("moving orb")
-    this.moveOrb(this.players.indexOf(this.atBat));
-  }
+  
   // see if player has money
   if (!this.atBat.bank) {
+    // auto-deal rest of round
     if (!this.autoDealing) {
       this.autoDealing = true;
       this.advanceRound(true);
     }
     return;
   }
-  $('.player').removeClass('at-bat');
-  this.atBat.div.addClass('at-bat');
+  // move orb/glow if changing turns
+  var currentRound = poker.rounds[this.roundIndex]
+  if (currentRound !== "showdown" && this.atBat !== previousBatter) {
+    if (!this.autoDealing) {
+      // start moving turnOrb
+      var self = this;
+      this.moveOrb(this.players.indexOf(this.atBat));
+      
+      setTimeout(function(){
+        self.startTurnGlow(self.atBat);
+      },700) // wait for orb to land
+    }
+  } else if (this.atBat === previousBatter) {
+   
+    var self = this;
+    setTimeout(function(){
+      self.startTurnGlow(self.atBat)
+    },1200) // wait for holeCard deal animation to finish
+  }
   $('.game-button').prop('disabled', false)
   $('#funds').val(this.bigBlind); // default bet/raise amount
   // decide which buttons to disable or change
@@ -790,12 +330,10 @@ Table.prototype.advanceTurn = function() {
     $('#bet-raise').text("Raise " + raiseAmount);
     if (totalStake < (betAmount+raiseAmount)) {
       // not enough to raise
-      console.log("not enough to raise")
       $('#bet-raise').prop("disabled", true);
     }
     if (totalStake < betAmount) {
       // not enough to call
-      console.log("not enough to call")
       $('#call-check').prop("disabled", true);
       $('#bet-raise').prop("disabled", true);
     }
@@ -803,20 +341,21 @@ Table.prototype.advanceTurn = function() {
   if (this.atBat === this.cpu) {
     var makeCPUMove = true
     if (makeCPUMove) {
-      $('.game-button').fadeIn();
       if (this.roundIndex === 2) {
         var delay = 3000
       } else {
         var delay = this.atBat.moveDelay
       }
       this.atBat.makeMove(delay);
-    } else {
-      // $('.game-button').animate({
-      //   'opacity': '1'
-      // },300);
     }
   } else {
-    $('.game-button').fadeIn();
+    var self = this;
+    setTimeout(function(){
+      if (self.vsCPU) {
+        $('#thinking-message').hide();
+      }
+      $('.game-button').fadeIn();
+    },600);  
   }
 }
 Table.prototype.deal = function(amount) {
@@ -861,9 +400,7 @@ Table.prototype.deal = function(amount) {
               } else {
                 $('.game-button').prop("disabled", false);
               }
-              
               self.dealing = false;
-             
             },480)
           }
         },500);
@@ -885,8 +422,9 @@ Table.prototype.deal = function(amount) {
       }
     }    
   }
+  // DOES NOT AUTODEAL PROPERLY VS CPU
   if (this.autoDealing) {
-    var roundsLeft = this.rounds.length-this.roundIndex
+    var roundsLeft = poker.rounds.length-this.roundIndex
     var totalDelay = 0
     for (var i=1; i<roundsLeft; i++) {
       var currentIndex = (this.roundIndex+i);      
@@ -912,16 +450,20 @@ Table.prototype.advanceRound = function(handOver) {
     this.minimumBet = 0;
     $('#funds').val(this.bigBlind); 
   }
-  var roundName = this.rounds[this.roundIndex];
-  
+  var roundName = poker.rounds[this.roundIndex];
   if (roundName === "preFlop") {
-    this.players[0].addToPot(this.players[0].blind,true); // compulsory bets
-    this.players[1].addToPot(this.players[1].blind,true);
-    this.deal(2); // hole cards
-    // starts call/raise because of blinds
-    $('#call-check').text("Call " + table.minimumBet);
-    $('#bet-raise').text("Raise " + table.bigBlind);
-    this.updateFigures();
+    // delay to wait for zoom out effect
+    var self = this;
+    setTimeout(function(){
+      self.players[0].addToPot(self.players[0].blind); // compulsory bets
+      self.players[1].addToPot(self.players[1].blind,true);
+      self.deal(2); // hole cards
+      // starts call/raise because of blinds
+      $('#call-check').text("Call " + self.minimumBet);
+      $('#bet-raise').text("Raise " + self.bigBlind);
+      self.updateFigures();
+      self.placeOrb(self.players.indexOf(self.atBat),true)
+    },600)
   } else if (roundName === "flop") {
     this.deal(3,handOver);
     $('#call-check').text("Check");
@@ -935,14 +477,14 @@ Table.prototype.advanceRound = function(handOver) {
     $('#call-check').text("Check");
     $('#bet-raise').text("Bet " + table.bigBlind);
   } else if (roundName === "showdown") {
-    this.atBat.div.removeClass("at-bat");
     $('.game-button').prop('disabled','true');
-
+    this.fadeTurnGlow(this.atBat)
     var self = this;
     setTimeout(function(){ // pause for suspense
       self.beginShowdown()
     },500);
   }
+  
   if (roundName !== "showdown") {
     this.advanceTurn();
   }
@@ -976,8 +518,8 @@ Table.prototype.getHands = function(multiCardArray) {
   return handArray;
 }
 Table.prototype.evaluateHand = function(hand) {
-  for (handKey in this.handEvaluators) {
-    if (this.handEvaluators[handKey].evaluate(hand)) {
+  for (handKey in poker.handActions) {
+    if (poker.handActions[handKey].evaluate(hand)) {
       return handKey;
     }
   }
@@ -985,13 +527,13 @@ Table.prototype.evaluateHand = function(hand) {
 Table.prototype.findBestHand = function(handArray) {
   var bestHand = 9;
   handArray.forEach(function(hand) {
-    if (table.handKeys.indexOf(hand.handValue) < bestHand) {
-      bestHand = table.handKeys.indexOf(hand.handValue);
+    if (poker.handKeys.indexOf(hand.handValue) < bestHand) {
+      bestHand = poker.handKeys.indexOf(hand.handValue);
     }
   })
   bestArr = [];
   handArray.forEach(function(hand) {
-    if (table.handKeys.indexOf(hand.handValue) === bestHand) {
+    if (poker.handKeys.indexOf(hand.handValue) === bestHand) {
       bestArr.push(hand);
     }
   })
@@ -1001,7 +543,7 @@ Table.prototype.findBestHand = function(handArray) {
     return bestArr[0];
   } else {
     for (var i = 0; i < len - 1; i++) {
-      if (this.handEvaluators[handType].breakTie(bestArr[0], bestArr[1]) === "hand1") {
+      if (poker.handActions[handType].breakTie(bestArr[0], bestArr[1]) === "hand1") {
         bestArr.splice(1,1);
       } else {
         bestArr.shift();
@@ -1012,15 +554,15 @@ Table.prototype.findBestHand = function(handArray) {
   return bestArr[0];
 }
 Table.prototype.findWinner = function (player1, player2) {
-  if (table.handKeys.indexOf(player1.hand.handValue) < table.handKeys.indexOf(player2.hand.handValue)) {
+  if (poker.handKeys.indexOf(player1.hand.handValue) < poker.handKeys.indexOf(player2.hand.handValue)) {
     return player1;
-  } else if (table.handKeys.indexOf(player1.hand.handValue) > table.handKeys.indexOf(player2.hand.handValue)) {
+  } else if (poker.handKeys.indexOf(player1.hand.handValue) > poker.handKeys.indexOf(player2.hand.handValue)) {
     return player2;
   } else {
     var handType = player1.hand.handValue;
-    if (this.handEvaluators[handType].breakTie(player1.hand, player2.hand) === "hand1") {
+    if (poker.handActions[handType].breakTie(player1.hand, player2.hand) === "hand1") {
       return player1;
-    } else if (this.handEvaluators[handType].breakTie(player1.hand, player2.hand) === "hand2") {
+    } else if (poker.handActions[handType].breakTie(player1.hand, player2.hand) === "hand2") {
       return player2;
     } else {
       return "tie";
@@ -1054,7 +596,6 @@ Table.prototype.beginShowdown = function() {
   var handArr2 = this.getHands(arr2);
   this.players[1].hand = this.findBestHand(handArr2);
   this.handWinner = this.findWinner(this.players[0], this.players[1]);
-  
   if (this.handWinner === "tie") {
     var half = Math.round(this.pot/2);
     this.players[0].addToPot(-half);
@@ -1065,9 +606,8 @@ Table.prototype.beginShowdown = function() {
       var appendage = "";
     }
     $('#winner-message').text("It's a tie!");
-    $('#loser-message').text("Both players have " + this.handInfo[this.players[0].hand.handValue].fullName + appendage);
+    $('#loser-message').text("Both players have " + poker.handInfo[this.players[0].hand.handValue].fullName + appendage);
     $('.win-lose-message').fadeIn();
-    // this.atBat.div.removeClass("at-bat");
     this.atBat.statusLabel.removeClass("status-label");
     this.atBat.statusLabel.removeClass("winner-label");
     this.revealHands();
@@ -1091,26 +631,26 @@ Table.prototype.beginShowdown = function() {
       var appendage1 = "";
       var appendage2 = "";
     }
-    $('#winner-message').text(this.handWinner.name + " wins with " + this.handInfo[this.handWinner.hand.handValue].fullName + appendage1);
-    $('#loser-message').text(loser.name + " had " + this.handInfo[loser.hand.handValue].fullName + appendage2);
+    $('#winner-message').text(this.handWinner.name + " wins with " + poker.handInfo[this.handWinner.hand.handValue].fullName + appendage1);
+    $('#loser-message').text(loser.name + " had " + poker.handInfo[loser.hand.handValue].fullName + appendage2);
     $('.win-lose-message').fadeIn();
     this.revealHands();
     this.showHandResults();
   }
 };
 Table.prototype.revealHands = function(){
-  this.players[0].div.removeClass('at-bat');
-  this.players[1].div.removeClass('at-bat');
+  $('#thinking-message').hide();
   this.players[0].holeCards[0].animateFlip("front");
   this.players[0].holeCards[1].animateFlip("front");
   this.players[1].holeCards[0].animateFlip("front");
   this.players[1].holeCards[1].animateFlip("front");
-  // $('.holeCard').addClass('protruding');
+  // $('.hole-card').addClass('protruding');
 }
 Table.prototype.showHandResults = function(notHand){
-  if (this.handWinner.hand) {
+  $('#thinking-message').hide();
+  if (!notHand) {
     var winningHand = this.handWinner.hand;
-    var involvedCards = this.handInfo[winningHand.handValue].cardsInvolved;
+    var involvedCards = poker.handInfo[winningHand.handValue].cardsInvolved;
     for (var i=0; i<this.dealtCards.length; i++) {
       var card = this.dealtCards[i];
       if (winningHand.cards.indexOf(card) > -1 && winningHand.cards.indexOf(card) < involvedCards) {
@@ -1170,6 +710,20 @@ Table.prototype.updateFigures = function() {
   $('#player-1-bet').text(this.players[0].currentBet);
   $('#player-2-bet').text(this.players[1].currentBet);
   if (this.cpu) {
-    $('#player-2-name').html("Computer : "+this.cpu.confidence);
+    $('#player-2-name').html(this.cpu.name + ": "+this.cpu.confidence);
   }
 };
+Table.prototype.fadeTurnGlow = function(player) {
+  player.div.css({
+    'animation-name': 'fade-pulse',
+    'animation-iteration-count': '1',
+    'animation-duration': '250ms'
+  })
+}
+Table.prototype.startTurnGlow = function(player) {
+  player.div.css({
+    'animation-name': 'pulse',
+    'animation-iteration-count': 'infinite',
+    'animation-duration': '1000ms'
+  })
+}

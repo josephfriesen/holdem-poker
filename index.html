@@ -7,13 +7,16 @@
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <title>Texas Hold 'Em</title>
-    <script src="js/jquery.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="js/poker.js"></script>
     <script src="js/table.js"></script>
     <script src="js/deck.js"></script>
     <script src="js/player.js"></script>
+    <script src="js/ai.js"></script>
     <script src="js/init.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Bevan" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Sawarabi+Mincho" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet "type="text/css">
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   </head>
@@ -29,54 +32,49 @@
     <div class="win-lose-message" id="winner-message"></div>
     <div class="win-lose-message" id="loser-message"></div>
     <div id="container">
-      <div class="sign-in">
-        <h2 id="signInHead">Please enter your names:</h2>
-        <form id="enterName">
-          <div class="nameDiv">
-            <label for="name1">Player 1:</label>
-            <input placeholder="Player 1" class="enterName" id="name1">
+      <div id="sign-in-box">
+        <form id="player-name-form">
+          <h4>Enter your name(s)</h4>
+          <input placeholder="Player 1" class="name-input" id="name-input-1">
+          <input placeholder="Player 2"  class="name-input" id="name-input-2">
+          <div id="start-button-area">
+            <button type="submit" class="action start-button" id="two-player-start">Two Player</button>
+            <button type="submit" class="action start-button" id="vs-cpu-start">vs. Computer</button>
           </div>
-          <br />
-          <div class="nameDiv">
-            <label for="name2">Player 2:</label>
-            <input placeholder="Computer"  class="enterName" id="name2">
-          </div>
-          <br />
-          <button type="submit" class="action" id="name-btn">Submit</button>
         </form>
       </div>
       <div id="table">
-        <div class="player-action" id="player-1-action">Check</div>
-        <div class="player-action" id="player-2-action">Bet 80</div>
+        <div class="player-action" id="player-1-action"></div>
+        <div class="player-action" id="player-2-action"></div>
           <div id="cards">
-          <div class="hole" id="holeOne">
-            <div class="holeCard"></div>
-            <div class="holeCard"></div>
+          <div class="hole" id="hole-1">
+            <div class="hole-card"></div>
+            <div class="hole-card"></div>
           </div>
-          <div id="community">
-            <div class="commCard"></div>
-            <div class="commCard"></div>
-            <div class="commCard"></div>
-            <div class="commCard"></div>
-            <div class="commCard"></div>
+          <div id="community-area">
+            <div class="community-card"></div>
+            <div class="community-card"></div>
+            <div class="community-card"></div>
+            <div class="community-card"></div>
+            <div class="community-card"></div>
           </div>
-          <div class="hole" id="holeTwo">
-            <div class="holeCard"></div>
-            <div class="holeCard"></div>
+          <div class="hole" id="hole-2">
+            <div class="hole-card"></div>
+            <div class="hole-card"></div>
           </div>
         </div>
-        <div id="pot" class="player-bet">Pot<br /><div id="pot-amount"></div></div>
+        <div id="pot" class="table-text">Pot<br /><div id="pot-amount"></div></div>
         <div id="playerAlign">
           <div class="player" id="player-1">
             <p class="player-name"><span id="player-1-name" class="box"></span></p>
             <p class="player-bank"><span id="player-1-bank"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="player-1-bet"></span></p>
+            <p class="table-text">Bet: &nbsp;<span id="player-1-bet"></span></p>
             <p><span id="dealer-1" class="status-label"><span></span></span></p>
           </div>
           <div class="player" id="player-2">
             <p class="player-name"><span id="player-2-name" class="box"></span></p>
             <p class="player-bank"><span id="player-2-bank"></span></p>
-            <p class="player-bet">Bet: &nbsp;<span id="player-2-bet" class="box"></span></p>
+            <p class="table-text">Bet: &nbsp;<span id="player-2-bet" class="box"></span></p>
             <p><span id="dealer-2" class="status-label"><span></span></span></p>
           </div>
         </div>
@@ -90,8 +88,8 @@
         </div> -->
         
       </div>
-      <div class="off-to-bottom" id="actionButtons">
-        <div id="thinking-message">Computer is thinking...</div>
+      <div class="off-to-bottom" id="action-buttons">
+        <div id="thinking-message"></div>
         <button class="action game-button" id="call-check"></button>
         <button class="action game-button" id="bet-raise"></button>
         <input class="game-button" type="tel" id="funds">
