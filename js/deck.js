@@ -59,8 +59,17 @@ Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
   this.div.animate({
     'opacity': '1'
   },180);
-  this.div.delay(500).removeClass('protruding')
-  if (!table.vsCPU && Array.from($(targetElement)[0].classList).includes("holeCard")) {
+  var classList = Array.from(targetElement[0].classList);
+  var holeCard = classList.indexOf("hole-card") > -1;
+  if (holeCard) {
+    this.div.addClass('slow-move');
+  }
+  var self = this
+  setTimeout(function(){
+    self.div.removeClass('slow-move');
+  },600);
+  this.div.delay(500).removeClass('protruding');
+  if (!table.vsCPU && classList.includes("hole-card")) {
     document.getElementById(this.rank+`-of-`+this.suit).onmousedown = function(){
       self.animateFlip();
     };
