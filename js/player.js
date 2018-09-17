@@ -12,22 +12,23 @@ function Player(table, human, name, bank) {
   this.flippedCards = false;
   this.confidence = 0;
   this.hopes = {};
+  this.previousPlayer = undefined;
   Array.from(poker.handKeys).forEach(function(hand){
     this.hopes[hand] = 0
   },this)
   this.options = ["call-check"]
   if (!this.table.players.length) {
     this.slots = [
-      $('#holeOne>.holeCard:first-child'),
-      $('#holeOne>.holeCard:nth-child(2)'),
+      $('#hole-1>.hole-card:first-child'),
+      $('#hole-1>.hole-card:nth-child(2)'),
     ];
-    this.hole = $('#holeOne')
+    this.hole = $('#hole-1')
   } else {
     this.slots = [
-      $('#holeTwo>.holeCard:first-child'),
-      $('#holeTwo>.holeCard:nth-child(2)'),
+      $('#hole-2>.hole-card:first-child'),
+      $('#hole-2>.hole-card:nth-child(2)'),
     ];
-    this.hole = $('#holeTwo')
+    this.hole = $('#hole-2')
   }
   this.table.players.push(this);
   this.div = $('#player-' + this.table.players.length);
