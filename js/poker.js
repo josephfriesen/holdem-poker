@@ -9,42 +9,42 @@
   ],
   cpuMessages: {
     "preFlop": [
-      "Computer seems upset with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks excited about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
+      " seems upset with its cards.",
+      " seems neutral about its cards.",
+      " seems okay with its cards.",
+      " looks excited about its cards.",
+      " is struggling to play it cool.",
+      " can barely contain its joy."
     ],
     "flop": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
+      " seems disappointed with its cards.",
+      " seems neutral about its cards.",
+      " seems okay with its cards.",
+      " looks pleased with its cards.",
+      " seems quite confident in its cards.",
+      " appears very happy about its cards.",
+      " is struggling to play it cool.",
+      " can barely contain its joy."
     ],
     "turn": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
+      " seems disappointed with its cards.",
+      " seems neutral about its cards.",
+      " seems okay with its cards.",
+      " looks pleased with its cards.",
+      " seems quite confident in its cards.",
+      " appears very happy about its cards.",
+      " is struggling to play it cool.",
+      " can barely contain its joy."
     ],
     "river": [
-      "Computer seems disappointed with its cards.",
-      "Computer seems neutral about its cards.",
-      "Computer seems okay with its cards.",
-      "Computer looks pleased with its cards.",
-      "Computer seems quite confident in its cards.",
-      "Computer appears very happy about its cards.",
-      "Computer is struggling to play it cool.",
-      "Computer can barely contain its joy."
+      " seems disappointed with its cards.",
+      " seems neutral about its cards.",
+      " seems okay with its cards.",
+      " looks pleased with its cards.",
+      " seems quite confident in its cards.",
+      " appears very happy about its cards.",
+      " is struggling to play it cool.",
+      " can barely contain its joy."
     ]
   },
   suits: [
