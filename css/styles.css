@@ -5,69 +5,170 @@
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none;
 }
-.at-bat {
+h4 {
+  font-size: 1.2rem;
+}
+.player {
+  position: relative;
   box-sizing: border-box;
+  height: 80px;
+  width: 160px;
+  border: 2px solid yellow;
+  z-index: 1;
+  color: #fff;
+  font-family: Helvetica;
+  text-align: center;
+  box-shadow: 0px 0px 0px 0px yellow;
+  animation-fill-mode: forwards;
+}
+
+
+#player-1 {
+  z-index: 12;
+  margin-top: -55px;
+  margin-left: 40px;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  float: left;
+  transition: all 500ms ease;
+}
+
+#player-2 {
+  margin-left: 560px;
+  margin-top: -55px;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  float: left;
+  transition: all 500ms ease;
+}
+
+.slow-move {
+  transition-duration: 600ms !important;
+}
+.at-bat {
   animation-name: pulse;
-  animation-duration: 1000ms;
   animation-iteration-count: infinite;
-  animation-play-state: running;
+  animation-duration: 1000ms;
+}
+.fading-glow {
+  animation-name: fade-pulse !important;
+  animation-duration: 300ms;
 }
 @keyframes pulse {
+  0%, 100% {
+    box-shadow: 0px 0px 0px 0px yellow;
+    color: white;
+  }
   50% {
-    box-shadow: 0px 0px 24px 3px yellow;
+    box-shadow: 0px 0px 30px 8px yellow;
     color: yellow;
+  }
+}
+@keyframes fade-pulse {
+  0% {
+    box-shadow: 0px 0px 15px 4px yellow;
+
+  }
+  100% {
+    box-shadow: 0px 0px 0px 0px yellow;
   }
 }
 #turn-orb {
   position:absolute;
   border-radius: 50%;
   box-shadow: 0px 0px 84px 32px yellow;
-  transform-origin: center;
-  z-index:12;
+  /* transform-origin: center; */
+  z-index:10;
   transform: translateY(0%);
   animation-name: bob-up;
-  animation-duration: 600ms;
+  animation-duration: 500ms;
   animation-iteration-count: infinite;
   animation-play-state: paused;
   animation-timing-function: linear;
-  display:none;
+  transition: all 500ms ease-in-out, opacity 300ms ease;
+  opacity:0;
 }
 @keyframes bob-up {
-  /* 25% {
-    top: 25%
-  } */
-  45% {
-    transform: translateY(-140px)
+  0%, 100% {
+    transform: translateY(0)
   }
-  55% {
-    transform: translateY(-140px)
+  30% {
+    transform: translateY(-9rem);
   }
-  /* 75% {
-    top: 25%
-  } */
+  40% {
+    transform: translateY(-12rem);
+  }
+  
+  60% {
+    transform: translateY(-12rem);
+  }
+  70% {
+    transform: translateY(-9rem);
+  }
 }
 @keyframes bob-down {
-  /* 25% {
-    top: 50%
-  } */
-  45% {
-    transform: translateY(96px)
+  0%, 100% {
+    transform: translateY(0)
   }
-  55% {
-    transform: translateY(96px)
+  30% {
+    transform: translateY(9rem);
   }
-  /* 75% {
-    top: 50%
-  } */
+  40% {
+    transform: translateY(12rem);
+  }
+  60% {
+    transform: translateY(12rem);
+  }
+  70% {
+    transform: translateY(9rem);
+  }
 }
-.player-name {
-  margin-top:5%;
-  margin-bottom:5%;
+#sign-in-box {
+  margin: 0 auto;
+  padding-top: 2%;
+  padding-left: 3%;
+  padding-right: 3%;
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  width: 400px;
+  border: 2px solid yellow;
+  border-radius: 1rem;
+  color: #fff;
+  box-sizing: border-box;
 }
-.enterName {
+
+#player-name-form {
+  display:grid;
+  grid-template-rows: 1fr 1fr 1fr 1.75fr;
+  align-items: center;
+}
+.name-input {
   padding-left:1%;
+  width: 12rem;  
 }
-.player-bet {
+.action {
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  text-align: center;
+  width: 100px;
+  height: 2rem;
+  color: #fff;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.start-button {
+  margin: 0;
+  width: 90%;
+}
+.name-input, .start-button {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#start-button-area {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+}
+.table-text {
   font-family: 'Bevan', cursive;
   margin-top: 0;
 }
@@ -76,6 +177,42 @@
   font-size: 1.3rem;
   margin-top:0;
 }
+#action-buttons {
+  position: relative;
+  border: outset rgb(163,153,153);
+  border-radius: 6px;
+  transition: transform 24ms ease;
+  margin: 100px auto 0 auto;
+  margin-top:3%;
+  box-sizing: border-box;
+  text-align: center;
+  background: #383737;
+  border: 2px solid yellow;
+  padding: 0.75rem;
+  width: 700px;
+  height: 3.6rem;
+  min-height: 50px;
+  opacity: 1;
+  transition: all 500ms ease;
+}
+.off-to-bottom {
+  margin-top: 200px !important;
+  opacity: 0 !important;
+}
+.post-game-button {
+  margin-left:auto;
+  margin-right: auto;
+}
+.game-button {
+  display:none;
+}
+.player-name {
+  margin-top:5%;
+  margin-bottom:5%;
+}
+
+
+
 #pot {
   text-align: center;
   width:10%;
@@ -131,41 +268,24 @@ body {
   display:none;
   overflow:hidden;
 }
-
 .header {
   text-align: center;
   text-transform: uppercase;
   background: rgb(153,153,153);
   background: linear-gradient(180deg, rgba(153,153,153,1) 25%, rgba(183,183,183,1) 50%, rgba(153,153,153,1) 75%);
-  height: 20px;
+  height: 45px;
   margin: 0;
   -webkit-margin-after: 0;
   -webkit-margin-before: 0;
-  padding: 8px;
-  font-family: 'Bevan', cursive;
+  padding: 10px;
+  font-family: 'Bevan', cursive !important;
   color: rgb(72, 72, 72);
-  font-size: 16px;
   z-index: 1;
-}
-
-.sign-in {
-  margin: 0 auto;
-  padding-top: 40px;
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  width: 500px;
-  height: 200px;
-  border: 2px solid yellow;
-  color: #fff;
-  text-align: center;
-}
-
-.nameDiv {
-  padding-top: 3px;
-}
-
-.enterName {
-  width: 180px;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  display:grid;
 }
 #name-btn {
   text-align: center;
@@ -180,7 +300,6 @@ body {
   background: rgb(7,10,88);
   background: linear-gradient(90deg, rgba(7,10,88,0.8090423669467788) 6%, rgba(25,37,170,0.7418154761904762) 19%, rgba(7,10,88,0.8146446078431373) 41%);
   width: 100%;
-  /* height: 800px; */
   height: 100%;
   margin: 0;
   padding: 0;
@@ -234,7 +353,6 @@ body {
 #thinking-message {
   margin-left:auto;
   margin-right:auto;
-  line-height:36px;
   color: white;
   font-family: 'Sawarabi Mincho', sans-serif;
   font-size: 1.1rem;
@@ -296,7 +414,7 @@ body {
 #player-2-action {
   right: 190px;
 }
-.holeCard {
+.hole-card {
   flex: 1;
 }
 
@@ -309,12 +427,12 @@ body {
   display: flex;
 }
 
-#holeOne {
+#hole-1 {
   margin-left: 60px;
   float:left;
 }
 
-#community {
+#community-area {
   box-sizing: border-box;
   border: 2px solid darkgreen;
   /* border-radius: 0.5rem; */
@@ -331,11 +449,11 @@ body {
   font-size: 20px;
   color: #F1D804;
 }
-.commCard {
+.community-card {
   flex: 1;
 }
 
-#holeTwo {
+#hole-2 {
 margin-left: 150px;
 float:left;
 margin-right: 60px;
@@ -345,34 +463,6 @@ margin-right: 60px;
   width: 960px;
   height: 80px;
   margin-top: -55px;
-}
-
-.player {
-  position: relative;
-  box-sizing: border-box;
-  height: 80px;
-  width: 160px;
-  border: 2px solid yellow;
-  z-index: 1;
-  color: #fff;
-  font-family: Helvetica;
-  text-align: center;
-}
-#player-1 {
-  z-index: 12;
-  margin-top: -55px;
-  margin-left: 40px;
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  float: left;
-}
-
-#player-2 {
-  margin-left: 560px;
-  margin-top: -55px;
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  float: left;
 }
 @keyframes throb {
   50% {
@@ -426,6 +516,8 @@ margin-right: 60px;
 button {
   cursor: pointer;
   outline: none;
+  line-height: 1rem;
+  font-size:0.9rem;
 }
 button.action:disabled {
   cursor: default;
@@ -440,50 +532,16 @@ button.action:active {
   float:left;
   position: absolute;
   left:8px;
+  padding:2px 5px 2px 5px;
   background: lightgrey;
+  color: rgb(78, 78, 78);
+  font-size: 0.8rem;
   display:none;
 }
 #new-hand {
   display: none;
 }
-#actionButtons {
-  position: relative;
-  border: outset rgb(163,153,153);
-  border-radius: 6px;
-  transition: transform 24ms ease;
-  box-sizing: border-box;
-  margin: 100px auto 0 auto;
-  margin-top:3%;
-  padding-top:0;
-  text-align: center;
-  background: #383737;
-  border: 2px solid yellow;
-  padding: 5px;
-  width: 700px;
-  height: 50px;
-  min-height: 50px;
-  opacity: 1;
-  transition: all 500ms ease;
-}
-.off-to-bottom {
-  margin-top: 200px !important;
-  opacity: 0 !important;
-}
-.post-game-button {
-  margin-left:auto;
-  margin-right: auto;
-}.game-button {
-  display:none;
-}
-.action {
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  text-align: center;
-  width: 100px;
-  height: 25px;
-  color: #fff;
-  margin: 5px;
-}
+
 
 #funds {
   width: 50px;
@@ -496,218 +554,4 @@ button.action:active {
   font-family: 'Sawarabi Mincho', sans-serif;
   color: #F1D804;
   display: none;
-}
-/* #funds, #check, #call, #raise, #allIn, #fold {
-  display: none;
-} */
-
-@media screen and (min-width: 768px) and (max-width: 1024px) {
-  /* @media screen and (min-width: 768px) and (max-width: 1024px) { */
-
-  #container {
-    padding-top: 60px;
-  }
-
-  #table {
-    border: 8px solid #F1D804;;
-    width: 745px;
-    height: 375px;
-  }
-  #winner-message {
-    margin-top: 84px;
-  }
-  #loser-message {
-    margin-top: 360px;
-  }
-  #cards {
-    width: 725px;
-    height: 75px;
-    margin-top: 120px;
-  }
-
-  .hole {
-    width: 90px;
-    height: 75px;
-    z-index: 4;
-    display: flex;
-    
-  }
-
-  #holeOne {
-    margin-left: 45px;
-}
-
-  #community {
-      width: 225px;
-      height: 75px;
-      margin-left: 115px;
-      float:left;
-      display: flex;
-    }
-
-  #holeTwo {
-    margin-left: 115px;
-    float:left;
-    margin-right: 45px;
-    }
-
-    #playerAlign {
-      width: 725px;
-      height: 60px;
-      margin-top: -40px;
-    }
-
-    .player {
-      height: 60px;
-      width: 120px;
-      font-size: 12px;
-    }
-
-    #player-1 {
-      margin-top: -40px;
-      margin-left: 30px;
-    }
-
-    #player-2 {
-      margin-left: 425px;
-      margin-top: -40px;
-    }
-
-    #boardWrite {
-      display: none;
-    }
-
-    #boardWriteMobile {
-      font-size: 18px;
-      line-height: 9px;
-      letter-spacing: 1.6px;
-      margin-left: 130px;
-      margin-top: 80px;
-      width: 525px;
-      height: 30px;
-      display: inline-block;
-    }
-
-    #pot, #bet {
-      margin-left: 330px;
-      margin-top: 7px;
-      font-size: 15px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-
-  .header {
-    height: 10px;
-    padding: 8px;
-  }
-
-  #container {
-    padding-top: 10px;
-    height: 424px;
-  }
-
-  #table {
-    border: 6px solid #F1D804;;
-    width: 565px;
-    height: 285px;
-  }
-
-  #cards {
-    width: 585px;
-    height: 75px;
-    margin-top: 190px;
-  }
-
-  .hole {
-    width: 90px;
-    height: 75px;
-    display: flex;
-  }
-
-  #holeOne {
-    margin-left: 35px;
-}
-
-  #community {
-      width: 225px;
-      height: 75px;
-      margin-left: 40px;
-      float:left;
-      display: flex;
-      margin-top: -140px;
-    }
-
-  #holeTwo {
-    margin-left: 305px;
-    float:left;
-    }
-
-    #playerAlign {
-      width: 725px;
-      height: 60px;
-      margin-top: -40px;
-    }
-
-    .player {
-      height: 60px;
-      width: 120px;
-      font-size: 12px;
-    }
-
-    #player-1 {
-      margin-top: -130px;
-      margin-left: -570px;
-    }
-
-    #player-2 {
-      margin-left: -155px;
-      margin-top: -130px;
-    }
-
-    #boardWrite {
-      display: none;
-    }
-
-    #boardWriteMobile {
-      font-size: 18px;
-      line-height: 9px;
-      letter-spacing: 1.6px;
-      margin-left: 40px;
-      margin-top: 15px;
-      width: 525px;
-      height: 30px;
-      display: inline-block;
-    }
-
-    #pot {
-      margin-left: 250px;
-      margin-top: -130px;
-      font-size: 15px;
-    }
-
-    #bet {
-      margin-left: 250px;
-      margin-top: 10px;
-      font-size: 15px;
-    }
-
-    .actionButtons {
-      width: 600px;
-      margin-left: -25px;
-      margin-top: 10px;
-    }
-
-    .action {
-      background: rgb(163,153,153);
-      background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-      text-align: center;
-      width: 80px;
-      height: 25px;
-      color: #fff;
-    }
-
-    #funds {
-      width: 160px;
-    }
 }
