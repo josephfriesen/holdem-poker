@@ -16,8 +16,15 @@ function Table() {
   this.autoDealing = false;
   this.vsCPU = false;
   this.cpu = undefined;
- this.deck = [];
+  this.deck = [];
   this.roundIndex = 0;
+  this.aiNames = [
+    "Computer",
+    "RoboCop",
+    "The T-1000",
+    "HAL 9000",
+    "EPICAC"
+  ]
 };
 Table.prototype.playerCoords = function(playerIndex) {
   var coords = {};
@@ -120,8 +127,8 @@ Table.prototype.initiateGame = function(playerNameArray,humanOpponent){
   this.dealer.blind = this.dealer.currentBet = this.bigBlind;
   this.atBat.blind = this.atBat.currentBet = this.bigBlind/2;
   this.atBat = this.dealer;
-  $('#funds').val(this.bigBlind);
-  $('#top-message').fadeIn();
+  $('#player-bet-amount').val(this.bigBlind);
+  // $('#top-message').fadeIn();
   this.createDeck();
   this.shuffle();
   this.advanceRound();
@@ -168,7 +175,7 @@ Table.prototype.startNewHand = function() {
   this.dealer.statusLabel.removeClass('winner-label');
   this.atBat = this.dealer;
   // $('.hole-card').removeClass('protruding');
-  $('#funds').val(this.bigBlind);
+  $('#player-bet-amount').val(this.bigBlind);
   $('.playing-card').fadeOut(200);
   $('#top-message').animate({
     'opacity': '0',
@@ -176,7 +183,6 @@ Table.prototype.startNewHand = function() {
     $('#top-message').css({
     'cursor':'default',
     'animation-play-state':'initial',
-    'transform': 'scale(0.75)'
     });
     $('#top-message').addClass('space-flip')
     $('#top-message').removeClass('space-next')
@@ -319,12 +325,12 @@ Table.prototype.advanceTurn = function() {
     },1200) // wait for holeCard deal animation to finish
   }
   $('.game-button').prop('disabled', false)
-  $('#funds').val(this.bigBlind); // default bet/raise amount
+  $('#player-bet-amount').val(this.bigBlind); // default bet/raise amount
   // decide which buttons to disable or change
   if (this.minimumBet) {
     // a bet exists
     var betAmount = this.minimumBet;
-    var raiseAmount = parseInt($('#funds').val());
+    var raiseAmount = parseInt($('#player-bet-amount').val());
     var totalStake = (this.atBat.bank+this.atBat.currentBet)
     $('#call-check').text("Call " + betAmount);
     $('#bet-raise').text("Raise " + raiseAmount);
@@ -448,7 +454,7 @@ Table.prototype.advanceRound = function(handOver) {
     this.players[0].currentBet = 0;
     this.players[1].currentBet = 0;
     this.minimumBet = 0;
-    $('#funds').val(this.bigBlind); 
+    $('#player-bet-amount').val(this.bigBlind); 
   }
   var roundName = poker.rounds[this.roundIndex];
   if (roundName === "preFlop") {

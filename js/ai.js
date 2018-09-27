@@ -35,7 +35,7 @@ Player.prototype.chooseAction = function() {
     }
   } else {
     // check or fold
-    if (!randomInt(0,10)) {
+    if (!randomInt(0,50)) {
       console.log("randomly folding at confidence 0")
       action = "fold"
     } else {
@@ -45,43 +45,51 @@ Player.prototype.chooseAction = function() {
   return [action, wager];
 }
 Player.prototype.receiveHoleCardConfidence = function() {
+  console.log("------------------\nScanning hole cards...")
+  var starting = this.confidence;
   var hole1 = this.holeCards[0];
   var hole2 = this.holeCards[1];
   if (hole1.rank === hole2.rank) {
     // has a pair
     if (hole1.value < 5) {
       // has a high pair
-      this.confidence += 3;
-      console.log("CPU +3 for high inside pair: " + hole1.rank + "s! " + this.confidence);
+      this.confidence += 4;
+      console.log("CPU +3 for inside pair " + hole1.rank);
     } else if (hole1.value > 8) {
       // has a low pair
-      this.confidence += 1;
-      console.log("CPU +1 for low inside pair: " + hole1.rank + "s! " + this.confidence);
+      this.confidence += 2;
+      console.log("CPU +1 for inside pair " + hole1.rank);
     } else {
       // has a medium pair
-      this.confidence += 2;
-      console.log("CPU +2 for med inside pair: " + hole1.rank + "s! " + this.confidence);
+      this.confidence += 3;
+      console.log("CPU +2 for inside pair " + hole1.rank);
     }
   } else if (hole1.suit === hole2.suit) {
     // has two of same suit
     this.confidence += 2;
     this.hopes.flush += 2;
-    console.log("CPU +2 for "+hole1.suit+" hole cards! " + this.confidence);
+    console.log("CPU +2 for "+hole1.suit+" hole cards");
+    console.log("- flush hope at " + this.hopes.flush)
   }
   if (hole1.value < 5 || hole2.value < 5 ) {
     // has one or two face cards
     if (hole1.value < 5 && hole2.value < 5) {
       // has two face cards
       this.confidence += 2
-      console.log("CPU +2 for two face hole cards! " + this.confidence)
+      console.log("CPU +2 for two face hole cards! ")
     } else {
       // has one face card
       this.confidence += 1
       console.log("CPU +1 for one face hole card! " + this.confidence);
     }
   }
+  console.log("Hole cards gave " + (this.confidence-starting) + " conf")
 }
 Player.prototype.receiveHandConfidence = function() {
+  console.log("------------------\nScanning hand " + this.hand.handValue + "...")
+  console.log(this.hand)
+  console.log()
+  var starting = this.confidence;
   var handRating = poker.handKeys.length-poker.handKeys.indexOf(this.hand.handValue)
   if (handRating >= 5) {
     // straight or better
@@ -98,9 +106,10 @@ Player.prototype.receiveHandConfidence = function() {
     // high card
   }
   this.hand.rated = true;
-  console.log("RHC bumped up conf to " + this.confidence)
+  console.log("Hand "+this.hand.handValue+" gave " + (this.confidence-starting) + " conf")
 }
 Player.prototype.checkFlushPotential = function() {
+  console.log("------------------\nScanning for flush potential...")
   var hole1 = this.holeCards[0];
   var hole2 = this.holeCards[1];
   var communityCards = this.table.communityCards
@@ -109,14 +118,14 @@ Player.prototype.checkFlushPotential = function() {
     if (communityCards.length === 3) {
       if (numberOfSuit < 1) {
         // no flop cards match suit
+        console.log("no longer a chance for a flush! lost " + this.hopes.flush + " confidence")
         this.confidence -= this.hopes.flush;
         this.hopes.flush = 0;
-        console.log("no longer a chance for a flush! losing confidence")
       } else {
         // one or more flop cards match
         this.hopes.flush += numberOfSuit; // max 3
         this.confidence += numberOfSuit;
-        console.log("could get a flush! need " + (5-(numberOfSuit+2)) + " more cards! ")
+        console.log("CPU += " + numberOfSuit + " for potential flush! need " + (5-(numberOfSuit+2)) + " more cards! ")
       } 
     } else if (communityCards.length === 4 && this.hopes.flush) {
       if (numberOfSuit < 2) {
@@ -128,7 +137,7 @@ Player.prototype.checkFlushPotential = function() {
         // two flop cards match
         this.hopes.flush += numberOfSuit; // max 3
         this.confidence += numberOfSuit;
-        console.log("still could get a flush! need " + (5-(numberOfSuit+2)) + " more cards! ")
+        console.log("CPU += " + numberOfSuit + " for potential flush! need " + (5-(numberOfSuit+2)) + " more cards! ")
       } 
     } else if (communityCards.length === 5 && this.hopes.flush) {
       if (numberOfSuit < 3) {
@@ -144,6 +153,7 @@ Player.prototype.checkFlushPotential = function() {
       } 
     }
   }
+  console.log("- flush hope at " + this.hopes.flush)
 }
 Player.prototype.pickBestMove = function() {
   var message = "";
@@ -209,13 +219,13 @@ Player.prototype.pickBestMove = function() {
     console.log("min bet " + this.table.minimumBet + " and conf score " + this.confidence + " (" + (80+(this.confidence*40))+ ")")
     action = "fold";
     wager = undefined
-    message = this.name + " can't take it any more."
+    message = " can't take it any more."
   }
   // if (wager) {
   //   if (wager >= this.bank) {
   //     console.log("changing to all in")
   //     wager = undefined;
-  //     action = "allIn";
+  //     action = "all-in";
   //   } else {
   //     var totalIn = (this.currentBet+wager)
   //     console.log("cpu currentBet is " + this.currentBet)
@@ -236,7 +246,7 @@ Player.prototype.pickBestMove = function() {
   // } else {
 
   // }
-  console.log("final action " + action + ", final wager " + wager + ", confidence " + this.confidence)
+  console.log("--------------------" + "\nfinal action " + action + "\nfinal wager " + wager + "\nconfidence " + this.confidence + "\n--------------------")
   $('#thinking-message').text(this.name+message);
   this.table.updateFigures();
   return [action, wager]
@@ -252,7 +262,7 @@ Player.prototype.makeMove = function(delay) {
       var bestMove = self.pickBestMove();
       var moveAction = bestMove[0]
       if (bestMove[1]) {
-        $('#funds').val(bestMove[1])
+        $('#player-bet-amount').val(bestMove[1])
         if (self.currentBet < self.table.minimumBet) {
           $('#bet-raise').text("Raise " + bestMove[1])
         } else {

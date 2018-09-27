@@ -1,9 +1,11 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0f0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#050">
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <title>Texas Hold 'Em</title>
@@ -16,7 +18,7 @@
     <script src="js/init.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Bevan" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Sawarabi+Mincho" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet "type="text/css">
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet "type="text/css"> -->
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   </head>
@@ -24,17 +26,17 @@
     <img id="cardsheet" src="img/cardsheet.png" style="display:none">
     <img id="cardback" src="img/cardback.png" style="display:none">
     <div id="turn-orb"></div>
-    <p class="header">
-      <button id="new-game-button">< New Game</button>
-      Texas Hold'Em
-    </p>
-    <div id="top-message" class="space-flip"><span></span></div>
+    <div id="header">
+      <div><button id="new-game-button">< New Game</button></New></div>
+      <div id="title-text">Texas Hold'Em</div>
+    </div>
     <div class="win-lose-message" id="winner-message"></div>
     <div class="win-lose-message" id="loser-message"></div>
     <div id="container">
+        <div id="top-message" class="space-flip"><span></span></div>
       <div id="sign-in-box">
         <form id="player-name-form">
-          <h4>Enter your name(s)</h4>
+          <h3>Enter your name(s)</h3>
           <input placeholder="Player 1" class="name-input" id="name-input-1">
           <input placeholder="Player 2"  class="name-input" id="name-input-2">
           <div id="start-button-area">
@@ -46,7 +48,7 @@
       <div id="table">
         <div class="player-action" id="player-1-action"></div>
         <div class="player-action" id="player-2-action"></div>
-          <div id="cards">
+        <div id="cards">
           <div class="hole" id="hole-1">
             <div class="hole-card"></div>
             <div class="hole-card"></div>
@@ -86,17 +88,16 @@
         <div id="boardWriteMobile">
           <p><span class="write">No Limit Hold'Em - Blinds <span class="blind-amounts"></span> - Buy-in <span class="starting-bank"></span></span></p>
         </div> -->
-        
       </div>
       <div class="off-to-bottom" id="action-buttons">
         <div id="thinking-message"></div>
         <button class="action game-button" id="call-check"></button>
         <button class="action game-button" id="bet-raise"></button>
-        <input class="game-button" type="tel" id="funds">
-        <button class="action game-button" id="allIn">All In</button>
+        <input class="game-button" type="number" id="player-bet-amount">
+        <button class="action game-button" id="all-in">All In</button>
         <button class="action game-button" id="fold">Fold</button>
         <button class="action post-game-button" id="new-hand">Next Hand</button>
       </div>
     </div>
   </body>
-</html>
+  </html>

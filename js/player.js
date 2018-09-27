@@ -63,7 +63,7 @@ Player.prototype.emitAction = function(actionMessage) {
   },1550)
 }
 Player.prototype.fold = function() {
-  var player = this.table.atBat;
+  this.table.fadeTurnGlow(this);
   if (this.table.players[0]===this.table.atBat) {
     this.table.handWinner = this.table.players[1];
   } else {
@@ -73,9 +73,8 @@ Player.prototype.fold = function() {
   this.table.handWinner.handsWon++;
   $('#winner-message').text(this.name + " folded");
   $('#winner-message').fadeIn();
-  this.swapLabel("fold-label")
-  this.div.removeClass("at-bat");
-  this.table.showStatusLabel(player);
+  this.swapLabel("fold-label");
+  this.table.showStatusLabel(this);
   this.holeCards[0].div.addClass('retracted');
   this.holeCards[1].div.addClass('retracted');
   this.table.showHandResults(true);
@@ -93,7 +92,7 @@ Player.prototype.amountLeft = function (action, amount) {
     amountLeft = this.bank;
   } else if ((action === "bet") || (action === "raise")) {
     amountLeft = this.bank - amount;
-  } else if (action === "allIn") {
+  } else if (action === "all-in") {
     amountLeft = 0;
   }
   return amountLeft;

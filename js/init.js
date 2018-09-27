@@ -1,4 +1,10 @@
 $(document).ready(function() {
+  if (window.innerWidth < window.innerHeight && window.innerWidth <= 500) {
+    $('#two-player-start').hide();
+    $('#vs-cpu-start').text("Start Game");
+    $('#name-input-2')[0].placeholder = table.aiNames[randomInt(0,table.aiNames.length-1)]
+
+  }
   $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
   $('.starting-bank').text(table.startingBank)
@@ -12,13 +18,12 @@ $(document).ready(function() {
     $("#action-buttons").removeClass("off-to-bottom");
     $("#action-buttons").fadeIn();
     $('#new-game-button').fadeIn();
-    
     var name1 = $("#name-input-1")[0];
     var name2 = $("#name-input-2")[0];
     var names = [ name1.value || name1.placeholder, name2.value || name2.placeholder ];
-    var humanOpponent = $(this)[0].id === "two-player-start"
-    if (!humanOpponent && !name2.value) {
-      names[1] = "Computer"
+    var humanOpponent = ($(this)[0].id === "two-player-start");
+    if (!humanOpponent && !name2.value.length && name2.placeholder === "Player 2") {
+      names[1] = table.aiNames[0,table.aiNames.length-1];
     }
     table.initiateGame(names,humanOpponent);
   });
@@ -46,7 +51,7 @@ $(document).ready(function() {
   });
   $('#bet-raise').click(function() {
     var player = table.atBat;
-    var raiseAmount = parseInt($('#funds').val());
+    var raiseAmount = parseInt($('#player-bet-amount').val());
     var matchAmount = table.minimumBet-player.currentBet
     var amountToAdd = matchAmount+raiseAmount;
     player.currentBet += amountToAdd;
@@ -59,7 +64,7 @@ $(document).ready(function() {
     table.advanceTurn();
     table.calledOrChecked = [];
   });
-  $('#allIn').click(function(){
+  $('#all-in').click(function(){
     var player = table.atBat;
     var raiseAmount = table.minimumBet = player.bank;
     player.currentBet += raiseAmount;
@@ -170,23 +175,23 @@ document.onkeyup = function(event) {
   }
 }
 window.addEventListener("input",function(event){
-  if (event.target.id === "funds") {
-    var nonNumber = hasLetters($('#funds').val());
+  if (event.target.id === "player-bet-amount") {
+    var nonNumber = hasLetters($('#player-bet-amount').val());
     if (nonNumber) {
-      $('#funds').val(parseInt($('#funds').val()));
+      $('#player-bet-amount').val(parseInt($('#player-bet-amount').val()));
     }
     if ($('#bet-raise').text() === "Bet") {
-      var tooMuch = $('#funds').val() > table.atBat.bank
+      var tooMuch = $('#player-bet-amount').val() > table.atBat.bank
       if (tooMuch) {
-        $('#funds').val(table.atBat.bank);
+        $('#player-bet-amount').val(table.atBat.bank);
       }
-      $('#bet-raise').text("Bet " + $('#funds').val());
+      $('#bet-raise').text("Bet " + $('#player-bet-amount').val());
     } else {
-      var tooMuch = $('#funds').val() > table.atBat.bank-table.atBat.currentBet
+      var tooMuch = $('#player-bet-amount').val() > table.atBat.bank-table.atBat.currentBet
       if (tooMuch) {
-        $('#funds').val(table.atBat.bank-table.atBat.currentBet);
+        $('#player-bet-amount').val(table.atBat.bank-table.atBat.currentBet);
       }
-      $('#bet-raise').text("Raise " + $('#funds').val());
+      $('#bet-raise').text("Raise " + $('#player-bet-amount').val());
     }
   }
 });
