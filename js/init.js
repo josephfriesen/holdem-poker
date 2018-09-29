@@ -1,9 +1,35 @@
 $(document).ready(function() {
-  if (window.innerWidth < window.innerHeight && window.innerWidth <= 500) {
-    $('#two-player-start').hide();
-    $('#vs-cpu-start').text("Start Game");
-    $('#name-input-2')[0].placeholder = table.aiNames[randomInt(0,table.aiNames.length-1)]
+  $("#table").hide()
+  if (window.innerWidth < window.innerHeight) {
+    // portrait
+    if (window.innerWidth <= 500) {
+      // small phone
+      $('#two-player-start').hide();
+      $('#vs-cpu-start').text("Start Game");
+      $('#name-input-2')[0].placeholder = table.aiNames[randomInt(0,table.aiNames.length-1)]
+    } else {
+      // large phone/tablet
 
+    }
+    // header is 8vh
+    // top-message is 4vh
+    // table is 120vw
+    // leaves 23vh bottom space
+    var usedSpace = (window.innerHeight*0.12) + (window.innerWidth*1.2);
+    var bottomSpace = (window.innerHeight - usedSpace)*0.8;
+    if (bottomSpace < 150) {
+      console.log("COCKS")
+      console.log(bottomSpace)
+
+    } else {
+      console.log(bottomSpace)
+    }
+    document.querySelector("#button-area").style.setProperty("height",bottomSpace+"px")
+
+  } else {
+    // landscape
+    document.querySelector("#table").style.setProperty('--table-height', '50vw')
+    document.querySelector("#table").style.setProperty('--table-width', (50*(10 / 6)) + 'vw')
   }
   $('body').fadeIn();
   $('.blind-amounts').text((table.bigBlind/2)+"/"+table.bigBlind)
@@ -15,8 +41,8 @@ $(document).ready(function() {
     $("#table").css({
       'transform': 'scale(1)'
     });
-    $("#action-buttons").removeClass("off-to-bottom");
-    $("#action-buttons").fadeIn();
+    $("#button-area").removeClass("off-to-bottom");
+    $("#button-area").fadeIn();
     $('#new-game-button').fadeIn();
     var name1 = $("#name-input-1")[0];
     var name2 = $("#name-input-2")[0];
@@ -38,8 +64,7 @@ $(document).ready(function() {
       table.minimumBet = player.currentBet;
       player.emitAction($(this).text());
       player.addToPot(amountToAdd);
-      table.advanceRound();
-    } else {
+      table.advanceRound();    } else {
       player.emitAction($(this).text());
       if (table.calledOrChecked.length === table.players.length) {
         table.advanceRound();

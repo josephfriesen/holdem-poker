@@ -31,7 +31,7 @@
       <div id="title-text">Texas Hold'Em</div>
     </div>
     <div class="win-lose-message" id="winner-message"></div>
-    <div class="win-lose-message" id="loser-message"></div>
+    
     <div id="container">
         <div id="top-message" class="space-flip"><span></span></div>
       <div id="sign-in-box">
@@ -40,63 +40,65 @@
           <input placeholder="Player 1" class="name-input" id="name-input-1">
           <input placeholder="Player 2"  class="name-input" id="name-input-2">
           <div id="start-button-area">
-            <button type="submit" class="action start-button" id="two-player-start">Two Player</button>
-            <button type="submit" class="action start-button" id="vs-cpu-start">vs. Computer</button>
+            <button type="submit" class="action-button start-button" id="two-player-start">Two Player</button>
+            <button type="submit" class="action-button start-button" id="vs-cpu-start">vs. Computer</button>
           </div>
         </form>
       </div>
       <div id="table">
+        <div id="table-container">
         <div class="player-action" id="player-1-action"></div>
         <div class="player-action" id="player-2-action"></div>
-        <div id="cards">
-          <div class="hole" id="hole-1">
-            <div class="hole-card"></div>
-            <div class="hole-card"></div>
-          </div>
-          <div id="community-area">
-            <div class="community-card"></div>
-            <div class="community-card"></div>
-            <div class="community-card"></div>
-            <div class="community-card"></div>
-            <div class="community-card"></div>
-          </div>
-          <div class="hole" id="hole-2">
-            <div class="hole-card"></div>
-            <div class="hole-card"></div>
-          </div>
+        <div class="player" id="player-2">
+          <span id="player-2-name"></span> - <span class="player-bank" id="player-2-bank"></span>
         </div>
-        <div id="pot" class="table-text">Pot<br /><div id="pot-amount"></div></div>
-        <div id="playerAlign">
-          <div class="player" id="player-1">
-            <p class="player-name"><span id="player-1-name" class="box"></span></p>
-            <p class="player-bank"><span id="player-1-bank"></span></p>
-            <p class="table-text">Bet: &nbsp;<span id="player-1-bet"></span></p>
-            <p><span id="dealer-1" class="status-label"><span></span></span></p>
-          </div>
-          <div class="player" id="player-2">
-            <p class="player-name"><span id="player-2-name" class="box"></span></p>
-            <p class="player-bank"><span id="player-2-bank"></span></p>
-            <p class="table-text">Bet: &nbsp;<span id="player-2-bet" class="box"></span></p>
-            <p><span id="dealer-2" class="status-label"><span></span></span></p>
-          </div>
+        <div class="hole" id="hole-2">
+          <div class="hole-card"></div>
+          <div class="hole-card"></div>
         </div>
-        <!-- <div id="boardWrite">
-          <p><span class="write">No Limit Hold'Em</span></p>
-          <p><span class="write">Blinds <span class="blind-amounts"></span></span></p>
-          <p><span class="write">Buy-in <span class="starting-bank"></span></span></p>
+        <div id="community-area">
+          <div class="community-card"></div>
+          <div class="community-card"></div>
+          <div class="community-card"></div>
+          <div class="community-card"></div>
+          <div class="community-card"></div>
         </div>
-        <div id="boardWriteMobile">
-          <p><span class="write">No Limit Hold'Em - Blinds <span class="blind-amounts"></span> - Buy-in <span class="starting-bank"></span></span></p>
-        </div> -->
+        <div id="pot" class="table-text">Pot<br /></div>
+        <div id="pot-amount" class="table-text"></div>
+        <div class="hole" id="hole-1">
+          <div class="hole-card"></div>
+          <div class="hole-card"></div>
+        </div>
+        <div class="player" id="player-1">
+          <span id="player-1-name"></span> - <span class="player-bank" id="player-1-bank"></span>
+        </div>
+        
+        <!-- <div id="pot" class="table-text">Pot<br /></div>
+        <div id="pot-amount" class="table-text"></div>
+        <div class="player" id="player-1">
+          <p class="player-name"><span id="player-1-name" class="box"></span></p>
+          <p class="player-bank"><span id="player-1-bank"></span></p>
+          <p class="table-text">Bet: &nbsp;<span id="player-1-bet"></span></p>
+          <p><span id="dealer-1" class="status-label"><span></span></span></p>
+        </div>
+        <div class="player" id="player-2">
+          <p class="player-name"><span id="player-2-name" class="box"></span></p>
+          <p class="player-bank"><span id="player-2-bank"></span></p>
+          <p class="table-text">Bet: &nbsp;<span id="player-2-bet" class="box"></span></p>
+          <p><span id="dealer-2" class="status-label"><span></span></span></p>
+        </div>
+        <div class="win-lose-message" id="loser-message"></div> -->
+
+        </div>
       </div>
-      <div class="off-to-bottom" id="action-buttons">
+      <div class="off-to-bottom" id="button-area">
         <div id="thinking-message"></div>
-        <button class="action game-button" id="call-check"></button>
-        <button class="action game-button" id="bet-raise"></button>
+        <button class="action-button game-button" id="call-check"></button>
+        <button class="action-button game-button" id="bet-raise"></button>
         <input class="game-button" type="number" id="player-bet-amount">
-        <button class="action game-button" id="all-in">All In</button>
-        <button class="action game-button" id="fold">Fold</button>
-        <button class="action post-game-button" id="new-hand">Next Hand</button>
+        <button class="action-button game-button" id="all-in">All In</button>
+        <button class="action-button game-button" id="fold">Fold</button>
+        <button class="action-button post-game-button" id="new-hand">Next Hand</button>
       </div>
     </div>
   </body>
