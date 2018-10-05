@@ -223,7 +223,7 @@ Table.prototype.changeButtonSelection = function(handOver,gameOver) {
 Table.prototype.createDeck = function(){
   poker.suits.forEach(function(suit,i){
     poker.ranks.forEach(function(rank,j){
-      this.deck.push(new Card(suit,rank));
+      this.deck.push(new Card(suit,rank,this));
     },this)
   },this)
 }
@@ -374,12 +374,10 @@ Table.prototype.deal = function(amount) {
         var newCard = self.deck.shift()
         player.holeCards.push(newCard);
         if (this.vsCPU) {
-          var isCPU = (player === this.cpu);
-          var cpuTurn = (this.atBat === this.cpu)
-          // newCard.place(player.slots[i],true,isCPU,isCPU);
-          newCard.place(player.slots[i],true,false,false);
+          // newCard.place(player.slots[i],(player === this.cpu),(player === this.cpu));
+          newCard.place(player.slots[i],false);
         } else {
-          newCard.place(player.slots[i],true,true,true);
+          newCard.place(player.slots[i],true,true);
         }
         
       }
@@ -389,15 +387,15 @@ Table.prototype.deal = function(amount) {
     if (amount === 3) {
       var newCard = self.deck.shift();
       this.communityCards.push(newCard);
-      newCard.place(this.slots[0],true,true);
+      newCard.place(this.slots[0],true);
       setTimeout(function(){
         var newCard2 = self.deck.shift();
         self.communityCards.push(newCard2);
-        newCard2.place(self.slots[1],true,true);
+        newCard2.place(self.slots[1],true);
         setTimeout(function(){
           var newCard3 = self.deck.shift();
           self.communityCards.push(newCard3);
-          newCard3.place(self.slots[2],true,true);
+          newCard3.place(self.slots[2],true);
           if (!self.autoDealing) {
             setTimeout(function(){
               if (self.atBat === self.cpu) {
@@ -415,7 +413,7 @@ Table.prototype.deal = function(amount) {
       var startAt = this.communityCards.length;
       var newCard = this.deck.shift();
       this.communityCards.push(newCard);
-      newCard.place(this.slots[startAt],true,true);
+      newCard.place(this.slots[startAt],true);
       if (!self.autoDealing) {
         setTimeout(function(){
           if (self.atBat === self.cpu) {
