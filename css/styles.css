@@ -1,6 +1,10 @@
+/* vars set on document.ready */
 :root {
-  --table-width: 85vw;
-  --table-height: 120vw;
+  --table-width: 0;
+  --table-height: 0;
+  --table-border: 1vw;
+  --card-width: 0;
+  --card-height: 0;
 }
 * {
   transition: box-shadow 500ms ease, transform 180ms ease;
@@ -11,6 +15,7 @@
   margin: 0;
   padding: 0;
   font-weight: 500;
+  box-sizing: border-box;
 }
 body {
   background: rgb(241,241,233);
@@ -19,7 +24,7 @@ body {
   margin: 0;
   padding: 0;
   /* display:none; */
-  /* overflow:hidden; */
+  overflow:hidden;
 }
 h4 {
   font-size: 1.5rem;
@@ -45,8 +50,9 @@ input {
   padding: 0 0.5rem 0 0.5rem;
   height: 2.5rem;
   display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
+  justify-content: end;
   line-height:1.2;
   z-index: 1;
 }
@@ -56,14 +62,46 @@ input {
   font-family: 'Bevan', cursive !important;
   color: rgb(72, 72, 72);
 }
+.action-button {
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  text-align: center;
+  border-radius: 0.3rem;
+  width: 100%;
+  height: 100%;
+  min-height: 2.5rem;
+  max-height: 2.5rem;
+  color: #fff;
+  font-size: 1rem;
+  /* margin: 0.1rem; */
+}
+.start-button, .top-button {
+  margin: 0;
+  width: 90%;
+}
+.name-input, .start-button {
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+.top-button {
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,0.5) 11%, rgba(56,55,55,0.5) 54%, rgba(38,37,37,0.5) 88%);
+  border-radius: 0.3rem;
+  color: #ddd;
+}
 #new-game-button {
   width: 6rem;
   height: 2rem;
-  background: lightgrey;
-  color: rgb(78, 78, 78);
   font-size: 0.8rem;
   line-height: 1rem;
   display:none;
+}
+#options-button {
+  width: 6rem;
+  height: 2rem;
+  font-size: 0.8rem;
+  line-height: 1rem;
+  /* display:none; */
 }
 #sign-in-box {
   margin: 0 auto;
@@ -75,13 +113,13 @@ input {
   border: 2px solid yellow;
   border-radius: 1rem;
   color: #fff;
-  box-sizing: border-box;
 }
 #table {
+  box-sizing: content-box;
   background: rgb(12,88,7);
   background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
   margin: 0 auto;
-  border: 0.5rem solid #F1D804;;
+  border: var(--table-border) solid #F1D804;;
   border-radius: 4rem;
   width: var(--table-width);
   height: var(--table-height);
@@ -104,26 +142,57 @@ input {
   flex: 1;
 }
 .hole {
-  height: calc(var(--table-width) / calc(13 / 4));
-  width: calc(var(--table-width) / 2.5);
+  width: var(--card-width);
+  height: var(--card-height);
   display: flex;
+}
+#hole-1 {
+  transform: translateY(30%);
 }
 #hole-2 {
-  transform: scale(0.75);
-  transform-origin: top;
-  /* flex:1.5; */
+  transform: scale(0.9) translateY(-200%);
+}
+.player {
+  height: auto;
+  width: auto;
+  min-width: calc(var(--table-width) / 2);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
+  border: 3px outset yellow;
+  border-radius: 0.35rem;
+  z-index: 1;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0px 0px 0px 0px yellow;
+  animation-fill-mode: forwards;
+}
+#player-1 {
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  transition: all 500ms ease;
+  flex: 1;
+  transform: translateY(20%);
+}
+#player-2 {
+  background: rgb(163,153,153);
+  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
+  transition: all 500ms ease;
+  flex:1;
+  transform: scale(0.9) translateY(-50%);
 }
 #community-area {
-  box-sizing: border-box;
   border-radius: 0.35rem;
-  border: 2px inset green;
+  border: calc(var(--table-border) / 2) inset green;
   width: var(--table-width);
-  height: calc(var(--table-width) / calc(13 / 4));
+  /* height: calc(var(--table-width) / calc(13 / 4)); */
+  /* height: var(--card-height); */
+  /* min-height: var(--card-height); */
+  /* min-height: calc(var(--table-width) / calc(13 / 4)); */
   display: flex;
-  flex:2;
-  transform: scale(0.9);
   transform-origin: top;
   justify-self: flex-end;
+  justify-content: flex-start;
 }
 #pot {
   line-height: 1.3rem;
@@ -149,39 +218,59 @@ input {
   color: #F1D804;
   transform: scale(1);
 }
-.player {
-  box-sizing: border-box;
-  height: 10%;
-  width: auto;
-  min-width: calc(var(--table-width) / 2);
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border: 2px solid yellow;
-  z-index: 1;
-  color: #fff;
-  text-align: center;
-  box-shadow: 0px 0px 0px 0px yellow;
-  animation-fill-mode: forwards;
-}
 .player-bank {
   font-family: 'Bevan', cursive;
   font-size: 1.5rem;
   color:yellow;
 }
-#player-1 {
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  transition: all 500ms ease;
-  flex: 1;
+#start-button-area {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
 }
-
-#player-2 {
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  transition: all 500ms ease;
-  flex:1;
+.table-text {
+  font-family: 'Bevan', cursive;
+  margin-top: 0;
+  color:yellow;
 }
-
+#button-area {
+  border: outset rgb(163,153,153);
+  border-radius: 6px;
+  transition: transform 24ms ease;
+  margin: 0 auto;
+  text-align: center;
+  background: #383737;
+  border: 2px solid yellow;
+  padding: 0.75rem;
+  width: 700px;
+  /* height: 3.6rem; */
+  /* min-height: 50px; */
+  opacity: 1;
+  bottom: 0vh;
+  transition: all 500ms ease;
+}
+#button-area {
+  position: relative;
+  /* margin-top:2%; */
+  text-align: center;
+  background: #383737;
+  width: 90vw;
+  /* height: 15vh; */
+  /* min-height: 120px; */
+  /* max-height: 15vh; */
+  opacity: 1;
+  transition: all 500ms ease;
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  column-gap: 0.5rem;
+  /* row-gap: 0.5em; */
+}
+.off-to-bottom {
+  display:none;
+  /* margin-top: 200px; */
+  opacity: 0;
+}
 .slow-move {
   transition-duration: 600ms !important;
 }
@@ -275,55 +364,7 @@ input {
   font-size: inherit;
   line-height: 1.5rem;
 }
-.action-button {
-  background: rgb(163,153,153);
-  background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-  text-align: center;
-  width: 100px;
-  height: 2rem;
-  color: #fff;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
-.start-button {
-  margin: 0;
-  width: 90%;
-}
-.name-input, .start-button {
-  margin-top: 2%;
-  margin-bottom: 2%;
-}
-#start-button-area {
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-}
-.table-text {
-  font-family: 'Bevan', cursive;
-  margin-top: 0;
-}
-#button-area {
-  position: relative;
-  border: outset rgb(163,153,153);
-  border-radius: 6px;
-  transition: transform 24ms ease;
-  margin: 100px auto 0 auto;
-  margin-top:3%;
-  box-sizing: border-box;
-  text-align: center;
-  background: #383737;
-  border: 2px solid yellow;
-  padding: 0.75rem;
-  width: 700px;
-  height: 3.6rem;
-  min-height: 50px;
-  opacity: 1;
-  transition: all 500ms ease;
-}
-.off-to-bottom {
-  display:none;
-  /* margin-top: 200px; */
-  opacity: 0;
-}
+
 .post-game-button {
   margin-left:auto;
   margin-right: auto;
@@ -346,7 +387,6 @@ input {
   font-size: 1.2rem;
 }
 .playing-card {
-  box-sizing: border-box;
   opacity: 0;
   transform-origin: center bottom;
   z-index: 12;
@@ -357,9 +397,9 @@ input {
 }
 #top-message {
   padding:0;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  height: 1.75rem;
+  /* padding-top: 0.5rem;
+  padding-bottom: 0.5rem; */
+  height: 2.25rem;
   text-align: center;
   font-size: 1.25rem;
   color: #F1D804;
@@ -371,8 +411,14 @@ input {
   animation-timing-function: ease;
   animation-play-state: paused;
   white-space: nowrap;
-  opacity:0;
+  background: brown;
+  /* opacity:0; */
   /* display:none; */
+}
+#top-message {
+  font-size: 0.75rem;
+  /* opacity: 1 !important; */
+  /* height: 2.5vh */
 }
 .space-flip {
   /* transform: scale(0.75) */
@@ -428,7 +474,7 @@ input {
   transform: scaleY(0.5) !important;
 }
 .protruding {
-  transform: translateY(-75%) !important;
+  transform: translateY(-75%);
 }
 .player-action {
   position: absolute;
@@ -446,7 +492,7 @@ input {
   right: 190px;
 }
 #hole-1 {
-  border: 3px solid red;
+  /* border: 3px solid red; */
 }
 #bet {
   margin-left: 440px;
@@ -454,23 +500,28 @@ input {
   font-size: 20px;
   color: #F1D804;
 }
-.community-card {
-  flex: 1;
-}
-
 #hole-2 {
-  border: 3px solid blue
+  /* border: 3px solid blue */
 }
-
-#playerAlign {
-  width: 960px;
-  /* width:30; */
-  height: 80px;
-  margin-top: -55px;
+#bet-raise {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+#player-bet-amount {
+  padding-left: 5px;
+  margin-right: 10px;
+  width: 100%;
+  height: 100%;
+  max-height: 2.5rem;
+  border-radius: 0.3rem;
+  border: inset;
+  font-size: 1.1rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 @keyframes throb {
   50% {
-    text-shadow: 0px 0px 12px rgb(136, 136, 136)
+    text-shadow: 0px 0px 12px;
   }
 }
 .player-action {
@@ -521,118 +572,20 @@ button.action:active {
   display: none;
 }
 
-
-#player-bet-amount {
-  width: 50px;
-  height:25px;
-  padding-left: 5px;
-  margin-right: 10px;
-}
-/* mobile landscape */
-
-/* @media screen and (orientation: landscape) and (max-height: 400px) {
-  #table {
-    border-color:gray;
-  }
-} */
-
-/* tablet/small window landscape*/
-
-/* @media screen and (orientation: landscape) and (max-width: 768px) and (min-width: 400px) {
-  #table {
-    border-color:blue;
-  }
-} */
-
 /* mobile/tablet portrait */
 
 @media screen and (max-width: 500px) {
-  body {
-    /* overflow:hidden; */
-  }
-	/* #table {
-    background: rgb(12,88,7);
-    background: linear-gradient(90deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
-    margin: 0 auto;
-    border: 0.5rem solid #F1D804;;
-    width: 90vw;
-    height: 60vw;
-    max-width: 980px;
-    max-height: 500px;onsPC
-    transform: scale(2);
-    transition: transform 500ms ease;
-    display: none;
-  } */
-  /* #sign-in-box {
-    margin: 0 auto;
-    padding-top: 2%;
-    padding-left: 3%;
-    padding-right: 3%;
-    background: rgb(163,153,153);
-    background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-    width: 400px;
-    border: 2px solid yellow;
-    border-radius: 1rem;
-    color: #fff;
-    box-sizing: border-box;
-  } */
-  .action-button {
-    background: rgb(163,153,153);
-    background: linear-gradient(202deg, rgba(163,153,153,1) 11%, rgba(56,55,55,1) 54%, rgba(38,37,37,1) 88%);
-    text-align: center;
-    border-radius: 0.3rem;
-    width: 100%;
-    height: 100%;
-    max-height: 50px;
-    color: #fff;
-    font-size: 0.9rem;
-    /* margin: 0.1rem; */
-  }
-  #button-area {
-    position: relative;
-    border: outset yellow;
-    transition: transform 24ms ease;
-    /* margin: 100px auto 0 auto; */
-    margin-top:3%;
-    box-sizing: border-box;
-    text-align: center;
-    background: #383737;
-    width: 90vw;
-    /* height: 15vh; */
-    min-height: 120px;
-    max-height: 15vh;
-    opacity: 1;
-    transition: all 500ms ease;
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
-    justify-items: center;
-    column-gap: 0.5rem;
-    row-gap: 0.5em;
-  }
+
+  
   #call-check, #all-in {
     /* width: 90%; */
   }
-  #bet-raise {
-    width: 100%;
-  }
-  #bet-raise {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
+  
   #fold {
     width:90%;
     grid-column: 3
   }
-  #player-bet-amount {
-    width: 100%;
-    height: 100%;
-    border-radius: 0.3rem;
-    border: inset;
-    font-size: 1.4rem;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
+
   #new-hand {
     grid-column: 2;
   } 
@@ -640,17 +593,12 @@ button.action:active {
     font-size: 0.9rem;
     grid-column: 1 / 4;
   }
-  #top-message {
-    font-size: 0.75rem;
-    /* opacity: 1 !important; */
-    height: 2.5vh
-  }
   #table {
     border-radius: 3.5rem;
     width: var(--table-width);
     height: var(--table-height);
     /* min-height: calc(var(--table-width) * (16/10)); */
-    max-height: calc(var(--table-width) * (16/10));
+    /* max-height: calc(var(--table-width) * (16/10)); */
     top: 0;
     background: linear-gradient(180deg, rgba(12,88,7,1) 25%, rgba(39,154,19,1) 50%, rgba(12,88,7,1) 75%);
   }

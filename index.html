@@ -27,8 +27,9 @@
     <img id="cardback" src="img/cardback.png" style="display:none">
     <div id="turn-orb"></div>
     <div id="header">
-      <div><button id="new-game-button">< New Game</button></New></div>
+      <div><button class="top-button" id="new-game-button">< New Game</button></div>
       <div id="title-text">Texas Hold'Em</div>
+      <div><button class="top-button" id="options-button">Options</button></div>
     </div>
     <div class="win-lose-message" id="winner-message"></div>
     
@@ -51,6 +52,7 @@
         <div class="player-action" id="player-2-action"></div>
         <div class="player" id="player-2">
           <span id="player-2-name"></span> - <span class="player-bank" id="player-2-bank"></span>
+          <p class="table-text">Bet: &nbsp;<span id="player-2-bet"></span></p>
         </div>
         <div class="hole" id="hole-2">
           <div class="hole-card"></div>
@@ -63,7 +65,7 @@
           <div class="community-card"></div>
           <div class="community-card"></div>
         </div>
-        <div id="pot" class="table-text">Pot<br /></div>
+        <div id="pot" class="table-text">Pot</div>
         <div id="pot-amount" class="table-text"></div>
         <div class="hole" id="hole-1">
           <div class="hole-card"></div>
@@ -71,6 +73,7 @@
         </div>
         <div class="player" id="player-1">
           <span id="player-1-name"></span> - <span class="player-bank" id="player-1-bank"></span>
+          <p class="table-text">Bet: &nbsp;<span id="player-1-bet"></span></p>
         </div>
         
         <!-- <div id="pot" class="table-text">Pot<br /></div>
