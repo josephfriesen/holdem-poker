@@ -1,10 +1,11 @@
-function Card(suit, rank) {
+function Card(suit, rank, table) {
   this.suit = suit;
   this.rank = rank;
+  this.table = table;
   this.cardHTML = `<div class="playing-card protruding" id="`+this.rank+`-of-`+this.suit+`"></div>`;
   this.dimensions = {
-    width: ($('#cardsheet').width()/13),
-    height: ($('#cardsheet').height()/4)
+    width: this.table.cardWidth,
+    height: this.table.cardHeight
   };
   this.value = this.getValue();
 }
@@ -28,14 +29,10 @@ Card.prototype.showBack = function() {
     'background-position': '0',
   });
 }
-Card.prototype.place = function (targetElement,resize,faceDown,stayFlipped) {
+Card.prototype.place = function (targetElement,faceDown,stayFlipped) {
   var self = this;
   targetElement.html(this.cardHTML);
   this.div = $('#'+this.rank+`-of-`+this.suit);
-  if (resize) {
-    this.dimensions.width = Math.round(targetElement.width());
-    this.dimensions.height = Math.round(targetElement.height());
-  }
   var pos = {};
   pos.left = poker.ranks.indexOf(this.rank) * this.dimensions.width;
   pos.top = poker.suits.indexOf(this.suit) * this.dimensions.height;
