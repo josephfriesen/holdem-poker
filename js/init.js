@@ -11,21 +11,22 @@ $(document).ready(function() {
       // large phone/tablet
 
     }
-    // header is 8vh
-    // top-message is 4vh
-    // table is 120vw
-    // leaves 23vh bottom space
-    var usedSpace = (window.innerHeight*0.12) + (window.innerWidth*1.2);
-    var bottomSpace = (window.innerHeight - usedSpace)*0.8;
-    if (bottomSpace < 150) {
-      console.log("COCKS")
-      console.log(bottomSpace)
-
-    } else {
-      console.log(bottomSpace)
-    }
-    document.querySelector("#button-area").style.setProperty("height",bottomSpace+"px")
-
+    table.width = (window.screen.availWidth*0.9);
+    table.height = (window.screen.availHeight*0.68);
+    var buttonsHeight = (window.screen.availHeight*0.22);
+    document.body.style.setProperty('--table-width',table.width);
+    document.body.style.setProperty('--table-height',table.height);
+    table.cardWidth = (table.width/5);
+    table.cardHeight = (table.cardWidth * (7/5));
+    document.body.style.setProperty('--card-width',table.cardWidth);
+    document.body.style.setProperty('--card-height',table.cardHeight);
+    document.querySelector("#community-area").style.setProperty("width",(table.cardWidth*5)+"px")
+    document.querySelector("#community-area").style.setProperty("height",(table.cardHeight)+"px")
+    document.querySelector("#community-area").style.setProperty("min-height",(table.cardHeight+(window.screen.availWidth*0.01))+"px")
+    var usedYSpace = $("#header").height() + $("#top-message").height() + $("#table").height() + (parseFloat($("#table").css("border-width"))*2)
+    console.log("avail height " + window.screen.availHeight)
+    console.log("used Y space " + usedYSpace)
+    document.querySelector("#button-area").style.setProperty("height",(window.screen.availHeight-usedYSpace)+"px")
   } else {
     // landscape
     document.querySelector("#table").style.setProperty('--table-height', '50vw')
