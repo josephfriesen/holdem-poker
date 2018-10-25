@@ -4,7 +4,7 @@
 
 ## Description
 
-This project is an in-browser Texas Hold'em poker game, played with two players or one player against a CPU opponent. 
+This project is an in-browser Texas Hold'em poker game, played with two players or one player against a CPU opponent. Created as a Team Week project for the Introduction to Programming section at Epicodus, 8/27 - 8/31/2018.
 
 ## Screenshots
 
