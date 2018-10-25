@@ -23,4 +23,4 @@ This project is an in-browser Texas Hold'em poker game, played with two players 
 
 ## Legal
 
-Created by [mailto:friesen.josephc@gmail.com](Joe Friesen) and [mailto:mike@eggborne.com](Michael Donovan), 2018.
+Created by [Joseph Friesen](mailto:friesen.josephc@gmail.com) and [Michael Donovan](mailto:mike@eggborne.com), 2018.
